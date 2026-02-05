@@ -5,34 +5,13 @@ import { ScrollReveal } from './scroll-reveal'
 import Link from 'next/link'
 
 const categories = [
-  {
-    title: 'Period Drama',
-    slug: 'period-drama',
-  },
-  {
-    title: 'Bollywood Movie',
-    slug: 'bollywood-movie',
-  },
-  {
-    title: 'Tollywood Movie',
-    slug: 'tollywood-movie',
-  },
-  {
-    title: 'Web Series',
-    slug: 'web-series',
-  },
-  {
-    title: 'TV Serials',
-    slug: 'tv-serials',
-  },
-  {
-    title: 'TV Ads',
-    slug: 'tv-ads',
-  },
-  {
-    title: 'Movie Promotion',
-    slug: 'movie-promotion',
-  },
+  { title: 'Period Drama', slug: 'period-drama' },
+  { title: 'Bollywood Movie', slug: 'bollywood-movie' },
+  { title: 'Tollywood Movie', slug: 'tollywood-movie' },
+  { title: 'Web Series', slug: 'web-series' },
+  { title: 'TV Serials', slug: 'tv-serials' },
+  { title: 'TV Ads', slug: 'tv-ads' },
+  { title: 'Movie Promotion', slug: 'movie-promotion' },
 ]
 
 export function ProjectsContent() {
@@ -55,14 +34,14 @@ export function ProjectsContent() {
       {/* Categories Grid */}
       <section className="py-20 md:py-32 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category, index) => (
               <ScrollReveal key={category.slug} delay={index * 0.1}>
                 <Link href={`/categories/${category.slug}`}>
                   <motion.div
                     whileHover={{ y: -8, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group h-48 bg-gradient-to-br from-primary to-accent rounded-lg p-8 flex items-center justify-center text-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="group h-48 bg-linear-to-br from-primary to-accent rounded-lg p-8 flex items-center justify-center text-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     <h3 className="text-2xl md:text-3xl font-display font-bold text-white group-hover:scale-110 transition-transform">
                       {category.title}

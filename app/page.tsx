@@ -7,30 +7,30 @@ import {
   GalleryPreviewSection,
   ProjectsPreviewSection,
 } from "@/components/home-preview-sections"
+import { SubsidySection } from "@/components/subsidy-section"
 import { Footer } from "@/components/footer"
 import { FloatingButtons } from "@/components/floating-buttons"
 
 export default function Home() {
   return (
     <>
-      {/* Full-screen hero video section */}
       <HeroSection />
-
-      {/* Infinite scrolling text banner */}
       <TextBanner />
 
-      {/* Remaining homepage sections */}
       <MPProjectSection />
+
+      {/* 🔥 SHOWREEL */}
+      <SubsidySection />
+
       <BenefitsSection />
       <AboutPreviewSection />
       <GalleryPreviewSection />
       <ProjectsPreviewSection />
 
-      {/* Footer */}
       <Footer />
-
-      {/* Floating buttons */}
       <FloatingButtons />
     </>
   )
 }
+
+

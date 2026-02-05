@@ -15,11 +15,16 @@ export function AboutContent() {
   ]
 
   const advantages = [
-    { title: 'Professional Line Producers', description: 'Experienced crew with deep local knowledge' },
-    { title: 'Government Aligned Execution', description: 'Smooth approvals and regulatory compliance' },
-    { title: 'Transparent Budgeting', description: 'Clear cost structures and no hidden expenses' },
-    { title: 'Verified Vendors & Locations', description: 'Curated partners meeting international standards' },
-    { title: 'Cost-effective Execution', description: 'Maximum value with optimized resources' },
+    { title: 'Single-Window Professional Facilitation', description: 'One centralized platform for permissions, subsidies, locations, and execution — eliminating confusion, delays, and dependency on multiple intermediaries.' },
+    { title: 'Verified Line Producers & Teams', description: 'We work only with experienced and vetted line producers and production professionals who understand large-scale film workflows and industry standards.' },
+    { title: 'Policy-Aligned Execution', description: 'Deep understanding of Madhya Pradesh film policies ensures smooth permissions, accurate subsidy guidance, and full compliance.' },
+    { title: 'Script-Driven Location Expertise', description: 'Locations are suggested and finalized based on script requirements, visual treatment, budget, and logistics — not guesswork.' },
+    { title: 'Strong Government Coordination', description: 'Established coordination with Film Tourism MP and local authorities for faster approvals and smooth on-ground operations.' },
+    { title: 'Reliable Vendor & Resource Network', description: 'Access to vetted vendors, equipment, artists, technicians, and services across Madhya Pradesh with proven reliability' },
+    { title: 'End-to-End Accountability', description: 'From pre-production to final wrap-up, FilmIndustryMP remains responsible for execution quality, timelines, and coordination.'},
+    { title: 'Proven Focus on Repeat Productions', description: 'Our system is designed to build long-term trust so producers confidently return to Madhya Pradesh for future projects.'},
+    { title: 'Vision Beyond One Project', description: 'We work with a long-term goal — positioning Madhya Pradesh as a consistent, film-friendly, and globally competitive production destination.'},
+
   ]
 
   return (
@@ -48,18 +53,21 @@ export function AboutContent() {
                   The Problem
                 </h2>
                 <p className="text-lg text-foreground/70 mb-6 leading-relaxed">
-                  Despite Madhya Pradesh's unparalleled locations and rich heritage, many
-                  productions never return after their first shoot.
+                  Over the years, Madhya Pradesh has attracted filmmakers from across India and abroad due to its diverse natural landscapes, rich heritage locations, and cost-effective production environment. However, a recurring challenge has been consistently observed in large-scale film productions shot in the state.
+
+Despite a successful first experience, many production houses do not return for subsequent projects. The primary reason is the involvement of unqualified intermediaries and informal local contacts who lack professional film production and line production experience.
+
+These intermediaries often have limited understanding of:
                 </p>
                 <div className="space-y-4">
                   {[
-                    'Unqualified local intermediaries',
-                    'Poor understanding of film workflows',
-                    'Lack of subsidy & permission knowledge',
-                    'Inefficient vendor & location handling',
+                    '1. Structured film production workflows',
+                    '2. Government permissions, policies, and subsidy framework',
+                    '3. Professional line production standards',
+                    '4. Vendor management, casting coordination, and location logistics',
                   ].map((problem) => (
                     <div key={problem} className="flex items-start gap-3">
-                      <span className="text-red-500 font-bold text-xl mt-0.5">✕</span>
+                    
                       <p className="text-foreground/70">{problem}</p>
                     </div>
                   ))}
@@ -73,8 +81,9 @@ export function AboutContent() {
                   The Result
                 </h3>
                 <p className="text-lg text-foreground/70">
-                  Delays, cost overruns, loss of trust, and missed repeat opportunities—
-                  preventing Madhya Pradesh from becoming a preferred filming destination.
+                  As a result, production houses—from Bollywood and regional cinema to OTT platforms and international studios—face delays, budget overruns, compliance issues, and operational inefficiencies. Such experiences create uncertainty and discourage repeat filming in Madhya Pradesh.
+
+
                 </p>
               </div>
             </ScrollReveal>
@@ -91,9 +100,17 @@ export function AboutContent() {
                 Our Objective
               </h2>
               <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
-                To eliminate the trust and execution gap by building a single-window
-                professional ecosystem—similar to a Tourism Board model—that manages
-                the entire production lifecycle from script to release.
+               FilmIndustryMP was established to eliminate this trust gap and execution challenge by creating a professional, centralized, and accountable film facilitation ecosystem in Madhya Pradesh.
+
+Our objective is to build a single-window system, comparable in structure and reliability to established tourism and film boards, where production houses can:
+
+Receive accurate guidance on permissions and film subsidy policies
+
+Connect with verified and experienced line producers
+
+Discover locations aligned with script requirements and budget planning
+
+Execute projects efficiently, transparently, and cost-effectively
               </p>
             </div>
           </ScrollReveal>
@@ -108,6 +125,9 @@ export function AboutContent() {
               Our Solution
             </h2>
           </ScrollReveal>
+           <p className="text-2xl text-foreground/70 leading-relaxed mb-16">
+           FilmIndustryMP functions as a professional point of contact and execution partner for production houses from India and around the world seeking to shoot in Madhya Pradesh.
+           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {solutions.map((solution, index) => (
@@ -143,7 +163,7 @@ export function AboutContent() {
                   whileHover={{ x: 8 }}
                   className="flex items-start gap-4 p-6 bg-secondary-foreground/10 rounded-lg hover:bg-secondary-foreground/20 transition-colors"
                 >
-                  <CheckCircle className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
+                  <CheckCircle className="w-6 h-6 text-accent shrink-0 mt-1" />
                   <div>
                     <h3 className="text-xl font-display font-bold mb-2">
                       {advantage.title}
@@ -164,12 +184,14 @@ export function AboutContent() {
             <div className="text-center space-y-8">
               <Target className="w-16 h-16 mx-auto text-primary" />
               <h2 className="text-4xl md:text-5xl font-display font-bold">
-                Our Vision
+                Our Long Term  Vision
               </h2>
               <p className="text-2xl text-foreground/70 leading-relaxed">
-                To transform Madhya Pradesh into a globally trusted, film-friendly
-                production destination for repeated projects across films, OTT, TV,
-                and international cinema.
+                Our mission extends beyond facilitating individual film shoots.
+
+FilmIndustryMP aims to build long-term confidence, encouraging production houses to repeatedly choose Madhya Pradesh for feature films, web series, OTT content, television shows, commercials, and international productions.
+
+Through professionalism, transparency, and institutional trust, we are committed to positioning Madhya Pradesh as a film-friendly, dependable, and globally competitive production destination.
               </p>
             </div>
           </ScrollReveal>

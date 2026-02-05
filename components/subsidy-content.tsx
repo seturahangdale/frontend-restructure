@@ -1,44 +1,64 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { ScrollReveal } from './scroll-reveal'
-
 export function SubsidyContent() {
   return (
-    <main className="min-h-screen pt-20">
-      {/* Hero Section */}
-      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h1 className="text-5xl md:text-6xl font-display font-bold mb-8 text-balance">
-              MP Film Subsidy Scheme
-            </h1>
-            <p className="text-xl md:text-2xl opacity-90">
-              Up to 35% subsidies to maximize your production value
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
+    <main className="pt-24 pb-32 bg-background">
+      <section className="max-w-5xl mx-auto px-6">
+        <h1 className="text-5xl font-display font-bold mb-6">
+          Madhya Pradesh Film Shoot Subsidy
+        </h1>
 
-      {/* Content Section */}
-      <section className="py-20 md:py-32 bg-background">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-8">
-              Film Subsidy Scheme
-            </h2>
-            <p className="text-xl text-foreground/70 mb-12">
-              Madhya Pradesh offers comprehensive support for film productions with subsidies up to 35%
-            </p>
-            <p className="text-lg font-semibold text-primary mb-8">
-              Conditions Apply
-            </p>
-            <p className="text-foreground/70">
-              For detailed information about eligibility criteria, application process, and subsidy amounts, please contact our team or visit our office.
-            </p>
-          </ScrollReveal>
-        </div>
+        <p className="text-lg text-muted-foreground mb-10">
+          Madhya Pradesh has emerged as one of India’s most film-friendly states,
+          offering attractive film shooting subsidies and incentives to encourage
+          national and international productions.
+        </p>
+
+        <h3 className="text-2xl font-semibold mb-4">
+          Why Choose Madhya Pradesh for Film Shooting?
+        </h3>
+
+        <ul className="list-disc pl-6 space-y-2 mb-10">
+          <li>Heritage monuments, forests, rivers & landscapes</li>
+          <li>Single-window facilitation</li>
+          <li>Support for films, OTT, TV & ads</li>
+          <li>Cost-effective production</li>
+          <li>Trained local crew & artists</li>
+        </ul>
+
+        <h3 className="text-2xl font-semibold mb-4">
+          Film Shooting Subsidy & Incentives
+        </h3>
+
+        <p className="mb-6">
+          Subsidy on eligible production expenses, incentives for promoting MP’s
+          culture, benefits for local employment and OTT projects.
+        </p>
+
+        <h3 className="text-2xl font-semibold mb-4">
+          Eligible Projects
+        </h3>
+
+        <ul className="list-disc pl-6 space-y-2 mb-12">
+          <li>Feature Films</li>
+          <li>Web Series & OTT Content</li>
+          <li>TV Serials & Reality Shows</li>
+          <li>Documentaries & Short Films</li>
+          <li>Advertisement & Corporate Films</li>
+        </ul>
+
+        {/* ✅ DOWNLOAD BUTTON (FIXED) */}
+        <a
+          href="/forms/Subsidy_Form_2025_CA_Certificate.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+          className="inline-flex items-center justify-center px-8 py-4 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition"
+        >
+          Download Subsidy Form
+        </a>
       </section>
     </main>
   )
 }
+

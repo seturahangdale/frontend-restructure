@@ -1,64 +1,29 @@
 'use client'
 
-import React from "react"
-
-import { motion } from 'framer-motion'
+import React, { useState } from "react"
+import { motion, AnimatePresence } from 'framer-motion'
 import { ScrollReveal } from './scroll-reveal'
-import { Phone, Mail, MapPin, Send } from 'lucide-react'
+import { Phone, Mail, MapPin, Send, Download, X } from 'lucide-react'
 import { Button } from './ui/button'
-import { useState } from 'react'
 
 export function ContactContent() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  })
-
   const [submitted, setSubmitted] = useState(false)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const [showCard, setShowCard] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
     setTimeout(() => setSubmitted(false), 3000)
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
   }
-
-  const contactInfo = [
-    {
-      icon: Phone,
-      label: 'Phone',
-      value: '+91 99771 10001',
-      href: 'tel:+919977110001',
-    },
-    {
-      icon: Mail,
-      label: 'Email',
-      value: 'info@filmindustrymp.com',
-      href: 'mailto:info@filmindustrymp.com',
-    },
-    {
-      icon: MapPin,
-      label: 'Location',
-      value: 'Madhya Pradesh, India',
-      href: '#',
-    },
-  ]
 
   return (
     <main className="min-h-screen pt-20">
-      {/* Hero Section */}
+
+      {/* HERO */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <ScrollReveal>
-            <h1 className="text-5xl md:text-6xl font-display font-bold mb-8 text-balance">
+            <h1 className="text-5xl md:text-6xl font-display font-bold mb-6">
               Get in Touch
             </h1>
             <p className="text-xl md:text-2xl opacity-90">
@@ -68,34 +33,123 @@ export function ContactContent() {
         </div>
       </section>
 
-      {/* Contact Info Cards */}
+      {/* CONTACT INFO */}
       <section className="py-16 md:py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {contactInfo.map((info, index) => (
-              <ScrollReveal key={info.label} delay={index * 0.15}>
-                <motion.a
-                  href={info.href}
-                  whileHover={{ y: -8 }}
-                  className="film-card p-8 text-center hover:border-accent transition-colors block"
-                >
-                  <info.icon className="w-12 h-12 text-accent mx-auto mb-4" />
-                  <h3 className="text-xl font-display font-bold text-foreground mb-2">
-                    {info.label}
-                  </h3>
-                  <p className="text-foreground/70 hover:text-accent transition-colors">
-                    {info.value}
-                  </p>
-                </motion.a>
-              </ScrollReveal>
-            ))}
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+
+            {/* PHONE */}
+            <ScrollReveal>
+              <motion.a
+                href="tel:+919977110001"
+                whileHover={{ y: -6 }}
+                className="film-card p-6 flex flex-col items-center text-center transition-all hover:border-accent"
+              >
+                <Phone className="w-10 h-10 text-accent mb-3" />
+                <h3 className="text-lg font-semibold mb-1">Phone</h3>
+                <p className="text-sm text-foreground/70">+91 99771 10001</p>
+              </motion.a>
+            </ScrollReveal>
+
+            {/* EMAIL */}
+            <ScrollReveal delay={0.1}>
+              <motion.a
+                href="mailto:info@filmindustrymp.com"
+                whileHover={{ y: -6 }}
+                className="film-card p-6 flex flex-col items-center text-center transition-all hover:border-accent"
+              >
+                <Mail className="w-10 h-10 text-accent mb-3" />
+                <h3 className="text-lg font-semibold mb-1">Email</h3>
+                <p className="text-sm text-foreground/70">
+                  info@filmindustrymp.com
+                </p>
+              </motion.a>
+            </ScrollReveal>
+
+            {/* OFFICE ADDRESS */}
+            <ScrollReveal delay={0.2}>
+              <motion.a
+                href="https://maps.app.goo.gl/MuPqtqD2FqUGdKcm9"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ y: -6 }}
+                className="film-card p-6 flex flex-col items-center text-center transition-all hover:border-accent"
+              >
+                <MapPin className="w-10 h-10 text-accent mb-3" />
+                <h3 className="text-lg font-semibold mb-2">Office Address</h3>
+
+                <div className="text-sm text-foreground/70 leading-relaxed space-y-1 max-w-[220px]">
+                  <p className="font-medium text-foreground">Naveen Jain</p>
+                  <p>6, Samarth City, Nainod Village</p>
+                  <p>Near Gommatgiri Temple</p>
+                  <p>Indore, MP 453112</p>
+                </div>
+              </motion.a>
+            </ScrollReveal>
+
+            {/* VISITING CARD */}
+            <ScrollReveal delay={0.3}>
+              <motion.div
+                whileHover={{ y: -6 }}
+                onClick={() => setShowCard(true)}
+                className="film-card p-6 flex flex-col items-center text-center transition-all hover:border-accent cursor-pointer"
+              >
+                <div className="w-10 h-10 mb-3 flex items-center justify-center rounded-full bg-accent/10 text-accent text-xl">
+                  📇
+                </div>
+                <h3 className="text-lg font-semibold mb-1">Visiting Card</h3>
+                <p className="text-sm text-foreground/70">Click to View</p>
+              </motion.div>
+            </ScrollReveal>
+
           </div>
         </div>
       </section>
 
-      {/* Contact Form Section */}
+      {/* VISITING CARD MODAL */}
+      <AnimatePresence>
+        {showCard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-xl max-w-md w-full p-6 relative"
+            >
+              <button
+                onClick={() => setShowCard(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              >
+                <X />
+              </button>
+
+              <img
+                src="/visitingcard/print Visiting Card.jpg"
+                alt="Visiting Card"
+                className="w-full rounded-md mb-4"
+              />
+
+              <a
+                href="/visitingcard/print Visiting Card.jpg"
+                download
+                className="w-full inline-flex items-center justify-center gap-2 bg-accent text-white py-3 rounded-lg hover:bg-accent/90 transition"
+              >
+                <Download className="w-5 h-5" />
+                Download Visiting Card
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* CONTACT FORM */}
       <section className="py-20 md:py-32 bg-secondary text-secondary-foreground">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto px-4">
           <ScrollReveal>
             <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-4">
               Send us a Message
@@ -108,146 +162,41 @@ export function ContactContent() {
           <ScrollReveal delay={0.2}>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Name */}
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  className="relative"
-                >
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="Your Name"
-                    required
-                    className="w-full px-6 py-4 bg-secondary-foreground/10 border border-secondary-foreground/20 rounded-lg text-secondary-foreground placeholder-secondary-foreground/60 focus:outline-none focus:border-accent focus:bg-secondary-foreground/20 transition-all"
-                  />
-                </motion.div>
-
-                {/* Email */}
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  className="relative"
-                >
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Email Address"
-                    required
-                    className="w-full px-6 py-4 bg-secondary-foreground/10 border border-secondary-foreground/20 rounded-lg text-secondary-foreground placeholder-secondary-foreground/60 focus:outline-none focus:border-accent focus:bg-secondary-foreground/20 transition-all"
-                  />
-                </motion.div>
-
-                {/* Phone */}
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  className="relative"
-                >
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Phone Number"
-                    required
-                    className="w-full px-6 py-4 bg-secondary-foreground/10 border border-secondary-foreground/20 rounded-lg text-secondary-foreground placeholder-secondary-foreground/60 focus:outline-none focus:border-accent focus:bg-secondary-foreground/20 transition-all"
-                  />
-                </motion.div>
-
-                {/* Subject */}
-                <motion.div
-                  whileHover={{ y: -2 }}
-                  className="relative"
-                >
-                  <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-6 py-4 bg-secondary-foreground/10 border border-secondary-foreground/20 rounded-lg text-secondary-foreground placeholder-secondary-foreground/60 focus:outline-none focus:border-accent focus:bg-secondary-foreground/20 transition-all appearance-none"
-                  >
-                    <option value="">Select Subject</option>
-                    <option value="Film Production">Film Production</option>
-                    <option value="Web Series">Web Series</option>
-                    <option value="OTT Content">OTT Content</option>
-                    <option value="Location Scout">Location Scout</option>
-                    <option value="Subsidy Inquiry">Subsidy Inquiry</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </motion.div>
+                <input className="input-style" placeholder="Your Name" required />
+                <input className="input-style" placeholder="Email Address" required />
+                <input className="input-style" placeholder="Phone Number" required />
+                <select className="input-style" required>
+                  <option>Select Subject</option>
+                  <option>Film Production</option>
+                  <option>Web Series</option>
+                  <option>OTT Content</option>
+                  <option>Subsidy Inquiry</option>
+                </select>
               </div>
 
-              {/* Message */}
-              <motion.div
-                whileHover={{ y: -2 }}
-                className="relative"
-              >
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Tell us about your project..."
-                  required
-                  rows={6}
-                  className="w-full px-6 py-4 bg-secondary-foreground/10 border border-secondary-foreground/20 rounded-lg text-secondary-foreground placeholder-secondary-foreground/60 focus:outline-none focus:border-accent focus:bg-secondary-foreground/20 transition-all resize-none"
-                />
-              </motion.div>
+              <textarea
+                rows={6}
+                placeholder="Tell us about your project..."
+                required
+                className="input-style resize-none"
+              />
 
-              {/* Submit Button */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full bg-accent hover:bg-accent/90 text-secondary-foreground flex items-center justify-center gap-2"
-                >
-                  <Send className="w-5 h-5" />
-                  Send Message
-                </Button>
-              </motion.div>
+              <Button className="w-full bg-accent">
+                <Send className="w-5 h-5 mr-2" />
+                Send Message
+              </Button>
 
-              {/* Success Message */}
               {submitted && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-accent/20 border border-accent rounded-lg text-accent text-center font-semibold"
-                >
+                <div className="text-center text-accent font-semibold">
                   Thank you! We'll get back to you soon.
-                </motion.div>
+                </div>
               )}
             </form>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="py-20 md:py-32 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-12">
-              Visit Us
-            </h2>
-          </ScrollReveal>
-
-          <ScrollReveal delay={0.2}>
-            <div className="rounded-lg overflow-hidden h-96 border border-border">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.5819904331157!2d74.6349!3d23.1815!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396e9c4e8c3c3c3d%3A0x1234567890abcdef!2sIndore%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1234567890"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
     </main>
   )
 }
+
