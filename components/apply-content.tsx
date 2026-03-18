@@ -7,6 +7,7 @@ import { ScrollReveal } from './scroll-reveal'
 import { Button } from './ui/button'
 import { useState } from 'react'
 import { Send, CheckCircle } from 'lucide-react'
+import { apiClient } from "@/lib/api-client"
 
 export function ApplyContent() {
   const [formStep, setFormStep] = useState(1)
@@ -28,6 +29,7 @@ export function ApplyContent() {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -50,26 +52,48 @@ export function ApplyContent() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
-      setFormStep(1)
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        projectTitle: '',
-        projectType: '',
-        shootLocation: '',
-        shootDate: '',
-        budget: '',
-        crewSize: '',
-        message: '',
-      })
-    }, 3000)
+    setIsSubmitting(true)
+
+    const payload = {
+      fullName: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      productionCompany: formData.company,
+      projectTitle: formData.projectTitle,
+      projectType: formData.projectType,
+      preferredLocation: formData.shootLocation,
+      estimatedBudget: formData.budget,
+      additionalNotes: `Message: ${formData.message}\n\nShoot Date: ${formData.shootDate}\nCrew Size: ${formData.crewSize}`
+    }
+
+    try {
+      await apiClient.submitApplication(payload)
+      setSubmitted(true)
+      setTimeout(() => {
+        setSubmitted(false)
+        setFormStep(1)
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          projectTitle: '',
+          projectType: '',
+          shootLocation: '',
+          shootDate: '',
+          budget: '',
+          crewSize: '',
+          message: '',
+        })
+      }, 3000)
+    } catch (error) {
+      console.error("Error submitting application:", error)
+      alert("Failed to submit application. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -98,19 +122,17 @@ export function ApplyContent() {
                 {[1, 2, 3].map((step) => (
                   <motion.div
                     key={step}
-                    className={`flex items-center gap-2 ${
-                      step <= formStep
+                    className={`flex items-center gap-2 ${step <= formStep
                         ? 'text-primary'
                         : 'text-foreground/30'
-                    }`}
+                      }`}
                   >
                     <motion.div
                       animate={{
                         scale: step === formStep ? 1.2 : 1,
                       }}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-                        step <= formStep ? 'bg-primary' : 'bg-border'
-                      }`}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${step <= formStep ? 'bg-primary' : 'bg-border'
+                        }`}
                     >
                       {step < formStep ? '✓' : step}
                     </motion.div>
@@ -396,11 +418,11 @@ export function ApplyContent() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    disabled={submitted}
+                    disabled={submitted || isSubmitting}
                     className="px-8 py-4 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition-colors flex items-center gap-2"
                   >
                     <Send className="w-5 h-5" />
-                    Submit Application
+                    {isSubmitting ? 'Submitting...' : 'Submit Application'}
                   </motion.button>
                 )}
               </div>

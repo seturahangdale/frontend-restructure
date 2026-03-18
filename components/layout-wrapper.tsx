@@ -12,7 +12,7 @@ export function LayoutWrapper({ children }: LayoutWrapperProps) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Page Content */}
-      <main className="flex-grow w-full">
+      <main className="grow w-full">
         {children}
       </main>
 

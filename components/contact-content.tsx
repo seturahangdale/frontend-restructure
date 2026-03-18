@@ -6,14 +6,45 @@ import { ScrollReveal } from './scroll-reveal'
 import { Phone, Mail, MapPin, Send, Download, X } from 'lucide-react'
 import { Button } from './ui/button'
 
+import { apiClient, ContactData } from "@/lib/api-client"
+
 export function ContactContent() {
   const [submitted, setSubmitted] = useState(false)
   const [showCard, setShowCard] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState<ContactData>({
+    name: '',
+    email: '',
+    phone: '',
+    subject: 'Select Subject',
+    message: ''
+  })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 3000)
+    setIsSubmitting(true)
+    try {
+      await apiClient.submitContact(formData)
+      setSubmitted(true)
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: 'Select Subject',
+        message: ''
+      })
+      setTimeout(() => setSubmitted(false), 3000)
+    } catch (error) {
+      console.error('Error submitting contact form:', error)
+      alert("Failed to submit form. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -55,13 +86,15 @@ export function ContactContent() {
             <ScrollReveal delay={0.1}>
               <motion.a
                 href="mailto:info@filmindustrymp.com"
+
                 whileHover={{ y: -6 }}
                 className="film-card p-6 flex flex-col items-center text-center transition-all hover:border-accent"
               >
-                <Mail className="w-10 h-10 text-accent mb-3" />
+                <Mail className="w-10 h-5 text-accent mb-3" />
                 <h3 className="text-lg font-semibold mb-1">Email</h3>
                 <p className="text-sm text-foreground/70">
                   info@filmindustrymp.com
+                  filmindustrymadhyapradesh@gmail.com
                 </p>
               </motion.a>
             </ScrollReveal>
@@ -73,16 +106,14 @@ export function ContactContent() {
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ y: -6 }}
-                className="film-card p-6 flex flex-col items-center text-center transition-all hover:border-accent"
+                className="film-card p-1 flex flex-col items-center text-center transition-all hover:border-accent"
               >
                 <MapPin className="w-10 h-10 text-accent mb-3" />
                 <h3 className="text-lg font-semibold mb-2">Office Address</h3>
 
                 <div className="text-sm text-foreground/70 leading-relaxed space-y-1 max-w-[220px]">
-                  <p className="font-medium text-foreground">Naveen Jain</p>
-                  <p>6, Samarth City, Nainod Village</p>
-                  <p>Near Gommatgiri Temple</p>
-                  <p>Indore, MP 453112</p>
+                  <p >Samarth City, Nainod,Indore</p>
+
                 </div>
               </motion.a>
             </ScrollReveal>
@@ -119,11 +150,11 @@ export function ContactContent() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-xl max-w-md w-full p-6 relative"
+              className="bg-card rounded-xl max-w-md w-full p-6 relative border border-border shadow-2xl"
             >
               <button
                 onClick={() => setShowCard(false)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-black"
+                className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
               >
                 <X />
               </button>
@@ -162,28 +193,59 @@ export function ContactContent() {
           <ScrollReveal delay={0.2}>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input className="input-style" placeholder="Your Name" required />
-                <input className="input-style" placeholder="Email Address" required />
-                <input className="input-style" placeholder="Phone Number" required />
-                <select className="input-style" required>
-                  <option>Select Subject</option>
-                  <option>Film Production</option>
-                  <option>Web Series</option>
-                  <option>OTT Content</option>
-                  <option>Subsidy Inquiry</option>
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="input-style"
+                  placeholder="Your Name"
+                  required
+                />
+                <input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="input-style"
+                  placeholder="Email Address"
+                  required
+                />
+                <input
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="input-style"
+                  placeholder="Phone Number"
+                  required
+                />
+                <select
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className="input-style"
+                  required
+                >
+                  <option value="Select Subject" disabled>Select Subject</option>
+                  <option value="Film Production">Film Production</option>
+                  <option value="Web Series">Web Series</option>
+                  <option value="OTT Content">OTT Content</option>
+                  <option value="Subsidy Inquiry">Subsidy Inquiry</option>
                 </select>
               </div>
 
               <textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
                 rows={6}
                 placeholder="Tell us about your project..."
                 required
                 className="input-style resize-none"
               />
 
-              <Button className="w-full bg-accent">
+              <Button className="w-full bg-accent" disabled={isSubmitting}>
                 <Send className="w-5 h-5 mr-2" />
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </Button>
 
               {submitted && (

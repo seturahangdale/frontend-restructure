@@ -4,50 +4,69 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Button } from './ui/button'
 import { ScrollReveal } from './scroll-reveal'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
+
+import { useState, useEffect } from 'react'
+import { apiClient } from '@/lib/api-client'
 
 /* ================= ABOUT PREVIEW ================= */
 
 function AboutPreviewSection() {
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await apiClient.getAboutData()
+        setData(res)
+      } catch (error) {
+        console.error('Failed to fetch about data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  if (loading || !data) {
+    return (
+      <section className="py-20 md:py-32 bg-background">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center">
+            <div className="w-10 h-10 border-2 border-slate-200 border-t-accent rounded-full animate-spin" />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-background">
+    <section className="py-20 md:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
 
           <ScrollReveal>
-            <div className="space-y-4 sm:space-y-5 md:space-y-6">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold leading-tight">
-                Who We Are
+            <div className="space-y-6">
+              <h2 className="text-4xl md:text-5xl font-display font-bold">
+                {data.whoWeAre.title}
               </h2>
 
-              <p className="text-base sm:text-lg text-foreground/70">
-                FilmIndustryMP is a dedicated film production support and line
-                production platform based in Madhya Pradesh.
-              </p>
-
-              <p className="text-base sm:text-lg text-foreground/70">
-                We work as a single-window facilitation partner for filmmakers,
-                providing permissions, locations, subsidies, and execution support.
-              </p>
-
-              <Link href="/pamphlets">
-                <Button className="bg-primary text-white w-full sm:w-auto mt-2">
-                  View Project Pamphlets
-                </Button>
-              </Link>
+              {data.whoWeAre.paragraphs.map((para: string, i: number) => (
+                <p key={i} className="text-lg text-foreground/70">
+                  {para}
+                </p>
+              ))}
             </div>
           </ScrollReveal>
 
           <ScrollReveal delay={0.2}>
-            <div className="bg-primary/10 border border-primary/30 rounded-xl p-6 sm:p-7 md:p-8">
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">What We Do</h3>
-              <ul className="list-disc list-inside space-y-2 text-base sm:text-lg text-foreground/80">
-                <li>Facilitate film shootings across Madhya Pradesh</li>
-                <li>Provide complete line production services</li>
-                <li>Assist with MP film subsidy and incentives</li>
-                <li>Coordinate government permissions and approvals</li>
-                <li>Offer locations, crew, artists, and logistics</li>
-                <li>Promote MP's culture and heritage through cinema</li>
+            <div className="bg-primary/10 border border-primary/30 rounded-xl p-8">
+              <h3 className="text-2xl font-bold mb-4">{data.whatWeDo.title}</h3>
+              <ul className="list-disc list-inside space-y-2 text-lg text-foreground/80">
+                {data.whatWeDo.items.map((item: string, i: number) => (
+                  <li key={i}>{item}</li>
+                ))}
               </ul>
             </div>
           </ScrollReveal>
@@ -58,141 +77,131 @@ function AboutPreviewSection() {
   )
 }
 
-/* ================= GALLERY PREVIEW ================= */
+/* ================= GALLERY PREVIEW (CLICKABLE) ================= */
 
 function GalleryPreviewSection() {
-  const previews = [
-    {
-      title: 'Khajuraho',
-      category: 'Heritage',
-      image: '/images/Khajuraho Temple.jpg',
-    },
-    {
-      title: 'Orchha',
-      category: 'Palaces',
-      image: '/images/gallery-orchha.jpg',
-    },
-    {
-      title: 'Pachmarhi',
-      category: 'Nature',
-      image: '/images/gallery-pachmarhi.jpg',
-    },
-    {
-      title: 'Gwalior Fort',
-      category: 'Heritage',
-      image: '/images/gallery-gwalior.jpg',
-    },
-  ]
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const res = await apiClient.getGalleryData()
+        setData(res)
+      } catch (error) {
+        console.error('Failed to fetch gallery data', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchGallery()
+  }, [])
+
+  if (loading || !data) {
+    return (
+      <section className="py-20 md:py-32 bg-secondary text-secondary-foreground">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <Loader2 className="w-10 h-10 animate-spin mx-auto text-accent mb-4" />
+          <p>Loading Cinematic Locations...</p>
+        </div>
+      </section>
+    )
+  }
+
+  const categories: any[] = data.categories || []
+  const items: any[] = data.items || []
+
+  const getThumbnail = (cat: any) => {
+    if (cat.thumbnail && cat.thumbnail.trim() !== '') return cat.thumbnail
+    // Auto-pick first item from this category
+    const firstItem = items.find((item: any) => item.category === cat.id)
+    return firstItem?.src || '/images/Khajuraho Temple.jpg'
+  }
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-secondary text-secondary-foreground">
+    <section className="py-20 md:py-32 bg-secondary text-secondary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <ScrollReveal>
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 sm:mb-4 px-4">
-              Stunning Locations
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
+              TOP CINEMATIC LOCATIONS IN MADHYA PRADESH
             </h2>
-            <p className="text-base sm:text-lg md:text-xl opacity-90 max-w-2xl mx-auto px-4">
-              Explore the diverse heritage and natural beauty of Madhya Pradesh
+            <p className="text-xl opacity-90 max-w-2xl mx-auto">
+              Madhya Pradesh offers one of India’s richest location libraries for filmmakers. Over {categories.length} distinct categories for every script and visual treatment.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
-          {previews.map((preview, index) => (
-            <ScrollReveal key={preview.title} delay={index * 0.1}>
-              <motion.div
-                whileHover={{ y: -8 }}
-                className="relative h-48 sm:h-52 md:h-56 lg:h-48 rounded-xl overflow-hidden cursor-pointer group"
-              >
-                <img
-                  src={preview.image}
-                  alt={preview.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {categories.map((cat, index) => (
+            <ScrollReveal key={cat.id} delay={index * 0.1}>
+              <Link href={`/locations/${cat.id}`}>
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  className="relative h-48 md:h-56 rounded-2xl overflow-hidden cursor-pointer group shadow-lg bg-slate-800"
+                >
+                  <img
+                    src={getThumbnail(cat)}
+                    alt={cat.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
 
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:via-black/40 transition-colors" />
 
-                <div className="relative z-10 h-full flex flex-col items-center justify-center text-white text-center px-2">
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-bold">
-                    {preview.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm opacity-90">{preview.category}</p>
-                </div>
-              </motion.div>
+                  <div className="relative z-10 h-full flex flex-col items-center justify-center text-white p-4">
+                    <span className="text-4xl mb-3 block group-hover:scale-125 transition-transform duration-300">{cat.icon}</span>
+                    <h3 className="text-xl md:text-2xl font-display font-bold text-center">
+                      {cat.name}
+                    </h3>
+                  </div>
+                </motion.div>
+              </Link>
             </ScrollReveal>
           ))}
         </div>
-
-        <ScrollReveal>
-          <div className="text-center">
-            <Link href="/gallery">
-              <Button className="bg-accent text-white w-full sm:w-auto">
-                View Full Gallery
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </ScrollReveal>
 
       </div>
     </section>
   )
 }
 
-/* ================= PROJECTS PREVIEW ================= */
+/* ================= PROJECTS PREVIEW (HOME ONLY – 4 ITEMS) ================= */
 
 function ProjectsPreviewSection() {
-  const featuredCategories = [
-    {
-      title: 'Period Drama',
-      slug: 'period-drama',
-      gradient: 'from-amber-500 to-orange-600',
-    },
-    {
-      title: 'Bollywood Movie',
-      slug: 'bollywood-movie',
-      gradient: 'from-purple-500 to-pink-600',
-    },
-    {
-      title: 'Web Series',
-      slug: 'web-series',
-      gradient: 'from-blue-500 to-cyan-600',
-    },
-    {
-      title: 'TV Ads',
-      slug: 'tv-ads',
-      gradient: 'from-green-500 to-teal-600',
-    },
+  const homeProjects = [
+    { title: 'Bollywood Movie', slug: 'bollywood-movie' },
+    { title: 'South Movies', slug: 'south-movies' },
+    { title: 'International Movie', slug: 'international-movie' },
+    { title: 'Movie Promotion', slug: 'movie-promotion' },
   ]
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-background">
+    <section className="py-20 md:py-32 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <ScrollReveal>
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-3 sm:mb-4 px-4">
-              Film Categories
+          <div className="text-center mb-14">
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
+              Featured Projects
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto px-4">
-              Explore the diverse range of productions filmed in Madhya Pradesh
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              Discover film projects and productions supported by Film Industry MP
+              across Madhya Pradesh.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6 mb-8 sm:mb-10 md:mb-12">
-          {featuredCategories.map((category, index) => (
-            <ScrollReveal key={category.slug} delay={index * 0.1}>
-              <Link href={`/categories/${category.slug}`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          {homeProjects.map((project, index) => (
+            <ScrollReveal key={project.slug} delay={index * 0.1}>
+              <Link href={`/categories/${project.slug}`}>
                 <motion.div
                   whileHover={{ y: -8, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`group h-36 sm:h-40 bg-gradient-to-br ${category.gradient} rounded-xl p-4 sm:p-6 flex items-center justify-center text-center cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300`}
+                  className="h-48 rounded-xl bg-gradient-to-br from-[#8B6B3E] to-[#2F5D2F] flex items-center justify-center text-center cursor-pointer shadow-lg hover:shadow-xl transition-all"
                 >
-                  <h3 className="text-xl sm:text-2xl font-display font-bold text-white group-hover:scale-110 transition-transform">
-                    {category.title}
+                  <h3 className="text-2xl font-display font-bold text-white">
+                    {project.title}
                   </h3>
                 </motion.div>
               </Link>
@@ -203,8 +212,8 @@ function ProjectsPreviewSection() {
         <ScrollReveal>
           <div className="text-center">
             <Link href="/projects">
-              <Button className="bg-primary text-white w-full sm:w-auto">
-                View All Categories
+              <Button className="bg-primary text-white">
+                View All Projects
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
@@ -216,6 +225,10 @@ function ProjectsPreviewSection() {
   )
 }
 
-/* ===== EXPORTS ===== */
+/* ================= EXPORTS ================= */
 
-export { AboutPreviewSection, GalleryPreviewSection, ProjectsPreviewSection }
+export {
+  AboutPreviewSection,
+  GalleryPreviewSection,
+  ProjectsPreviewSection,
+}

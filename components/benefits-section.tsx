@@ -2,7 +2,18 @@
 
 import { motion } from 'framer-motion'
 import { ScrollReveal } from './scroll-reveal'
-import { CheckCircle } from 'lucide-react'
+import { CheckCircle, Film, Camera, Clapperboard, Star } from 'lucide-react'
+
+const DOT_POSITIONS = [
+  { top: '22%', left: '15%' },
+  { top: '45%', left: '52%' },
+  { top: '68%', left: '78%' },
+  { top: '31%', left: '88%' },
+  { top: '57%', left: '33%' },
+  { top: '80%', left: '10%' },
+  { top: '25%', left: '65%' },
+  { top: '72%', left: '45%' },
+]
 
 const benefits = [
   {
@@ -64,8 +75,102 @@ const benefits = [
 
 export function BenefitsSection() {
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-gradient-to-b from-background via-orange-50/5 dark:via-orange-950/20 to-background overflow-hidden">
+
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `linear-gradient(to right, #d97706 1px, transparent 1px), linear-gradient(to bottom, #d97706 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }} />
+        </div>
+
+        {/* Floating film elements - top left */}
+        <motion.div
+          className="absolute top-20 left-10 opacity-[0.15]"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 10, 0]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Film className="w-32 h-32 text-amber-700" />
+        </motion.div>
+
+        {/* Camera - top right */}
+        <motion.div
+          className="absolute top-32 right-16 opacity-[0.15]"
+          animate={{
+            y: [0, 15, 0],
+            rotate: [0, -10, 0]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Camera className="w-28 h-28 text-blue-700" />
+        </motion.div>
+
+        {/* Clapperboard - bottom left */}
+        <motion.div
+          className="absolute bottom-32 left-20 opacity-[0.15]"
+          animate={{
+            rotate: [-5, 5, -5]
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Clapperboard className="w-30 h-30 text-purple-700" />
+        </motion.div>
+
+        {/* Star - bottom right */}
+        <motion.div
+          className="absolute bottom-20 right-24 opacity-[0.18]"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360]
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Star className="w-24 h-24 text-yellow-600 fill-yellow-600" />
+        </motion.div>
+
+        {/* Additional small floating elements */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-3 h-3 rounded-full bg-amber-600/25"
+            style={DOT_POSITIONS[i]}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.25, 0.4, 0.25],
+            }}
+            transition={{
+              duration: 5 + i,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5,
+            }}
+          />
+        ))}
+
+        {/* Decorative corner accents */}
+        <div className="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br from-amber-500/10 to-transparent rounded-br-full" />
+        <div className="absolute bottom-0 right-0 w-48 h-48 bg-gradient-to-tl from-orange-500/10 to-transparent rounded-tl-full" />
+
+        {/* Additional decorative lines */}
+        <motion.div
+          className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-600/15 to-transparent"
+          animate={{ opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute bottom-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-600/15 to-transparent"
+          animate={{ opacity: [0.15, 0.25, 0.15] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <ScrollReveal>
           <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24">

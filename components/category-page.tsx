@@ -25,7 +25,7 @@ export function CategoryPage({ title, description }: CategoryPageProps) {
           </div>
 
           {/* Image Section */}
-          <div className="w-full h-96 md:h-[500px] rounded-lg overflow-hidden bg-foreground/5 border border-foreground/10">
+          <div className="w-full h-96 `md:h-125` rounded-lg overflow-hidden bg-foreground/5 border border-foreground/10">
             <img
               src="/section-image.jpg"
               alt={title}

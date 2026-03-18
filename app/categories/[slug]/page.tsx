@@ -12,9 +12,9 @@ const categories: Record<string, { title: string }> = {
 }
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateStaticParams() {
@@ -24,7 +24,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
-  const category = categories[params.slug]
+  const { slug } = await params
+  const category = categories[slug]
   if (!category) return { title: 'Not Found' }
 
   return {
@@ -33,8 +34,9 @@ export async function generateMetadata({ params }: CategoryPageProps) {
   }
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const category = categories[params.slug]
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = await params
+  const category = categories[slug]
 
   if (!category) {
     notFound()

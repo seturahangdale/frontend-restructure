@@ -17,7 +17,7 @@ const footerLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Gallery', href: '/gallery' },
-  { label: 'Projects', href: '/projects' },
+  { label: 'Promotion', href: '/projects' },
   { label: 'Subsidy', href: '/subsidy' },
   { label: 'Apply', href: '/apply' },
   { label: 'Contact', href: '/contact' },
@@ -35,6 +35,12 @@ const contactInfo = [
     label: 'Email',
     value: 'info@filmindustrymp.com',
     href: 'mailto:info@filmindustrymp.com',
+  },
+  {
+    icon: Mail,
+    label: 'Email 2',
+    value: 'madhyapradeshfilmindustry@gmail.com',
+    href: 'mailto:madhyapradeshfilmindustry@gmail.com',
   },
   {
     icon: MapPin,
@@ -61,12 +67,25 @@ export function Footer() {
             <img
               src="/images/footerlogo.png"
               alt="Film Industry MP"
-              className="h-28 sm:h-32 mb-4"
+              className="h-32 sm:h-38 mb-6"
             />
 
-            <p className="text-sm sm:text-base opacity-90 max-w-xs mb-6">
+            <p className="text-sm sm:text-base opacity-90 max-w-xs mb-4">
               Your single-window partner for premium film production in Madhya Pradesh.
             </p>
+
+            <a
+              href="mailto:info@filmindustrymp.com"
+              className="text-sm hover:text-accent transition-colors block"
+            >
+              info@filmindustrymp.com
+            </a>
+            <a
+              href="mailto:madhyapradeshfilmindustry@gmail.com"
+              className="text-sm hover:text-accent transition-colors mb-6 block"
+            >
+              madhyapradeshfilmindustry@gmail.com
+            </a>
 
             {/* SOCIAL MEDIA */}
             <div className="flex gap-3">
@@ -167,6 +186,9 @@ export function Footer() {
               </Link>
               <Link href="#" className="hover:text-accent transition-colors">
                 Terms of Service
+              </Link>
+              <Link href="/admin" className="hover:text-accent transition-colors font-semibold border-l border-secondary-foreground/20 pl-6">
+                Admin Portal
               </Link>
             </div>
           </div>
