@@ -82,6 +82,20 @@ export default function AboutManager() {
         setData({ ...data, whatWeDo: { ...data.whatWeDo, items: newItems } })
     }
 
+    const updateKeyInitiative = (index: number, value: string) => {
+        const newItems = [...(data.keyInitiatives || [])]
+        newItems[index] = value
+        setData({ ...data, keyInitiatives: newItems })
+    }
+
+    const addKeyInitiative = () => {
+        setData({ ...data, keyInitiatives: [...(data.keyInitiatives || []), ''] })
+    }
+
+    const removeKeyInitiative = (index: number) => {
+        setData({ ...data, keyInitiatives: (data.keyInitiatives || []).filter((_: any, i: number) => i !== index) })
+    }
+
     if (loading) {
         return (
             <div className="flex items-center justify-center p-20">
@@ -178,6 +192,52 @@ export default function AboutManager() {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* Key Initiatives Section */}
+                <section className="bg-white dark:bg-card p-10 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-border ring-1 ring-slate-200/50 dark:ring-border/50 overflow-hidden relative group">
+                    <div className="absolute top-0 left-0 w-2 h-full bg-amber-500 opacity-20 group-hover:opacity-100 transition-opacity" />
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="w-12 h-12 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center shadow-inner">
+                            <List size={24} />
+                        </div>
+                        <div>
+                            <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground">Key Initiatives</h4>
+                            <p className="text-xs text-slate-400 dark:text-muted-foreground mt-1">Bullet points shown on the About page under the grassroots paragraph</p>
+                        </div>
+                    </div>
+                    <div className="space-y-4">
+                        <AnimatePresence initial={false}>
+                            {(data.keyInitiatives || []).map((item: string, idx: number) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className="flex gap-4 group/item"
+                                >
+                                    <textarea
+                                        value={item}
+                                        onChange={(e) => updateKeyInitiative(idx, e.target.value)}
+                                        className="flex-1 px-6 py-4 bg-slate-50 dark:bg-muted/50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-amber-600/20 text-slate-700 dark:text-foreground font-medium placeholder:text-slate-300 dark:placeholder:text-muted-foreground transition-all shadow-sm ring-1 ring-slate-100 dark:ring-border min-h-[80px] resize-none"
+                                        placeholder={`Initiative ${idx + 1}`}
+                                    />
+                                    <button
+                                        onClick={() => removeKeyInitiative(idx)}
+                                        className="p-3 h-fit text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border-none mt-2 opacity-0 group-hover/item:opacity-100"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                        <button
+                            onClick={addKeyInitiative}
+                            className="flex items-center gap-2 text-[10px] font-bold text-amber-600 uppercase tracking-widest hover:bg-amber-50 px-6 py-3 rounded-xl transition-all border border-dashed border-amber-200"
+                        >
+                            <Plus size={14} className="border-2 border-amber-600/20 rounded-full p-0.5" /> Add Initiative
+                        </button>
                     </div>
                 </section>
 

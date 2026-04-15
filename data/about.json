@@ -1,20 +1,28 @@
 {
-    "whoWeAre": {
-        "title": "Who We Are",
-        "paragraphs": [
-            "FilmIndustryMP is a dedicated film production support and line production platform based in Madhya Pradesh.",
-            "We work as a single-window facilitation partner for filmmakers, providing permissions, locations, subsidies, and execution support."
-        ]
-    },
-    "whatWeDo": {
-        "title": "What We Do",
-        "items": [
-            "Facilitate film shootings across Madhya Pradesh",
-            "Provide complete line production services",
-            "Assist with MP film subsidy and incentives",
-            "Coordinate government permissions and approvals",
-            "Offer locations, crew, artists, and logistics",
-            "Promote MP’s culture and heritage through cinema"
-        ]
-    }
+  "whoWeAre": {
+    "title": "Who We Are",
+    "paragraphs": [
+      "Film Industry MP is a specialized film facilitation network platform, focused on connecting national and international production houses with the right local resources across Madhya Pradesh.",
+      "We act as a reliable bridge between filmmakers and on-ground professionals by identifying and providing verified, city-specific experts who can efficiently manage and execute film-related requirements.",
+      "Our services include facilitation support for Celebrity Management, Movie Promotion, Theatre Advertisement, Line Production, Location Scouting, Government Permissions, and overall production coordination — all through trusted local partners.",
+      "Rather than direct execution, Film Industry MP focuses on building a strong ecosystem by ensuring that every project gets access to the right people, in the right location, at the right time."
+    ]
+  },
+  "keyInitiatives": [
+    "Providing city-wise verified film facilitation professionals across Madhya Pradesh",
+    "Connecting production houses with local experts for smooth on-ground execution",
+    "Offering guidance on location feasibility, coordination, and permission processes through local partners",
+    "Supporting filmmakers in accessing regional resources quickly and efficiently"
+  ],
+  "whatWeDo": {
+    "title": "What We Do",
+    "items": [
+      "Facilitate film shootings across Madhya Pradesh",
+      "Provide complete line production services",
+      "Assist with MP film subsidy and incentives",
+      "Coordinate government permissions and approvals",
+      "Offer locations, crew, artists, and logistics",
+      "Promote MP culture and heritage through cinema"
+    ]
+  }
 }

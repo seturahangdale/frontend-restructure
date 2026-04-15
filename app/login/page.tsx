@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -15,6 +15,11 @@ export default function LoginPage() {
     const [isForgotUsername, setIsForgotUsername] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
+
+    useEffect(() => {
+      document.body.classList.add('login-page')
+      return () => document.body.classList.remove('login-page')
+    }, [])
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -31,7 +36,9 @@ export default function LoginPage() {
 
             if (data.success) {
                 toast.success('Welcome back, Admin!')
-                router.push('/admin')
+                setTimeout(() => {
+                    window.location.replace('/admin')
+                }, 300)
             } else {
                 toast.error(data.message || 'Invalid credentials')
             }

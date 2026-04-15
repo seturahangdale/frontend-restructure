@@ -1,217 +1,221 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { ScrollReveal } from './scroll-reveal'
-import { CheckCircle, Film, Camera, Clapperboard, Star } from 'lucide-react'
-
-const DOT_POSITIONS = [
-  { top: '22%', left: '15%' },
-  { top: '45%', left: '52%' },
-  { top: '68%', left: '78%' },
-  { top: '31%', left: '88%' },
-  { top: '57%', left: '33%' },
-  { top: '80%', left: '10%' },
-  { top: '25%', left: '65%' },
-  { top: '72%', left: '45%' },
-]
+import { motion, useMotionValue, useSpring } from 'framer-motion'
+import Link from 'next/link'
+import { useRef, useState } from 'react'
 
 const benefits = [
-  {
-    title: 'Obtain Ease of Permissions',
-    description:
-      'Rapid clearances for locations, incentives, subsidies, and government support',
-    icon: '✓',
-  },
-  {
-    title: 'Hire Verified Line Producers',
-    description:
-      'Experienced, trustworthy local crew for seamless filming execution',
-    icon: '✓',
-  },
-  {
-    title: 'Access Ideal Locations',
-    description:
-      'Scenic sites aligned to your script with cost-effective logistics',
-    icon: '✓',
-  },
-  {
-    title: 'Local Crew, Artists & Resources',
-    description:
-      'Well-trained local technicians, artists, junior artists, and production staff — reducing cost and increasing subsidy benefits',
-
-    icon: '✓',
-  },
-  {
-    title: 'Cost-Effective Production Planning',
-    description:
-      'Smart budgeting, local vendor tie-ups, and subsidy-aligned planning to maximize savings without compromising quality',
-    icon: '✓',
-  },
-  {
-    title: 'Experience with Films, OTT & Ad Shoots',
-    description:
-      'Proven support for feature films, web series, OTT content, TV shows, documentaries, and advertisement films.',
-    icon: '✓',
-  },
-  {
-    title: 'Fast Turnaround & Transparent Process',
-    description:
-      'Clear communication, realistic timelines, and transparent costing — no hidden surprises.',
-    icon: '✓',
-  },
-  {
-    title: 'Strong Local Presence in Madhya Pradesh',
-    description:
-      'Deep understanding of regional culture, locations, and administration ensures smooth on-ground execution.',
-    icon: '✓',
-  },
-  {
-    title: 'Creative & Production-Friendly Approach',
-    description:
-      'We respect the creative vision of filmmakers while managing practical production challenges efficiently.',
-    icon: '✓',
-  },
+  { number: '01', title: 'Ease of Permissions',        description: 'Rapid clearances for locations, incentives, subsidies, and full government support.' },
+  { number: '02', title: 'Verified Line Producers',    description: 'Experienced, trustworthy local crew for seamless filming across Madhya Pradesh.' },
+  { number: '03', title: 'Ideal Film Locations',       description: 'Scenic sites aligned to your script with cost-effective logistics and permit support.' },
+  { number: '04', title: 'Local Crew & Artists',       description: 'Well-trained technicians, artists, and production staff — reducing cost and boosting subsidy.' },
+  { number: '05', title: 'Cost-Effective Planning',    description: 'Smart budgeting, local vendor tie-ups, and subsidy-aligned planning to maximize savings.' },
+  { number: '06', title: 'Films, OTT & Ad Shoots',     description: 'Proven support for feature films, web series, OTT, TV shows, docs, and ad films.' },
+  { number: '07', title: 'Fast & Transparent Process', description: 'Clear communication, realistic timelines, and transparent costing — no surprises.' },
+  { number: '08', title: 'Strong Local Presence',      description: 'Deep knowledge of regional culture, locations, and administration.' },
+  { number: '09', title: 'Production-Friendly',        description: 'We respect creative vision while handling all practical production challenges.' },
 ]
+
+const goldGrad = {
+  background: 'linear-gradient(135deg, #C9A84C, #E8C97A)',
+  WebkitBackgroundClip: 'text' as const,
+  WebkitTextFillColor: 'transparent' as const,
+  backgroundClip: 'text' as const,
+}
+
+// Floating particles
+const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
+  id: i,
+  x: `${8 + Math.random() * 84}%`,
+  y: `${5 + Math.random() * 90}%`,
+  size: 1 + Math.random() * 1.5,
+  duration: 4 + Math.random() * 6,
+  delay: Math.random() * 4,
+}))
+
+function SpotlightGrid() {
+  const gridRef = useRef<HTMLDivElement>(null)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const springX = useSpring(mouseX, { stiffness: 80, damping: 20 })
+  const springY = useSpring(mouseY, { stiffness: 80, damping: 20 })
+  const [hovered, setHovered] = useState(false)
+
+  const handleMouse = (e: React.MouseEvent) => {
+    if (!gridRef.current) return
+    const rect = gridRef.current.getBoundingClientRect()
+    mouseX.set(e.clientX - rect.left)
+    mouseY.set(e.clientY - rect.top)
+  }
+
+  return (
+    <div
+      ref={gridRef}
+      className="flex-1 relative z-10 flex items-center overflow-hidden px-4 md:px-6 py-8"
+      onMouseMove={handleMouse}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Spotlight */}
+      {hovered && (
+        <motion.div
+          className="absolute pointer-events-none z-0 rounded-full"
+          style={{
+            width: 400,
+            height: 400,
+            x: springX,
+            y: springY,
+            translateX: '-50%',
+            translateY: '-50%',
+            background: 'radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%)',
+          }}
+        />
+      )}
+
+      <motion.div
+        className="grid grid-cols-2 md:grid-cols-3 w-full h-full relative z-10"
+        style={{ gridTemplateRows: 'repeat(3, 1fr)' }}
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      >
+        {benefits.map((b, i) => (
+          <motion.div
+            key={b.number}
+            className="group relative p-5 cursor-default overflow-hidden"
+            style={{
+              borderRight: (i % 3 !== 2) ? '1px solid rgba(201,168,76,0.08)' : 'none',
+              borderBottom: (i < 6) ? '1px solid rgba(201,168,76,0.08)' : 'none',
+            }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.35 + i * 0.05 }}
+            whileHover={{ backgroundColor: 'rgba(201,168,76,0.04)' }}
+          >
+            {/* Gold top border on hover */}
+            <div className="absolute top-0 left-0 right-0 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+              style={{ background: 'linear-gradient(to right, #C9A84C, #E8C97A)' }} />
+
+            {/* Number — brightens on hover */}
+            <motion.span
+              className="block font-display font-bold text-3xl leading-none mb-3 transition-all duration-300"
+              style={{ color: 'rgba(201,168,76,0.12)' }}
+              whileHover={{ color: 'rgba(201,168,76,0.45)', scale: 1.05 } as any}
+            >
+              {b.number}
+            </motion.span>
+
+            <h3 className="font-display font-semibold text-[#F5F0E8] text-base mb-2 group-hover:text-[#C9A84C] transition-colors duration-300 leading-snug">
+              {b.title}
+            </h3>
+            <p className="text-[#F5F0E8]/32 text-sm leading-relaxed group-hover:text-[#F5F0E8]/55 transition-colors duration-300">
+              {b.description}
+            </p>
+
+            {/* Bottom-right corner accent on hover */}
+            <div className="absolute bottom-0 right-0 w-0 h-0 group-hover:w-5 group-hover:h-5 transition-all duration-300"
+              style={{ borderBottom: '1px solid rgba(201,168,76,0.4)', borderRight: '1px solid rgba(201,168,76,0.4)' }} />
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  )
+}
 
 export function BenefitsSection() {
   return (
-    <section className="relative py-12 sm:py-16 md:py-20 lg:py-28 xl:py-32 bg-gradient-to-b from-background via-orange-50/5 dark:via-orange-950/20 to-background overflow-hidden">
+    <section className="relative w-full min-h-screen md:h-full bg-[#080808] flex flex-col md:flex-row overflow-hidden">
 
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-[0.03]">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(to right, #d97706 1px, transparent 1px), linear-gradient(to bottom, #d97706 1px, transparent 1px)`,
-            backgroundSize: '60px 60px'
-          }} />
+      {/* Subtle grid bg */}
+      <div className="absolute inset-0 opacity-[0.022] pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(201,168,76,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.5) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
+
+      {/* Floating particles */}
+      {PARTICLES.map(p => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            left: p.x, top: p.y,
+            width: p.size, height: p.size,
+            background: '#C9A84C',
+          }}
+          animate={{ y: [0, -22, 0], opacity: [0, 0.6, 0] }}
+          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      ))}
+
+      {/* Top gold line */}
+      <div className="absolute top-0 left-0 right-0 h-px z-10"
+        style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
+
+      {/* ── LEFT: Title ── */}
+      <div className="relative z-10 flex flex-col justify-center px-8 py-12 md:py-0 md:px-14 lg:px-16 w-full md:w-[34%] md:shrink-0">
+
+        {/* Ghost number */}
+        <motion.span
+          className="absolute font-display font-bold select-none pointer-events-none hidden md:block"
+          style={{ fontSize: 'clamp(120px,16vw,200px)', color: 'rgba(201,168,76,0.03)', bottom: '-20px', left: '10px', lineHeight: 1 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }}
+        >
+          9
+        </motion.span>
+
+        <motion.p
+          className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase mb-4 font-medium"
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          Why Choose Us
+        </motion.p>
+
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-px w-10" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
+          <span className="text-[#C9A84C] text-sm">✦</span>
         </div>
 
-        {/* Floating film elements - top left */}
-        <motion.div
-          className="absolute top-20 left-10 opacity-[0.15]"
-          animate={{
-            y: [0, -20, 0],
-            rotate: [0, 10, 0]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        <motion.h2
+          className="font-display font-bold text-[#F5F0E8] text-3xl md:text-4xl lg:text-5xl leading-tight mb-5"
+          initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <Film className="w-32 h-32 text-amber-700" />
-        </motion.div>
+          9 Reasons to<br />Film in{' '}
+          <span style={goldGrad}>MP</span>
+        </motion.h2>
 
-        {/* Camera - top right */}
-        <motion.div
-          className="absolute top-32 right-16 opacity-[0.15]"
-          animate={{
-            y: [0, 15, 0],
-            rotate: [0, -10, 0]
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        <motion.p
+          className="text-[#F5F0E8]/40 text-sm leading-relaxed max-w-xs mb-10"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <Camera className="w-28 h-28 text-blue-700" />
-        </motion.div>
+          Everything a production needs — locations, crew, permits, subsidies — all in one place.
+        </motion.p>
 
-        {/* Clapperboard - bottom left */}
         <motion.div
-          className="absolute bottom-32 left-20 opacity-[0.15]"
-          animate={{
-            rotate: [-5, 5, -5]
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <Clapperboard className="w-30 h-30 text-purple-700" />
+          <Link
+            href="/about"
+            className="inline-flex items-center gap-3 text-[#C9A84C] text-xs tracking-[0.3em] uppercase group hover:gap-5 transition-all duration-300"
+          >
+            Learn More
+            <span className="h-px w-6 bg-[#C9A84C] group-hover:w-10 transition-all duration-300" />
+          </Link>
         </motion.div>
-
-        {/* Star - bottom right */}
-        <motion.div
-          className="absolute bottom-20 right-24 opacity-[0.18]"
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360]
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <Star className="w-24 h-24 text-yellow-600 fill-yellow-600" />
-        </motion.div>
-
-        {/* Additional small floating elements */}
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-3 h-3 rounded-full bg-amber-600/25"
-            style={DOT_POSITIONS[i]}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.25, 0.4, 0.25],
-            }}
-            transition={{
-              duration: 5 + i,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.5,
-            }}
-          />
-        ))}
-
-        {/* Decorative corner accents */}
-        <div className="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br from-amber-500/10 to-transparent rounded-br-full" />
-        <div className="absolute bottom-0 right-0 w-48 h-48 bg-gradient-to-tl from-orange-500/10 to-transparent rounded-tl-full" />
-
-        {/* Additional decorative lines */}
-        <motion.div
-          className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-600/15 to-transparent"
-          animate={{ opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-orange-600/15 to-transparent"
-          animate={{ opacity: [0.15, 0.25, 0.15] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <ScrollReveal>
-          <div className="text-center mb-10 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-4 sm:mb-5 md:mb-6 text-foreground px-4">
-              Why Choose Film Industry MP?
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto px-4">
-              We provide comprehensive solutions for seamless film production in
-              Madhya Pradesh
-            </p>
-          </div>
-        </ScrollReveal>
+      {/* Vertical separator */}
+      <div className="hidden md:block absolute inset-y-0 z-10"
+        style={{ left: '34%', width: 1, background: 'linear-gradient(to bottom, transparent, rgba(201,168,76,0.2), transparent)' }} />
 
-        {/* Benefits Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {benefits.map((benefit, index) => (
-            <ScrollReveal key={benefit.title} delay={index * 0.1}>
-              <motion.div
-                whileHover={{ y: -8 }}
-                className="film-card p-6 sm:p-7 md:p-8 lg:p-10 h-full"
-              >
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
-                  viewport={{ once: true }}
-                  className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-accent/10 flex items-center justify-center mb-4 sm:mb-5 md:mb-6"
-                >
-                  <CheckCircle className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-accent" />
-                </motion.div>
-                <h3 className="text-lg sm:text-xl md:text-2xl font-display font-bold text-foreground mb-3 sm:mb-4">
-                  {benefit.title}
-                </h3>
-                <p className="text-sm sm:text-base text-foreground/70 leading-relaxed">
-                  {benefit.description}
-                </p>
-              </motion.div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </div>
+      {/* ── RIGHT: grid with spotlight ── */}
+      <SpotlightGrid />
+
+      {/* Bottom gold line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
+
     </section>
   )
 }

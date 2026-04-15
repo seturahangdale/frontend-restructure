@@ -177,7 +177,7 @@ export function SubsidyEditor() {
                             <span className="text-xl">✨</span>
                         </div>
                         <div>
-                            <h3 className="text-xl font-display font-bold text-slate-900 dark:text-muted-foreground tracking-tight uppercase tracking-widest text-[10px] opacity-50 mb-1 font-black">Initial Impact</h3>
+                            <h3 className="font-display font-black text-slate-900 dark:text-muted-foreground uppercase tracking-widest text-[10px] opacity-50 mb-1">Initial Impact</h3>
                             <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground">Hero Experience</h4>
                         </div>
                     </div>
@@ -212,7 +212,7 @@ export function SubsidyEditor() {
                             <span className="text-xl">🌳</span>
                         </div>
                         <div>
-                            <h3 className="text-xl font-display font-bold text-slate-900 dark:text-muted-foreground tracking-tight uppercase tracking-widest text-[10px] opacity-50 mb-1 font-black">Strategic Value</h3>
+                            <h3 className="font-display font-black text-slate-900 dark:text-muted-foreground uppercase tracking-widest text-[10px] opacity-50 mb-1">Strategic Value</h3>
                             <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground">Region Advantages</h4>
                         </div>
                     </div>
@@ -268,7 +268,7 @@ export function SubsidyEditor() {
                             <span className="text-xl">💰</span>
                         </div>
                         <div>
-                            <h3 className="text-xl font-display font-bold text-slate-900 dark:text-muted-foreground tracking-tight uppercase tracking-widest text-[10px] opacity-50 mb-1 font-black">Financial Architecture</h3>
+                            <h3 className="font-display font-black text-slate-900 dark:text-muted-foreground uppercase tracking-widest text-[10px] opacity-50 mb-1">Financial Architecture</h3>
                             <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground">Subsidies & Support</h4>
                         </div>
                     </div>

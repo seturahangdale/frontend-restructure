@@ -1,22 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readFile, writeFile } from 'fs/promises'
+import fs from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-const GALLERY_PATH = path.join(process.cwd(), 'data', 'gallery.json')
+const BACKEND_URL = process.env.INTERNAL_API_URL || 'https://film-api.indusanalytics.co.in/api'
+const GALLERY_FALLBACK_PATH = path.join(process.cwd(), 'data', 'gallery.json')
 
 export async function GET() {
     try {
-        if (!existsSync(GALLERY_PATH)) {
-            // Return empty structure if file doesn't exist
-            return NextResponse.json({ categories: [], items: [] })
+        // Fetch categories from settings and items from gallery DB in parallel
+        const [categoriesRes, itemsRes] = await Promise.all([
+            fetch(`${BACKEND_URL}/settings/gallery-categories`, { cache: 'no-store' }),
+            fetch(`${BACKEND_URL}/gallery`, { cache: 'no-store' }),
+        ])
+
+        let categories: any[] | null = null
+        let items: any[] | null = null
+
+        if (categoriesRes.ok) {
+            const text = await categoriesRes.text()
+            if (text && text.trim() !== 'null') {
+                try { categories = JSON.parse(text) } catch { /* ignore */ }
+            }
         }
 
-        const data = await readFile(GALLERY_PATH, 'utf-8')
-        return NextResponse.json(JSON.parse(data))
+        if (itemsRes.ok) {
+            const data = await itemsRes.json()
+            if (data && Array.isArray(data.items) && data.items.length > 0) {
+                const mapped = data.items.map((item: any) => ({
+                    ...item,
+                    src: item.src || item.imageUrl || '',
+                    tags: item.tags || [],
+                    description: item.description || '',
+                }))
+                // Only use backend items if at least some have images
+                const hasImages = mapped.some((item: any) => item.src && item.src.trim() !== '')
+                if (hasImages) items = mapped
+            }
+        }
+
+        // If we got both from backend, return them
+        if (categories !== null && items !== null) {
+            return NextResponse.json({ categories, items })
+        }
+
+        // Fallback to local gallery.json
+        if (existsSync(GALLERY_FALLBACK_PATH)) {
+            const fileData = await fs.readFile(GALLERY_FALLBACK_PATH, 'utf-8')
+            const fallback = JSON.parse(fileData)
+            return NextResponse.json({
+                categories: categories ?? fallback.categories ?? [],
+                items: items ?? fallback.items ?? [],
+            })
+        }
+
+        return NextResponse.json({
+            categories: categories ?? [],
+            items: items ?? [],
+        })
     } catch (error) {
         console.error('Fetch gallery error:', error)
         return NextResponse.json(
@@ -30,16 +74,26 @@ export async function PUT(request: NextRequest) {
     try {
         const body = await request.json()
 
-        // Simple validation
         if (!body.categories || !body.items) {
             return NextResponse.json({ error: 'Invalid gallery data structure' }, { status: 400 })
         }
 
-        await writeFile(GALLERY_PATH, JSON.stringify(body, null, 2))
+        // Save categories to settings key; items are managed individually via upload/delete
+        const res = await fetch(`${BACKEND_URL}/settings/gallery-categories`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body.categories),
+        })
+
+        if (!res.ok) {
+            const err = await res.text()
+            console.error('Backend error saving gallery categories:', err)
+            return NextResponse.json({ error: 'Failed to update gallery' }, { status: 500 })
+        }
 
         return NextResponse.json({
             success: true,
-            message: 'Gallery updated successfully'
+            message: 'Gallery updated successfully',
         })
     } catch (error) {
         console.error('Update gallery error:', error)

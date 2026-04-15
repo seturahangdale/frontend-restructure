@@ -1,38 +1,35 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import {
-    Youtube,
-    Instagram,
-    Facebook,
-    Linkedin,
-    Twitter,
-    Save,
-    Loader2,
-    Link as LinkIcon,
-    Video,
-    Info
-} from 'lucide-react'
-import { Button } from '../ui/button'
+import { Save, Loader2, Link as LinkIcon, Video, Info, Plus, Trash2 } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
 
-export function SocialManager() {
-    const [data, setData] = useState<any>(null)
-    const [loading, setLoading] = useState(true)
-    const [saving, setSaving] = useState(false)
+const CATEGORY_COLORS: Record<string, string> = {
+    information: 'blue',
+    location:    'emerald',
+    event:       'amber',
+}
 
-    useEffect(() => {
-        fetchSocial()
-    }, [])
+const CATEGORY_ICONS: Record<string, string> = {
+    information: '📢',
+    location:    '📍',
+    event:       '🎬',
+}
+
+export function SocialManager() {
+    const [data, setData]       = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving]   = useState(false)
+    const [activeTab, setActiveTab] = useState('information')
+
+    useEffect(() => { fetchSocial() }, [])
 
     const fetchSocial = async () => {
         try {
             const res = await apiClient.getSocialData()
             setData(res)
-        } catch (error) {
-            console.error('Failed to fetch social:', error)
+        } catch {
             toast.error('Failed to load social data')
         } finally {
             setLoading(false)
@@ -41,49 +38,49 @@ export function SocialManager() {
 
     const normalizeYoutubeUrl = (url: string) => {
         if (!url) return ''
-
-        // Check if it's a full iframe tag
         if (url.includes('<iframe')) {
-            const srcMatch = url.match(/src=["']([^"']+)["']/);
-            if (srcMatch && srcMatch[1]) {
-                return srcMatch[1];
-            }
+            const m = url.match(/src=["']([^"']+)["']/)
+            if (m?.[1]) return m[1]
         }
-
         if (url.includes('/embed/')) return url
-
-        let videoId = ''
-        if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split(/[?#]/)[0]
-        } else if (url.includes('v=')) {
-            videoId = url.split('v=')[1].split(/[&#?]/)[0]
-        } else if (url.includes('/v/')) {
-            videoId = url.split('/v/')[1].split(/[?#]/)[0]
-        } else if (url.includes('/shorts/')) {
-            videoId = url.split('/shorts/')[1].split(/[?#]/)[0]
-        }
-
-        if (videoId) {
-            return `https://www.youtube.com/embed/${videoId}`
-        }
-        return url
+        let id = ''
+        if (url.includes('youtu.be/'))  id = url.split('youtu.be/')[1].split(/[?#]/)[0]
+        else if (url.includes('v='))    id = url.split('v=')[1].split(/[&#?]/)[0]
+        else if (url.includes('/v/'))   id = url.split('/v/')[1].split(/[?#]/)[0]
+        else if (url.includes('/shorts/')) id = url.split('/shorts/')[1].split(/[?#]/)[0]
+        return id ? `https://www.youtube.com/embed/${id}` : url
     }
 
-    const handleYoutubeUpdate = (url: string) => {
-        setData({ ...data, youtubeUrl: normalizeYoutubeUrl(url) })
+    const getCategoryIndex = (id: string) =>
+        (data.videoCategories || []).findIndex((c: any) => c.id === id)
+
+    const addVideo = (categoryId: string) => {
+        const cats = [...(data.videoCategories || [])]
+        const idx = getCategoryIndex(categoryId)
+        if (idx === -1) return
+        cats[idx] = { ...cats[idx], videos: [...cats[idx].videos, { url: '', title: '' }] }
+        setData({ ...data, videoCategories: cats })
     }
 
-    const handleSave = async () => {
-        setSaving(true)
-        try {
-            await apiClient.updateSocialData(data)
-            toast.success('Social data saved successfully!')
-        } catch (error) {
-            console.error('Save error:', error)
-            toast.error('Failed to save changes')
-        } finally {
-            setSaving(false)
-        }
+    const updateVideo = (categoryId: string, vIdx: number, field: 'url' | 'title', value: string) => {
+        const cats = [...(data.videoCategories || [])]
+        const idx = getCategoryIndex(categoryId)
+        if (idx === -1) return
+        const videos = [...cats[idx].videos]
+        if (field === 'url') value = normalizeYoutubeUrl(value)
+        videos[vIdx] = { ...videos[vIdx], [field]: value }
+        cats[idx] = { ...cats[idx], videos }
+        setData({ ...data, videoCategories: cats })
+    }
+
+    const removeVideo = (categoryId: string, vIdx: number) => {
+        const cats = [...(data.videoCategories || [])]
+        const idx = getCategoryIndex(categoryId)
+        if (idx === -1) return
+        const videos = [...cats[idx].videos]
+        videos.splice(vIdx, 1)
+        cats[idx] = { ...cats[idx], videos }
+        setData({ ...data, videoCategories: cats })
     }
 
     const updateLink = (index: number, newUrl: string) => {
@@ -92,137 +89,162 @@ export function SocialManager() {
         setData({ ...data, socialLinks: updatedLinks })
     }
 
-    const getIcon = (platform: string) => {
-        switch (platform) {
-            case 'instagram': return <Instagram className="w-5 h-5 text-pink-500" />
-            case 'facebook': return <Facebook className="w-5 h-5 text-blue-600" />
-            case 'youtube': return <Youtube className="w-5 h-5 text-red-600" />
-            case 'linkedin': return <Linkedin className="w-5 h-5 text-blue-700" />
-            case 'twitter': return <Twitter className="w-5 h-5 text-slate-900" />
-            default: return <LinkIcon className="w-5 h-5" />
+    const handleSave = async () => {
+        setSaving(true)
+        try {
+            await apiClient.updateSocialData(data)
+            toast.success('Saved successfully!')
+        } catch {
+            toast.error('Failed to save changes')
+        } finally {
+            setSaving(false)
         }
     }
 
-    if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center py-20">
-                <Loader2 className="w-10 h-10 animate-spin text-accent mb-4" />
-                <p>Loading Social Manager...</p>
-            </div>
-        )
+    const getIcon = (platform: string) => {
+        const icons: Record<string, string> = {
+            instagram: '📷', facebook: '📘', youtube: '▶️', linkedin: '💼', twitter: '𝕏'
+        }
+        return <span className="text-lg">{icons[platform] ?? '🔗'}</span>
     }
 
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 animate-spin text-accent mb-4" />
+            <p>Loading...</p>
+        </div>
+    )
+
+    const categories: any[] = data.videoCategories || []
+    const activeCategory = categories.find((c: any) => c.id === activeTab)
+
     return (
-        <div className="max-w-6xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white dark:bg-card p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-border ring-1 ring-slate-200/50 dark:ring-border/50">
+        <div className="max-w-6xl mx-auto space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white dark:bg-card p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-border">
                 <div>
-                    <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-foreground tracking-tight leading-none">Social <span className="text-slate-300 dark:text-muted-foreground font-light text-2xl ml-1">& Media</span></h2>
-                    <p className="text-sm text-slate-500 dark:text-muted-foreground mt-2 font-medium italic">Synchronize digital touchpoints and video narratives.</p>
+                    <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-foreground tracking-tight leading-none">
+                        Social <span className="text-slate-300 dark:text-muted-foreground font-light text-2xl ml-1">& Media</span>
+                    </h2>
+                    <p className="text-sm text-slate-500 dark:text-muted-foreground mt-2 font-medium italic">
+                        Manage video categories and social platform links.
+                    </p>
                 </div>
-                <button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-2xl px-10 py-7 h-auto shadow-xl shadow-purple-900/20 gap-3 font-bold transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center disabled:opacity-50"
-                >
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5 border-2 border-white/20 rounded-md p-0.5" />}
-                    {saving ? 'Synchronizing...' : 'Live Sync Changes'}
+                <button onClick={handleSave} disabled={saving}
+                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-2xl px-10 py-5 shadow-xl shadow-purple-900/20 gap-3 font-bold transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center disabled:opacity-50">
+                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                    {saving ? 'Saving...' : 'Save Changes'}
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                {/* YouTube Section */}
-                <section className="bg-white dark:bg-card p-10 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-border ring-1 ring-slate-200/50 dark:ring-border/50 overflow-hidden relative group hover:shadow-xl transition-all duration-500">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-500 opacity-0 group-hover:opacity-[0.03] -mr-12 -mt-12 rounded-full transition-all duration-1000" />
-                    <div className="flex items-center gap-5 mb-10">
-                        <div className="w-14 h-14 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 rounded-2xl flex items-center justify-center shadow-inner border border-red-100/50 dark:border-red-900/30 group-hover:scale-110 transition-transform duration-500">
-                            <Youtube size={26} />
-                        </div>
-                        <div>
-                            <h3 className="text-[10px] font-black text-slate-400 dark:text-muted-foreground uppercase tracking-[0.2em] mb-1">Cinematic Narrative</h3>
-                            <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground tracking-tight">Primary Video Highlight</h4>
-                        </div>
-                    </div>
+            {/* Video Categories */}
+            <section className="bg-white dark:bg-card rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-border overflow-hidden">
+                {/* Category Tabs */}
+                <div className="flex border-b border-slate-100 dark:border-border">
+                    {categories.map((cat: any) => {
+                        const color = CATEGORY_COLORS[cat.id] || 'slate'
+                        const isActive = activeTab === cat.id
+                        return (
+                            <button key={cat.id} onClick={() => setActiveTab(cat.id)}
+                                className={`flex-1 flex items-center justify-center gap-2 py-5 px-4 text-sm font-bold transition-all border-b-2 ${
+                                    isActive
+                                        ? `border-${color}-500 text-${color}-600 dark:text-${color}-400 bg-${color}-50/50 dark:bg-${color}-950/10`
+                                        : 'border-transparent text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
+                                }`}>
+                                <span>{CATEGORY_ICONS[cat.id]}</span>
+                                {cat.label}
+                                <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] font-black ${
+                                    isActive ? `bg-${color}-100 dark:bg-${color}-900/30 text-${color}-600 dark:text-${color}-400` : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                }`}>{cat.videos.length}</span>
+                            </button>
+                        )
+                    })}
+                </div>
 
-                    <div className="space-y-8">
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                Embed Endpoint URL
-                            </label>
-                            <input
-                                type="text"
-                                value={data.youtubeUrl}
-                                onChange={(e) => handleYoutubeUpdate(e.target.value)}
-                                placeholder="https://www.youtube.com/embed/..."
-                                className="w-full px-6 py-4 bg-slate-50 dark:bg-muted/50 border-none rounded-2xl outline-none focus:ring-2 focus:ring-red-600/20 text-slate-900 dark:text-foreground font-bold placeholder:text-slate-300 dark:placeholder:text-muted-foreground transition-all shadow-sm ring-1 ring-slate-100 dark:ring-border"
-                            />
-                            <div className="flex gap-2 items-start mt-3 ml-2">
-                                <Info size={14} className="text-slate-300 mt-1 shrink-0" />
-                                <p className="text-[10px] text-slate-400 font-medium leading-relaxed">
-                                    Integration requires high-fidelity sequences. Standard watch directives will be auto-normalized to iframe production standards.
+                {/* Active Category Content */}
+                {activeCategory && (
+                    <div className="p-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-800 dark:text-foreground">
+                                    {CATEGORY_ICONS[activeCategory.id]} {activeCategory.label} Videos
+                                </h3>
+                                <p className="text-xs text-slate-400 mt-1 flex items-start gap-1.5">
+                                    <Info size={11} className="mt-0.5 shrink-0" />
+                                    YouTube link paste karo — auto-convert ho jayega embed URL mein.
                                 </p>
                             </div>
+                            <button onClick={() => addVideo(activeCategory.id)}
+                                className="flex items-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-2xl text-sm font-bold transition-all">
+                                <Plus size={15} /> Add Video
+                            </button>
                         </div>
 
-                        <div className="aspect-video bg-slate-900 dark:bg-background rounded-[2rem] overflow-hidden border border-slate-800 dark:border-border shadow-2xl relative flex items-center justify-center ring-8 ring-slate-50 dark:ring-muted/50 transition-all duration-500 group-hover:ring-slate-100/50 dark:group-hover:ring-border/50">
-                            {data.youtubeUrl ? (
-                                <iframe
-                                    src={data.youtubeUrl}
-                                    className="w-full h-full"
-                                    title="Preview"
-                                    allowFullScreen
-                                />
-                            ) : (
-                                <div className="text-center group/empty">
-                                    <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-white/5 group-hover:scale-110 transition-transform">
-                                        <Video className="w-8 h-8 text-slate-700" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                            {activeCategory.videos.map((video: any, vIdx: number) => (
+                                <div key={vIdx} className="bg-slate-50 dark:bg-muted/30 rounded-2xl p-5 border border-slate-100 dark:border-border space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Video {vIdx + 1}</span>
+                                        <button onClick={() => removeVideo(activeCategory.id, vIdx)}
+                                            className="text-red-400 hover:text-red-600 transition-colors p-1">
+                                            <Trash2 size={14} />
+                                        </button>
                                     </div>
-                                    <p className="text-slate-500 font-black uppercase tracking-widest text-[10px]">No Signal Detected</p>
+                                    <input type="text" value={video.title}
+                                        onChange={e => updateVideo(activeCategory.id, vIdx, 'title', e.target.value)}
+                                        placeholder="Title (optional)"
+                                        className="w-full px-4 py-2.5 bg-white dark:bg-background rounded-xl outline-none focus:ring-2 focus:ring-red-600/20 text-slate-800 dark:text-foreground text-sm font-semibold placeholder:text-slate-300 shadow-sm ring-1 ring-slate-100 dark:ring-border" />
+                                    <input type="text" value={video.url}
+                                        onChange={e => updateVideo(activeCategory.id, vIdx, 'url', e.target.value)}
+                                        placeholder="YouTube URL paste karo..."
+                                        className="w-full px-4 py-2.5 bg-white dark:bg-background rounded-xl outline-none focus:ring-2 focus:ring-red-600/20 text-slate-800 dark:text-foreground text-sm placeholder:text-slate-300 shadow-sm ring-1 ring-slate-100 dark:ring-border" />
+                                    <div className="aspect-video bg-slate-900 rounded-xl overflow-hidden">
+                                        {video.url
+                                            ? <iframe src={video.url} className="w-full h-full" allowFullScreen title={video.title || `Video ${vIdx + 1}`} />
+                                            : <div className="w-full h-full flex items-center justify-center"><Video className="w-8 h-8 text-slate-600" /></div>
+                                        }
+                                    </div>
+                                </div>
+                            ))}
+                            {activeCategory.videos.length === 0 && (
+                                <div className="col-span-full flex flex-col items-center justify-center py-16 text-slate-400">
+                                    <Video className="w-12 h-12 mb-3 opacity-30" />
+                                    <p className="text-sm font-semibold">Koi video nahi hai. "Add Video" click karo.</p>
                                 </div>
                             )}
                         </div>
                     </div>
-                </section>
+                )}
+            </section>
 
-                {/* Social Links Section */}
-                <section className="bg-white dark:bg-card p-10 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-border ring-1 ring-slate-200/50 dark:ring-border/50 overflow-hidden relative group hover:shadow-xl transition-all duration-500">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-0 group-hover:opacity-[0.03] -mr-12 -mt-12 rounded-full transition-all duration-1000" />
-                    <div className="flex items-center gap-5 mb-10">
-                        <div className="w-14 h-14 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center shadow-inner border border-blue-100/50 dark:border-blue-900/30 group-hover:scale-110 transition-transform duration-500">
-                            <LinkIcon size={26} />
-                        </div>
-                        <div>
-                            <h3 className="text-[10px] font-black text-slate-400 dark:text-muted-foreground uppercase tracking-[0.2em] mb-1">Global Connectivity</h3>
-                            <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground tracking-tight">Platform Synergy</h4>
-                        </div>
+            {/* Social Links */}
+            <section className="bg-white dark:bg-card p-10 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-border">
+                <div className="flex items-center gap-5 mb-8">
+                    <div className="w-14 h-14 bg-blue-50 dark:bg-blue-950/20 text-blue-600 rounded-2xl flex items-center justify-center border border-blue-100/50">
+                        <LinkIcon size={26} />
                     </div>
-
-                    <div className="space-y-5">
-                        {data.socialLinks.map((link: any, index: number) => (
-                            <div key={link.platform} className="p-5 bg-slate-50/30 dark:bg-muted/30 rounded-2xl border border-slate-100/50 dark:border-border/50 hover:bg-white dark:hover:bg-muted/50 hover:shadow-xl hover:shadow-slate-200/30 transition-all duration-500 ring-1 ring-slate-100 dark:ring-border/30 group/social">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-50 group-hover/social:scale-110 transition-transform">
-                                            {getIcon(link.platform)}
-                                        </div>
-                                        <span className="font-display font-black text-slate-900 uppercase tracking-[0.15em] text-[10px]">{link.name}</span>
-                                    </div>
-                                    <div className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${link.url ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100/50 dark:border-emerald-800/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200/50 dark:border-slate-700'}`}>
-                                        {link.url ? 'Active Path' : 'Disconnected'}
-                                    </div>
-                                </div>
-                                <input
-                                    type="text"
-                                    value={link.url}
-                                    onChange={(e) => updateLink(index, e.target.value)}
-                                    placeholder={`Registry URL for ${link.name}`}
-                                    className="w-full px-5 py-3.5 bg-white dark:bg-background border-none rounded-xl outline-none focus:ring-2 focus:ring-purple-600/20 text-slate-700 dark:text-foreground font-bold placeholder:text-slate-300 dark:placeholder:text-muted-foreground transition-all shadow-inner ring-1 ring-slate-100 dark:ring-border"
-                                />
+                    <div>
+                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Social Platforms</h3>
+                        <h4 className="text-2xl font-bold text-slate-800 dark:text-foreground">Platform Links</h4>
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    {data.socialLinks.map((link: any, index: number) => (
+                        <div key={link.platform} className="flex items-center gap-4 p-5 bg-slate-50/50 dark:bg-muted/30 rounded-2xl border border-slate-100 dark:border-border">
+                            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 shrink-0">
+                                {getIcon(link.platform)}
                             </div>
-                        ))}
-                    </div>
-                </section>
-            </div>
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest w-20 shrink-0">{link.name}</span>
+                            <input type="text" value={link.url}
+                                onChange={e => updateLink(index, e.target.value)}
+                                placeholder={`${link.name} URL`}
+                                className="flex-1 px-4 py-3 bg-white dark:bg-background rounded-xl outline-none focus:ring-2 focus:ring-purple-600/20 text-slate-700 dark:text-foreground text-sm placeholder:text-slate-300 shadow-sm ring-1 ring-slate-100 dark:ring-border" />
+                        </div>
+                    ))}
+                </div>
+            </section>
+
         </div>
     )
 }

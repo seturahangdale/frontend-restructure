@@ -1,495 +1,376 @@
 'use client'
 
-import React from "react"
-
-import { motion } from 'framer-motion'
-import { ScrollReveal } from './scroll-reveal'
-import { Button } from './ui/button'
-import { useState } from 'react'
-import { Send, CheckCircle } from 'lucide-react'
+import React, { useState } from "react"
+import { motion, AnimatePresence } from 'framer-motion'
+import { Send, CheckCircle, ChevronRight, ChevronLeft, Check } from 'lucide-react'
 import { apiClient } from "@/lib/api-client"
 
+const goldText = {
+  background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)',
+  WebkitBackgroundClip: 'text' as const,
+  WebkitTextFillColor: 'transparent' as const,
+  backgroundClip: 'text' as const,
+}
+
+const inputCls = "w-full px-4 py-3 bg-[#0d0d0d] border border-[rgba(201,168,76,0.15)] text-[#F5F0E8] text-sm placeholder:text-[rgba(245,240,232,0.18)] outline-none transition-colors duration-200 focus:border-[#C9A84C] rounded-none"
+const labelCls = "block text-xs tracking-[0.35em] text-[#C9A84C]/60 uppercase font-semibold mb-2"
+const selectStyle = { background: '#0d0d0d', color: '#F5F0E8', appearance: 'none' as const }
+
+const STEPS = [
+  { num: 1, label: 'Your Info',       sub: 'Personal details'     },
+  { num: 2, label: 'Project',         sub: 'About your project'   },
+  { num: 3, label: 'Overview',        sub: 'Budget & crew'        },
+]
+
 export function ApplyContent() {
-  const [formStep, setFormStep] = useState(1)
-  const [formData, setFormData] = useState({
-    // Step 1
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    // Step 2
-    projectTitle: '',
-    projectType: '',
-    shootLocation: '',
-    shootDate: '',
-    // Step 3
-    budget: '',
-    crewSize: '',
-    message: '',
+  const [formStep, setFormStep]         = useState(1)
+  const [submitted, setSubmitted]       = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData]         = useState({
+    name: '', email: '', phone: '', company: '',
+    projectTitle: '', projectType: '', shootLocation: '', shootDate: '',
+    budget: '', crewSize: '', message: '',
   })
 
-  const [submitted, setSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleNextStep = () => {
-    if (formStep < 3) {
-      setFormStep(formStep + 1)
-    }
-  }
-
-  const handlePrevStep = () => {
-    if (formStep > 1) {
-      setFormStep(formStep - 1)
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-
-    const payload = {
-      fullName: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      productionCompany: formData.company,
-      projectTitle: formData.projectTitle,
-      projectType: formData.projectType,
-      preferredLocation: formData.shootLocation,
-      estimatedBudget: formData.budget,
-      additionalNotes: `Message: ${formData.message}\n\nShoot Date: ${formData.shootDate}\nCrew Size: ${formData.crewSize}`
-    }
-
     try {
-      await apiClient.submitApplication(payload)
+      await apiClient.submitApplication({
+        fullName:          formData.name,
+        email:             formData.email,
+        phone:             formData.phone,
+        productionCompany: formData.company,
+        projectTitle:      formData.projectTitle,
+        projectType:       formData.projectType,
+        preferredLocation: formData.shootLocation,
+        estimatedBudget:   formData.budget,
+        additionalNotes:   `Message: ${formData.message}\nShoot Date: ${formData.shootDate}\nCrew Size: ${formData.crewSize}`,
+      })
       setSubmitted(true)
       setTimeout(() => {
         setSubmitted(false)
         setFormStep(1)
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          company: '',
-          projectTitle: '',
-          projectType: '',
-          shootLocation: '',
-          shootDate: '',
-          budget: '',
-          crewSize: '',
-          message: '',
-        })
-      }, 3000)
-    } catch (error) {
-      console.error("Error submitting application:", error)
-      alert("Failed to submit application. Please try again.")
+        setFormData({ name:'',email:'',phone:'',company:'',projectTitle:'',projectType:'',shootLocation:'',shootDate:'',budget:'',crewSize:'',message:'' })
+      }, 5000)
+    } catch {
+      alert("Failed to submit. Please try again.")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <main className="min-h-screen pt-20">
-      {/* Hero Section */}
-      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h1 className="text-5xl md:text-6xl font-display font-bold mb-8 text-balance">
-              Apply for Filming
-            </h1>
-            <p className="text-xl md:text-2xl opacity-90">
-              Get started with your project in Madhya Pradesh
-            </p>
-          </ScrollReveal>
-        </div>
-      </section>
+    <main className="min-h-screen bg-[#080808]">
 
-      {/* Form Section */}
-      <section className="py-20 md:py-32 bg-background">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            {/* Progress Bar */}
-            <div className="mb-12">
-              <div className="flex justify-between mb-4">
-                {[1, 2, 3].map((step) => (
-                  <motion.div
-                    key={step}
-                    className={`flex items-center gap-2 ${step <= formStep
-                        ? 'text-primary'
-                        : 'text-foreground/30'
-                      }`}
-                  >
-                    <motion.div
-                      animate={{
-                        scale: step === formStep ? 1.2 : 1,
+      {/* Gold top line */}
+      <div className="fixed top-0 left-0 right-0 h-px z-50"
+        style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-[calc(100vh-96px)]">
+
+          {/* ══ LEFT SIDEBAR ══ */}
+          <motion.div
+            className="py-10 lg:py-14 lg:pr-12 flex flex-col gap-10"
+            style={{ borderRight: '1px solid rgba(201,168,76,0.08)' }}
+            initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}
+          >
+            {/* Branding */}
+            <div>
+              <p className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-4">Film Industry MP</p>
+              <h1 className="font-display font-bold text-[#F5F0E8] text-3xl sm:text-4xl leading-snug mb-3">
+                Apply for<br /><span style={goldText}>Filming in MP</span>
+              </h1>
+              <div className="h-px w-12 mt-4" style={{ background: 'linear-gradient(to right, #C9A84C, transparent)' }} />
+              <p className="text-[#F5F0E8]/30 text-sm leading-relaxed mt-4">
+                Start your production journey in Madhya Pradesh. Complete the form — takes under 3 minutes.
+              </p>
+            </div>
+
+            {/* Steps */}
+            <div>
+              <p className="text-xs tracking-[0.4em] text-[#C9A84C]/35 uppercase font-medium mb-5">Application Steps</p>
+              <div className="space-y-1">
+                {STEPS.map((step) => {
+                  const isActive   = formStep === step.num
+                  const isComplete = formStep > step.num
+                  return (
+                    <div key={step.num}
+                      className="flex items-center gap-4 px-4 py-3.5 transition-all duration-300 relative"
+                      style={{
+                        background: isActive ? 'rgba(201,168,76,0.04)' : 'transparent',
+                        borderLeft: isActive ? '2px solid #C9A84C' : '2px solid transparent',
                       }}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${step <= formStep ? 'bg-primary' : 'bg-border'
-                        }`}
                     >
-                      {step < formStep ? '✓' : step}
-                    </motion.div>
-                    <span className="hidden md:inline font-semibold">
-                      {step === 1 && 'Your Info'}
-                      {step === 2 && 'Project Details'}
-                      {step === 3 && 'Project Overview'}
-                    </span>
-                  </motion.div>
-                ))}
+                      <div className="w-7 h-7 shrink-0 flex items-center justify-center text-xs font-bold transition-all duration-300"
+                        style={{
+                          border: `1px solid ${isComplete || isActive ? '#C9A84C' : 'rgba(201,168,76,0.2)'}`,
+                          background: isComplete ? '#C9A84C' : 'transparent',
+                          color: isComplete ? '#080808' : isActive ? '#C9A84C' : 'rgba(201,168,76,0.25)',
+                        }}>
+                        {isComplete ? <Check className="w-3.5 h-3.5" /> : step.num}
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold leading-none mb-1"
+                          style={{ color: isActive ? '#F5F0E8' : isComplete ? 'rgba(201,168,76,0.7)' : 'rgba(245,240,232,0.25)' }}>
+                          {step.label}
+                        </p>
+                        <p className="text-[10px] tracking-widest uppercase"
+                          style={{ color: isActive ? 'rgba(201,168,76,0.5)' : 'rgba(245,240,232,0.12)' }}>
+                          {step.sub}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              <div className="w-full h-1 bg-border rounded-full overflow-hidden">
-                <motion.div
-                  animate={{ width: `${(formStep / 3) * 100}%` }}
-                  className="h-full bg-primary rounded-full"
-                  transition={{ duration: 0.3 }}
-                />
+
+              {/* Progress bar */}
+              <div className="mt-5 px-1">
+                <div className="flex justify-between mb-1.5">
+                  <span className="text-[10px] tracking-widest text-[#F5F0E8]/20 uppercase">Progress</span>
+                  <span className="text-[10px] tracking-widest text-[#C9A84C]/50 font-bold">{Math.round((formStep / 3) * 100)}%</span>
+                </div>
+                <div className="h-px w-full" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                  <motion.div className="h-full"
+                    style={{ background: 'linear-gradient(to right, #C9A84C, #E8C97A)' }}
+                    animate={{ width: `${(formStep / 3) * 100}%` }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Step 1: Personal Info */}
-              {formStep === 1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-6"
-                >
-                  <h2 className="text-3xl font-display font-bold">
-                    Tell us about yourself
-                  </h2>
+            {/* Contact help */}
+            <div className="mt-auto pt-6" style={{ borderTop: '1px solid rgba(201,168,76,0.07)' }}>
+              <p className="text-xs tracking-[0.4em] text-[#C9A84C]/35 uppercase font-medium mb-3">Need Help?</p>
+              <p className="text-[#F5F0E8]/25 text-sm leading-relaxed mb-3">Our team is ready to assist you with your application.</p>
+              <a href="mailto:info@filmindustrymp.com" className="block text-sm text-[#C9A84C]/50 hover:text-[#C9A84C] transition-colors mb-1">
+                info@filmindustrymp.com
+              </a>
+              <a href="tel:+919977110001" className="block text-sm text-[#C9A84C]/50 hover:text-[#C9A84C] transition-colors">
+                +91 99771 10001
+              </a>
+            </div>
+          </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                        placeholder="Your full name"
-                      />
-                    </motion.div>
+          {/* ══ RIGHT FORM ══ */}
+          <motion.div
+            className="py-10 lg:py-14 lg:pl-12"
+            initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.15 }}
+          >
+            <form onSubmit={handleSubmit} className="h-full flex flex-col">
 
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                        placeholder="your@email.com"
-                      />
-                    </motion.div>
+              <AnimatePresence mode="wait">
 
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                        placeholder="+91 XXXXX XXXXX"
-                      />
-                    </motion.div>
-
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Production Company *
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        value={formData.company}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                        placeholder="Your company name"
-                      />
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 2: Project Details */}
-              {formStep === 2 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-6"
-                >
-                  <h2 className="text-3xl font-display font-bold">
-                    Tell us about your project
-                  </h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <motion.div whileHover={{ y: -2 }} className="relative md:col-span-2">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Project Title *
-                      </label>
-                      <input
-                        type="text"
-                        name="projectTitle"
-                        value={formData.projectTitle}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                        placeholder="Working title of your project"
-                      />
-                    </motion.div>
-
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Project Type *
-                      </label>
-                      <select
-                        name="projectType"
-                        value={formData.projectType}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none"
-                      >
-                        <option value="">Select project type</option>
-                        <option value="Hindi Film">Hindi Film</option>
-                        <option value="International Film">International Film</option>
-                        <option value="Web Series">Web Series</option>
-                        <option value="Documentary">Documentary</option>
-                        <option value="TV Commercial">TV Commercial</option>
-                        <option value="Music Video">Music Video</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </motion.div>
-
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Preferred Shoot Location *
-                      </label>
-                      <select
-                        name="shootLocation"
-                        value={formData.shootLocation}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none"
-                      >
-                        <option value="">Select location</option>
-                        <option value="Khajuraho">Khajuraho</option>
-                        <option value="Orchha">Orchha</option>
-                        <option value="Pachmarhi">Pachmarhi</option>
-                        <option value="Gwalior Fort">Gwalior Fort</option>
-                        <option value="Sanchi">Sanchi</option>
-                        <option value="Mandu">Mandu</option>
-                        <option value="Bhopal">Bhopal</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </motion.div>
-
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Intended Shoot Date *
-                      </label>
-                      <input
-                        type="month"
-                        name="shootDate"
-                        value={formData.shootDate}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-                      />
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 3: Project Overview */}
-              {formStep === 3 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-6"
-                >
-                  <h2 className="text-3xl font-display font-bold">
-                    Project overview
-                  </h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Estimated Budget *
-                      </label>
-                      <select
-                        name="budget"
-                        value={formData.budget}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none"
-                      >
-                        <option value="">Select budget range</option>
-                        <option value="Below ₹1 Crore">Below ₹1 Crore</option>
-                        <option value="₹1-5 Crore">₹1-5 Crore</option>
-                        <option value="₹5-10 Crore">₹5-10 Crore</option>
-                        <option value="₹10-25 Crore">₹10-25 Crore</option>
-                        <option value="₹25-50 Crore">₹25-50 Crore</option>
-                        <option value="Above ₹50 Crore">Above ₹50 Crore</option>
-                      </select>
-                    </motion.div>
-
-                    <motion.div whileHover={{ y: -2 }} className="relative">
-                      <label className="block text-sm font-semibold mb-2 text-foreground">
-                        Estimated Crew Size *
-                      </label>
-                      <select
-                        name="crewSize"
-                        value={formData.crewSize}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all appearance-none"
-                      >
-                        <option value="">Select crew size</option>
-                        <option value="10-30 people">10-30 people</option>
-                        <option value="30-50 people">30-50 people</option>
-                        <option value="50-100 people">50-100 people</option>
-                        <option value="100-200 people">100-200 people</option>
-                        <option value="200+ people">200+ people</option>
-                      </select>
-                    </motion.div>
-                  </div>
-
-                  <motion.div whileHover={{ y: -2 }} className="relative">
-                    <label className="block text-sm font-semibold mb-2 text-foreground">
-                      Additional Notes
-                    </label>
-                    <textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      className="w-full px-6 py-4 bg-card border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
-                      rows={6}
-                      placeholder="Tell us more about your project, requirements, or any special requests..."
-                    />
+                {/* ── STEP 1 ── */}
+                {formStep === 1 && (
+                  <motion.div key="s1"
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3 }} className="flex-1"
+                  >
+                    <div className="mb-8">
+                      <p className="text-xs tracking-[0.5em] text-[#C9A84C]/40 uppercase font-medium mb-2">Step 01 of 03</p>
+                      <h2 className="font-display font-bold text-[#F5F0E8] text-2xl sm:text-3xl">Tell us about yourself</h2>
+                      <p className="text-[#F5F0E8]/25 text-sm mt-2">Your contact and company information.</p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label className={labelCls}>Full Name *</label>
+                        <input className={inputCls} type="text" name="name" value={formData.name}
+                          onChange={handleChange} placeholder="Your full name" required />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Email Address *</label>
+                        <input className={inputCls} type="email" name="email" value={formData.email}
+                          onChange={handleChange} placeholder="your@email.com" required />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Phone Number *</label>
+                        <input className={inputCls} type="tel" name="phone" value={formData.phone}
+                          onChange={handleChange} placeholder="+91 XXXXX XXXXX" required />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Production Company *</label>
+                        <input className={inputCls} type="text" name="company" value={formData.company}
+                          onChange={handleChange} placeholder="Company name" required />
+                      </div>
+                    </div>
                   </motion.div>
-                </motion.div>
-              )}
-
-              {/* Navigation Buttons */}
-              <div className="flex gap-4 justify-between pt-8 border-t border-border">
-                {formStep > 1 && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    type="button"
-                    onClick={handlePrevStep}
-                    className="px-8 py-4 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/10 transition-colors"
-                  >
-                    Previous
-                  </motion.button>
                 )}
-                <div className="flex-1" />
-                {formStep < 3 ? (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    type="button"
-                    onClick={handleNextStep}
-                    className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+
+                {/* ── STEP 2 ── */}
+                {formStep === 2 && (
+                  <motion.div key="s2"
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3 }} className="flex-1"
                   >
-                    Next
+                    <div className="mb-8">
+                      <p className="text-xs tracking-[0.5em] text-[#C9A84C]/40 uppercase font-medium mb-2">Step 02 of 03</p>
+                      <h2 className="font-display font-bold text-[#F5F0E8] text-2xl sm:text-3xl">About your project</h2>
+                      <p className="text-[#F5F0E8]/25 text-sm mt-2">Tell us what you're shooting and where.</p>
+                    </div>
+                    <div className="space-y-5">
+                      <div>
+                        <label className={labelCls}>Project Title *</label>
+                        <input className={inputCls} type="text" name="projectTitle" value={formData.projectTitle}
+                          onChange={handleChange} placeholder="Working title of your project" required />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className={labelCls}>Project Type *</label>
+                          <select className={inputCls} name="projectType" value={formData.projectType}
+                            onChange={handleChange} required style={selectStyle}>
+                            <option value="">Select type</option>
+                            <option>Hindi Film</option>
+                            <option>International Film</option>
+                            <option>Web Series</option>
+                            <option>Documentary</option>
+                            <option>TV Commercial</option>
+                            <option>Music Video</option>
+                            <option>Other</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className={labelCls}>Preferred Location *</label>
+                          <select className={inputCls} name="shootLocation" value={formData.shootLocation}
+                            onChange={handleChange} required style={selectStyle}>
+                            <option value="">Select location</option>
+                            <option>Khajuraho</option>
+                            <option>Orchha</option>
+                            <option>Pachmarhi</option>
+                            <option>Gwalior Fort</option>
+                            <option>Sanchi</option>
+                            <option>Mandu</option>
+                            <option>Bhopal</option>
+                            <option>Other</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label className={labelCls}>Intended Shoot Date *</label>
+                        <input className={inputCls} type="month" name="shootDate" value={formData.shootDate}
+                          onChange={handleChange} required style={{ colorScheme: 'dark' }} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ── STEP 3 ── */}
+                {formStep === 3 && (
+                  <motion.div key="s3"
+                    initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3 }} className="flex-1"
+                  >
+                    <div className="mb-8">
+                      <p className="text-xs tracking-[0.5em] text-[#C9A84C]/40 uppercase font-medium mb-2">Step 03 of 03</p>
+                      <h2 className="font-display font-bold text-[#F5F0E8] text-2xl sm:text-3xl">Budget & overview</h2>
+                      <p className="text-[#F5F0E8]/25 text-sm mt-2">Final details before we review your application.</p>
+                    </div>
+                    <div className="space-y-5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                          <label className={labelCls}>Estimated Budget *</label>
+                          <select className={inputCls} name="budget" value={formData.budget}
+                            onChange={handleChange} required style={selectStyle}>
+                            <option value="">Select budget</option>
+                            <option>Below ₹1 Crore</option>
+                            <option>₹1-5 Crore</option>
+                            <option>₹5-10 Crore</option>
+                            <option>₹10-25 Crore</option>
+                            <option>₹25-50 Crore</option>
+                            <option>Above ₹50 Crore</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className={labelCls}>Estimated Crew Size *</label>
+                          <select className={inputCls} name="crewSize" value={formData.crewSize}
+                            onChange={handleChange} required style={selectStyle}>
+                            <option value="">Select size</option>
+                            <option>10-30 people</option>
+                            <option>30-50 people</option>
+                            <option>50-100 people</option>
+                            <option>100-200 people</option>
+                            <option>200+ people</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label className={labelCls}>Additional Notes</label>
+                        <textarea className={inputCls} name="message" value={formData.message}
+                          onChange={handleChange} rows={6}
+                          placeholder="Tell us more about your project, special requirements, or any questions..." />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+              </AnimatePresence>
+
+              {/* Success */}
+              <AnimatePresence>
+                {submitted && (
+                  <motion.div
+                    className="mt-6 p-5 flex items-start gap-4"
+                    style={{ border: '1px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.04)' }}
+                    initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  >
+                    <CheckCircle className="w-5 h-5 text-[#C9A84C] shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[#C9A84C] font-semibold text-sm mb-1">Application Submitted</p>
+                      <p className="text-[#F5F0E8]/40 text-xs leading-relaxed">
+                        Thank you. Our team will review your application and be in touch within 24–48 hours.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Nav */}
+              <div className="flex items-center justify-between mt-10 pt-6"
+                style={{ borderTop: '1px solid rgba(201,168,76,0.08)' }}>
+                {formStep > 1 ? (
+                  <motion.button type="button" onClick={() => setFormStep(s => s - 1)}
+                    className="flex items-center gap-2 text-[#C9A84C]/50 hover:text-[#C9A84C] text-xs tracking-[0.25em] uppercase font-medium transition-colors"
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" /> Back
+                  </motion.button>
+                ) : <div />}
+
+                {formStep < 3 ? (
+                  <motion.button type="button" onClick={() => setFormStep(s => s + 1)}
+                    className="flex items-center gap-3 px-9 py-3.5 text-[#080808] text-xs font-bold tracking-[0.3em] uppercase"
+                    style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 100%)' }}
+                    whileHover={{ opacity: 0.88 }} whileTap={{ scale: 0.98 }}
+                  >
+                    Continue <ChevronRight className="w-3.5 h-3.5" />
                   </motion.button>
                 ) : (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    type="submit"
-                    disabled={submitted || isSubmitting}
-                    className="px-8 py-4 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition-colors flex items-center gap-2"
+                  <motion.button type="submit" disabled={submitted || isSubmitting}
+                    className="flex items-center gap-3 px-9 py-3.5 text-[#080808] text-[10px] font-bold tracking-[0.35em] uppercase disabled:opacity-50"
+                    style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 100%)' }}
+                    whileHover={{ opacity: isSubmitting ? 1 : 0.88 }} whileTap={{ scale: 0.98 }}
                   >
-                    <Send className="w-5 h-5" />
-                    {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                    {isSubmitting
+                      ? <><div className="w-3.5 h-3.5 border-2 border-[#080808]/30 border-t-[#080808] rounded-full animate-spin" /> Submitting</>
+                      : <><Send className="w-3.5 h-3.5" /> Submit Application</>
+                    }
                   </motion.button>
                 )}
               </div>
 
-              {/* Success Message */}
-              {submitted && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="p-6 bg-accent/20 border-2 border-accent rounded-lg space-y-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-6 h-6 text-accent" />
-                    <h3 className="text-lg font-semibold text-accent">
-                      Application Submitted Successfully!
-                    </h3>
-                  </div>
-                  <p className="text-foreground/70">
-                    Thank you for your interest. Our team will review your application and get in touch within 24-48 hours.
-                  </p>
-                </motion.div>
-              )}
             </form>
-          </ScrollReveal>
-        </div>
-      </section>
+          </motion.div>
 
-      {/* Help Section */}
-      <section className="py-20 md:py-32 bg-secondary text-secondary-foreground">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-12">
-              Need Help?
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-secondary-foreground/10 rounded-lg p-8">
-                <h3 className="text-2xl font-display font-bold mb-4">
-                  Contact Us
-                </h3>
-                <p className="opacity-90 mb-4">
-                  Have questions about your application?
-                </p>
-                <a
-                  href="mailto:info@filmindustrymp.com"
-                  className="text-accent hover:text-accent/80 font-semibold"
-                >
-                  info@filmindustrymp.com
-                </a>
-              </div>
-              <div className="bg-secondary-foreground/10 rounded-lg p-8">
-                <h3 className="text-2xl font-display font-bold mb-4">
-                  Call Us
-                </h3>
-                <p className="opacity-90 mb-4">
-                  Speak with our team directly
-                </p>
-                <a
-                  href="tel:+919977110001"
-                  className="text-accent hover:text-accent/80 font-semibold"
-                >
-                  +91 99771 10001
-                </a>
-              </div>
-            </div>
-          </ScrollReveal>
         </div>
-      </section>
+      </div>
     </main>
   )
 }

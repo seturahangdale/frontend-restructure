@@ -1,5 +1,4 @@
 import { encrypt } from "@/lib/auth";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
 
             const res = NextResponse.json({ success: true, message: "Logged in successfully" });
 
-            (await cookies()).set("session", session, {
+            res.cookies.set("session", session, {
                 expires,
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",

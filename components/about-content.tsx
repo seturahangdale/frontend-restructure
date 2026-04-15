@@ -1,370 +1,442 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { ScrollReveal } from './scroll-reveal'
-import { CheckCircle, Target, Film, Sparkles, Zap, Loader2 } from 'lucide-react'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 
-const STAR_POSITIONS_20 = [
-  { top: '5%', left: '20%' }, { top: '15%', left: '75%' }, { top: '28%', left: '40%' },
-  { top: '42%', left: '88%' }, { top: '55%', left: '10%' }, { top: '63%', left: '55%' },
-  { top: '74%', left: '30%' }, { top: '85%', left: '68%' }, { top: '9%', left: '92%' },
-  { top: '35%', left: '5%' },  { top: '48%', left: '60%' }, { top: '71%', left: '82%' },
-  { top: '20%', left: '48%' }, { top: '60%', left: '25%' }, { top: '90%', left: '45%' },
-  { top: '33%', left: '70%' }, { top: '78%', left: '15%' }, { top: '12%', left: '58%' },
-  { top: '50%', left: '95%' }, { top: '95%', left: '35%' },
-]
+const goldText = {
+  background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)',
+  WebkitBackgroundClip: 'text' as const,
+  WebkitTextFillColor: 'transparent' as const,
+  backgroundClip: 'text' as const,
+}
 
-const BUBBLE_POSITIONS_6 = [
-  { top: '25%', left: '12%' }, { top: '40%', left: '58%' }, { top: '60%', left: '80%' },
-  { top: '75%', left: '30%' }, { top: '22%', left: '70%' }, { top: '55%', left: '45%' },
-]
-import { apiClient } from '@/lib/api-client'
+function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 28 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function GoldDivider() {
+  return (
+    <div className="flex items-center justify-center gap-3 my-12">
+      <div className="h-px bg-gradient-to-r from-transparent to-[#C9A84C]/40 w-24" />
+      <span className="text-[#C9A84C]/60 text-sm">✦</span>
+      <div className="h-px bg-gradient-to-l from-transparent to-[#C9A84C]/40 w-24" />
+    </div>
+  )
+}
+
+function BulletItem({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <FadeIn delay={delay}>
+      <div className="flex items-start gap-4 py-3 border-b border-white/5">
+        <span className="text-[#C9A84C] mt-1 shrink-0 text-sm">✦</span>
+        <p className="text-[#F5F0E8]/65 text-base leading-relaxed">{text}</p>
+      </div>
+    </FadeIn>
+  )
+}
 
 export function AboutContent() {
-  const [data, setData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await apiClient.getAboutData()
-        setData(res)
-      } catch (error) {
-        console.error('Failed to fetch about data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [])
-
-  const solutions = [
-    { title: 'Line Producer Assignment', icon: '👥', color: 'from-blue-500 to-cyan-500' },
-    { title: 'Location Scouting by Script', icon: '🎬', color: 'from-purple-500 to-pink-500' },
-    { title: 'Government Coordination', icon: '🏛️', color: 'from-amber-500 to-orange-500' },
-    { title: 'Casting & Local Talent', icon: '⭐', color: 'from-yellow-500 to-amber-500' },
-    { title: 'Vendors & Production Crew', icon: '🔧', color: 'from-green-500 to-emerald-500' },
-    { title: 'On-Ground Execution Support', icon: '📋', color: 'from-red-500 to-rose-500' },
-  ]
-
-  const advantages = [
-    { title: 'Single-Window Professional Facilitation', description: 'One centralized platform for permissions, subsidies, locations, and execution — eliminating confusion, delays, and dependency on multiple intermediaries.' },
-    { title: 'Verified Line Producers & Teams', description: 'We work only with experienced and vetted line producers and production professionals who understand large-scale film workflows and industry standards.' },
-    { title: 'Policy-Aligned Execution', description: 'Deep understanding of Madhya Pradesh film policies ensures smooth permissions, accurate subsidy guidance, and full compliance.' },
-    { title: 'Script-Driven Location Expertise', description: 'Locations are suggested and finalized based on script requirements, visual treatment, budget, and logistics — not guesswork.' },
-    { title: 'Strong Government Coordination', description: 'Established coordination with Film Tourism MP and local authorities for faster approvals and smooth on-ground operations.' },
-    { title: 'Reliable Vendor & Resource Network', description: 'Access to vetted vendors, equipment, artists, technicians, and services across Madhya Pradesh with proven reliability' },
-    { title: 'End-to-End Accountability', description: 'From pre-production to final wrap-up, FilmIndustryMP remains responsible for execution quality, timelines, and coordination.' },
-    { title: 'Proven Focus on Repeat Productions', description: 'Our system is designed to build long-term trust so producers confidently return to Madhya Pradesh for future projects.' },
-    { title: 'Vision Beyond One Project', description: 'We work with a long-term goal — positioning Madhya Pradesh as a consistent, film-friendly, and globally competitive production destination.' },
-  ]
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        <Loader2 className="w-12 h-12 animate-spin text-accent mb-4" />
-        <p className="text-muted-foreground animate-pulse font-medium tracking-widest uppercase text-sm">Preparing Our Story</p>
-      </div>
-    )
-  }
-
   return (
-    <main className="min-h-screen pt-20 overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#3E2723] via-[#5D4037] to-[#6D4C41] text-white overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full"
-              style={{
-                top: STAR_POSITIONS_20[i].top,
-                left: STAR_POSITIONS_20[i].left,
-              }}
-              animate={{
-                y: [0, -50, 0],
-                opacity: [0, 1, 0],
-                scale: [0, 1.5, 0],
-              }}
-              transition={{
-                duration: 4 + i * 0.2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: i * 0.3,
-              }}
-            />
-          ))}
-        </div>
+    <main className="min-h-screen bg-[#080808] text-white overflow-hidden">
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
+      {/* Gold top border */}
+      <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
+
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden pt-32 pb-20">
+
+        {/* Ghost text bg — slow drift */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 2, ease: 'easeOut' }}
+        >
+          <span className="font-display font-bold text-white/[0.02]" style={{ fontSize: 'clamp(80px, 18vw, 220px)', whiteSpace: 'nowrap' }}>
+            FOUNDER
+          </span>
+        </motion.div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+            {/* LEFT — Photo */}
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.8 }}
+              className="relative"
+              initial={{ opacity: 0, x: -60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
+              {/* Photo area with clip reveal */}
               <motion.div
-                className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                className="relative w-full max-w-lg mx-auto lg:mx-0 overflow-hidden"
+                style={{ aspectRatio: '3/4' }}
+                initial={{ clipPath: 'inset(100% 0 0 0)' }}
+                animate={{ clipPath: 'inset(0% 0 0 0)' }}
+                transition={{ duration: 1, delay: 0.2, ease: [0.76, 0, 0.24, 1] }}
               >
-                <Sparkles className="w-5 h-5 text-amber-400" />
-                <span className="text-sm font-semibold">Transforming Film Production</span>
+                <motion.img
+                  src="/founder image/Naveen sir.png"
+                  alt="Naveen Jain"
+                  className="w-full h-full object-cover object-top"
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 1.4, delay: 0.2, ease: 'easeOut' }}
+                />
+
               </motion.div>
 
-              <h1 className="text-5xl md:text-7xl font-display font-bold mb-8 text-balance bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-transparent">
-                Transforming Madhya Pradesh Into a Global Filming Hub
-              </h1>
-              <p className="text-xl md:text-2xl opacity-90 leading-relaxed">
-                Our mission is to bridge the trust and execution gap in film production
-              </p>
-            </motion.div>
-          </ScrollReveal>
-        </div>
-
-        {/* Decorative bottom wave */}
-        <div className="absolute bottom-0 left-0 w-full">
-          <svg viewBox="0 0 1200 120" className="w-full h-16 fill-background">
-            <path d="M0,0 C300,80 900,80 1200,0 L1200,120 L0,120 Z" />
-          </svg>
-        </div>
-      </section>
-
-      {/* The Problem Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-b from-background via-red-50/10 dark:via-red-950/20 to-background overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 pointer-events-none opacity-5">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-            className="absolute top-10 right-10 w-64 h-64"
-          >
-            <Film className="w-full h-full text-red-600" />
-          </motion.div>
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
-            <ScrollReveal>
-              <div>
-                <motion.h2
-                  className="text-4xl md:text-5xl font-display font-bold mb-8 bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent"
-                  whileHover={{ scale: 1.02 }}
+              {/* Name card */}
+              <motion.div
+                className="max-w-sm mx-auto lg:mx-0 mt-6 px-1"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.1 }}
+              >
+                <p className="text-[#C9A84C] font-display font-bold text-2xl">Naveen Jain</p>
+                <p className="text-white/40 text-sm tracking-widest uppercase mt-1">Founder, Film Industry MP</p>
+                <motion.div
+                  className="h-px bg-[#C9A84C] mt-4"
+                  initial={{ width: 0 }}
+                  animate={{ width: 64 }}
+                  transition={{ duration: 0.7, delay: 1.3 }}
+                />
+                <a
+                  href="https://www.imdb.com/name/nm8970775/?ref_=fn_i_1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-4 group"
+                  title="View on IMDb"
                 >
-                  The Problem
-                </motion.h2>
-                <p className="text-lg text-foreground/70 mb-6 leading-relaxed">
-                  Over the years, Madhya Pradesh has attracted filmmakers from across India and abroad due to its diverse natural landscapes, rich heritage locations, and cost-effective production environment. However, a recurring challenge has been consistently observed in large-scale film productions shot in the state.
-
-                  Despite a successful first experience, many production houses do not return for subsequent projects. The primary reason is the involvement of unqualified intermediaries and informal local contacts who lack professional film production and line production experience.
-
-                  These intermediaries often have limited understanding of:
-                </p>
-                <div className="space-y-4">
-                  {[
-                    '1. Structured film production workflows',
-                    '2. Government permissions, policies, and subsidy framework',
-                    '3. Professional line production standards',
-                    '4. Vendor management, casting coordination, and location logistics',
-                  ].map((problem, i) => (
-                    <motion.div
-                      key={problem}
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                    >
-                      <Zap className="w-5 h-5 text-red-600 shrink-0 mt-1" />
-                      <p className="text-foreground/70">{problem}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.2}>
-              <motion.div
-                className="relative bg-gradient-to-br from-red-500/10 via-orange-500/10 to-red-500/10 border-2 border-red-500/30 rounded-2xl p-8 md:p-10"
-                whileHover={{ scale: 1.02, borderColor: 'rgba(239, 68, 68, 0.5)' }}
-                transition={{ duration: 0.3 }}
-              >
-                {/* Decorative corner accents */}
-                <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-red-500 rounded-tl-2xl" />
-                <div className="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-orange-500 rounded-br-2xl" />
-
-                <h3 className="text-2xl font-display font-bold text-foreground mb-4">
-                  The Result
-                </h3>
-                <p className="text-lg text-foreground/70">
-                  As a result, production houses—from Bollywood and regional cinema to OTT platforms and international studios—face delays, budget overruns, compliance issues, and operational inefficiencies. Such experiences create uncertainty and discourage repeat filming in Madhya Pradesh.
-                </p>
+                  <img
+                    src="/logo/Screenshot 2026-03-25 114202.png"
+                    alt="IMDb"
+                    className="h-5 w-auto object-contain opacity-60 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                  <span className="text-[10px] tracking-[0.3em] uppercase text-white/30 group-hover:text-[#C9A84C] transition-colors duration-300">View Profile</span>
+                </a>
               </motion.div>
-            </ScrollReveal>
+            </motion.div>
+
+            {/* RIGHT — Intro */}
+            <div>
+              <motion.p
+                className="text-[10px] tracking-[0.55em] text-[#C9A84C] uppercase font-medium mb-4"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                The Visionary Behind
+              </motion.p>
+
+              <motion.h1
+                className="font-display font-bold leading-[1.05] mb-6"
+                style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.55, ease: [0.25, 0.46, 0.45, 0.94] }}
+              >
+                Meet the <span style={goldText}>Founder</span>
+              </motion.h1>
+
+              <motion.div
+                className="h-px bg-[#C9A84C]/50 mb-8"
+                initial={{ width: 0 }}
+                animate={{ width: 64 }}
+                transition={{ duration: 0.7, delay: 0.8 }}
+              />
+
+              <motion.p
+                className="text-[#F5F0E8]/65 text-lg leading-relaxed mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+              >
+                Naveen Jain is the Founder of Film Industry MP, a dedicated film facilitation network platform focused on simplifying film production across Madhya Pradesh.
+              </motion.p>
+              <motion.p
+                className="text-[#F5F0E8]/55 text-base leading-relaxed mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.05 }}
+              >
+                With over <span className="text-[#C9A84C] font-semibold">15 years of experience</span> in the film industry ecosystem, he has developed a deep understanding of on-ground challenges, regional dynamics, and the critical importance of the right local connections in executing successful film projects.
+              </motion.p>
+              <motion.p
+                className="text-[#F5F0E8]/55 text-base leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+              >
+                Rather than operating as a traditional production service provider, Naveen Jain has positioned himself as a <span className="text-[#F5F0E8] font-semibold">Film Facilitator for national and international markets</span> — someone who ensures that every production is supported by the right people, in the right location, at the right time.
+              </motion.p>
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Our Objective */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-950/20 dark:via-cyan-950/20 dark:to-blue-950/20 overflow-hidden">
-        {/* Floating elements */}
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-20 h-20 rounded-full bg-gradient-to-br from-blue-400/10 to-cyan-400/10"
-            style={{
-              top: BUBBLE_POSITIONS_6[i].top,
-              left: BUBBLE_POSITIONS_6[i].left,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 5 + i,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.5,
-            }}
-          />
-        ))}
+      <GoldDivider />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <motion.h2
-                className="text-4xl md:text-5xl font-display font-bold mb-6 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"
-                whileHover={{ scale: 1.02 }}
-              >
-                {data.whoWeAre.title}
-              </motion.h2>
-              <div className="text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed space-y-6">
-                {data.whoWeAre.paragraphs.map((para: string, i: number) => (
-                  <p key={i}>{para}</p>
+      {/* ── NETWORK & EXPERTISE ── */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+            <FadeIn>
+              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-4">His Network</p>
+              <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-6">
+                Building the Right<br /><span style={goldText}>Connections</span>
+              </h2>
+              <p className="text-[#F5F0E8]/55 text-base leading-relaxed mb-10">
+                Through Film Industry MP, he actively builds and manages a strong network of city-wise verified professionals, enabling production houses to access trusted local expertise for:
+              </p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-px" style={{ border: '1px solid rgba(201,168,76,0.12)' }}>
+                {[
+                  { num: '15+', label: 'Years\nExperience' },
+                  { num: '50+', label: 'Cities\nCovered' },
+                  { num: '100+', label: 'Productions\nFacilitated' },
+                ].map((stat, i) => (
+                  <FadeIn key={i} delay={0.15 + i * 0.1}>
+                    <div className="flex flex-col items-center justify-center py-7 px-4 text-center" style={{ background: 'rgba(201,168,76,0.02)' }}>
+                      <span className="font-display font-bold text-3xl md:text-4xl" style={goldText}>{stat.num}</span>
+                      <span className="text-[#F5F0E8]/30 text-[10px] tracking-widest uppercase mt-2 leading-relaxed whitespace-pre-line">{stat.label}</span>
+                    </div>
+                  </FadeIn>
                 ))}
               </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
+            </FadeIn>
 
-      {/* Our Solution */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-b from-background to-purple-50/10 dark:to-purple-950/20 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              {data.whatWeDo.title}
-            </h2>
-          </ScrollReveal>
-          <p className="text-2xl text-foreground/70 leading-relaxed mb-16 text-center max-w-4xl mx-auto">
-            FilmIndustryMP functions as a professional point of contact and execution partner for production houses from India and around the world seeking to shoot in Madhya Pradesh.
-          </p>
+            <FadeIn delay={0.15}>
+              <div className="mt-2 lg:mt-14">
+                <BulletItem text="Location Scouting" delay={0.1} />
+                <BulletItem text="Line Production Support" delay={0.15} />
+                <BulletItem text="Government Permissions" delay={0.2} />
+                <BulletItem text="Celebrity Management & Promotions" delay={0.25} />
+                <BulletItem text="On-ground Execution via Local Experts" delay={0.3} />
+              </div>
+            </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {data.whatWeDo.items.map((item: string, index: number) => (
-              <ScrollReveal key={index} delay={index * 0.15}>
-                <motion.div
-                  whileHover={{ y: -12, scale: 1.03 }}
-                  className="relative film-card p-8 text-center overflow-hidden group h-full flex flex-col items-center justify-center"
-                >
-                  {/* Use a default cinematic icon or cycle through colors/icons if needed, but for now title is dynamic */}
-                  <div className="text-7xl mb-4 relative z-10">
-                    {index === 0 ? '👥' : index === 1 ? '🎬' : index === 2 ? '🏛️' : index === 3 ? '⭐' : index === 4 ? '🔧' : '📋'}
-                  </div>
-                  <h3 className="text-xl font-display font-bold text-foreground relative z-10">
-                    {item}
-                  </h3>
-                </motion.div>
-              </ScrollReveal>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#2F5D2F] via-[#3d7a3d] to-[#2F5D2F] text-white overflow-hidden">
-        {/* Animated grid background */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)`,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
+      <GoldDivider />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-center mb-16">
-              Why Film Industry MP?
-            </h2>
-          </ScrollReveal>
+      {/* ── LOCATION VIDEO APPROACH ── */}
+      <section className="relative py-12 overflow-hidden">
+        {/* Glow */}
+        <div className="absolute top-1/2 right-0 w-96 h-96 pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%)', transform: 'translateY(-50%)' }} />
 
-          <div className="space-y-6">
-            {advantages.map((advantage, index) => (
-              <ScrollReveal key={advantage.title} delay={index * 0.1}>
-                <motion.div
-                  whileHover={{ x: 12, scale: 1.02 }}
-                  className="flex items-start gap-4 p-6 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all border border-white/20"
-                >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.1 }}
-                  >
-                    <CheckCircle className="w-6 h-6 text-green-400 shrink-0 mt-1" />
-                  </motion.div>
-                  <div>
-                    <h3 className="text-xl font-display font-bold mb-2">
-                      {advantage.title}
-                    </h3>
-                    <p className="opacity-90">{advantage.description}</p>
-                  </div>
-                </motion.div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </div>
-      </section>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
-      {/* Vision Section */}
-      <section className="relative py-20 md:py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-amber-950/20 overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 pointer-events-none">
-          <motion.div
-            className="absolute top-10 left-10 w-32 h-32 rounded-full bg-gradient-to-br from-amber-400/20 to-orange-400/20 blur-2xl"
-            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 4, repeat: Infinity }}
-          />
-          <motion.div
-            className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-gradient-to-br from-orange-400/20 to-red-400/20 blur-2xl"
-            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 4, repeat: Infinity, delay: 2 }}
-          />
-        </div>
-
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center space-y-8">
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              >
-                <Target className="w-20 h-20 mx-auto text-amber-600" />
-              </motion.div>
-              <h2 className="text-4xl md:text-5xl font-display font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                Our Long Term Vision
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start mb-8">
+            <FadeIn>
+              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Key Differentiator</p>
+              <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-5">
+                Visual Intelligence for<br /><span style={goldText}>Filmmakers</span>
               </h2>
-              <p className="text-2xl text-foreground/70 leading-relaxed">
-                Our mission extends beyond facilitating individual film shoots.
-
-                FilmIndustryMP aims to build long-term confidence, encouraging production houses to repeatedly choose Madhya Pradesh for feature films, web series, OTT content, television shows, commercials, and international productions.
-
-                Through professionalism, transparency, and institutional trust, we are committed to positioning Madhya Pradesh as a film-friendly, dependable, and globally competitive production destination.
+              <p className="text-[#F5F0E8]/55 text-base leading-relaxed max-w-xl mb-3">
+                A key differentiator in his approach is his focus on <span className="text-[#F5F0E8] font-semibold">visual and practical guidance</span> for filmmakers.
               </p>
-            </div>
-          </ScrollReveal>
+              <p className="text-[#F5F0E8]/45 text-sm leading-relaxed max-w-xl">
+                He creates detailed location-based videos for cities and shooting spots across MP — providing complete insights for production houses to pre-visualize and plan shoots remotely.
+              </p>
+            </FadeIn>
+
+            <FadeIn delay={0.15}>
+              <p className="text-[#F5F0E8]/45 text-sm leading-relaxed" style={{ borderLeft: '2px solid rgba(201,168,76,0.3)', paddingLeft: '1.5rem' }}>
+                These videos are published on the website and across social media platforms, helping production houses pre-visualize locations, plan shoots effectively, and make informed decisions remotely.
+              </p>
+            </FadeIn>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[
+              { num: '01', text: 'Detailed overview of the location' },
+              { num: '02', text: 'Permission process and practical guidelines' },
+              { num: '03', text: 'Possible challenges during shoot and how to manage them' },
+              { num: '04', text: 'Advantages and unique features of the location' },
+              { num: '05', text: 'Creative possibilities — how different scenes can be executed' },
+            ].map((item, i) => (
+              <FadeIn key={i} delay={i * 0.08}>
+                <div
+                  className="group p-5 h-full transition-all duration-300"
+                  style={{ border: '1px solid rgba(201,168,76,0.1)', background: 'rgba(201,168,76,0.02)' }}
+                >
+                  <span className="block font-display font-bold text-2xl mb-2" style={{ color: 'rgba(201,168,76,0.15)' }}>{item.num}</span>
+                  <p className="text-[#F5F0E8]/60 text-xs leading-relaxed">{item.text}</p>
+                  <div className="h-px w-0 group-hover:w-full mt-3 transition-all duration-500" style={{ background: '#C9A84C' }} />
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
         </div>
       </section>
+
+      <GoldDivider />
+
+      {/* ── VISION ── */}
+      <section className="relative py-20 overflow-hidden">
+        {/* bg glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 70%)' }} />
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+
+          {/* Label + heading */}
+          <FadeIn>
+            <div className="text-center mb-14">
+              <p className="text-[10px] tracking-[0.6em] text-[#C9A84C] uppercase font-medium mb-4">His Vision</p>
+              <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight max-w-2xl mx-auto">
+                A Film-Friendly <span style={goldText}>Ecosystem</span>
+              </h2>
+            </div>
+          </FadeIn>
+
+          {/* 3 vision pillars */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px mb-16" style={{ border: '1px solid rgba(201,168,76,0.1)' }}>
+            {[
+              {
+                roman: 'I',
+                title: 'Reduce Uncertainty',
+                text: 'Connecting production houses with reliable, location-specific resources while guiding them through visual content and real insights — improving execution efficiency.'
+              },
+              {
+                roman: 'II',
+                title: 'Build the Ecosystem',
+                text: 'Committed to creating a film-friendly ecosystem in Madhya Pradesh where filmmakers work seamlessly while generating opportunities for local talent, vendors, and communities.'
+              },
+              {
+                roman: 'III',
+                title: 'Lead with Vision',
+                text: 'With a clear vision, strong grassroots network, and innovative digital approach — positioned as a trusted Film Facilitator, Industry Connector, and Location Intelligence Provider.'
+              },
+            ].map((pillar, i) => (
+              <FadeIn key={i} delay={i * 0.12}>
+                <div className="group relative p-8 h-full transition-all duration-300 overflow-hidden"
+                  style={{ background: 'rgba(201,168,76,0.015)' }}>
+                  {/* hover gold top line */}
+                  <div className="absolute top-0 left-0 right-0 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+                    style={{ background: 'linear-gradient(to right, #C9A84C, transparent)' }} />
+                  <span className="font-display font-bold text-sm tracking-[0.3em] mb-5 block" style={{ color: 'rgba(201,168,76,0.5)' }}>{pillar.roman}</span>
+                  <h3 className="font-display font-bold text-[#F5F0E8] text-lg mb-3">{pillar.title}</h3>
+                  <p className="text-[#F5F0E8]/45 text-sm leading-relaxed">{pillar.text}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* Quote */}
+          <FadeIn delay={0.4}>
+            <div className="relative overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.12)' }}>
+              {/* gold left bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-1" style={{ background: 'linear-gradient(to bottom, transparent, #C9A84C, transparent)' }} />
+              {/* large ghost quote mark */}
+              <span className="absolute right-8 top-2 font-display font-bold leading-none select-none pointer-events-none"
+                style={{ fontSize: 'clamp(100px,15vw,180px)', color: 'rgba(201,168,76,0.04)' }}>"</span>
+
+              <div className="relative z-10 px-12 py-10 md:flex md:items-center md:gap-12">
+                <div className="shrink-0 mb-6 md:mb-0">
+                  <div className="w-16 h-16 overflow-hidden" style={{ border: '1px solid rgba(201,168,76,0.3)' }}>
+                    <img src="/founder image/Naveen sir.png" alt="Naveen Jain" className="w-full h-full object-cover object-top" />
+                  </div>
+                  <p className="text-[#C9A84C] font-semibold text-sm mt-3">Naveen Jain</p>
+                  <p className="text-white/30 text-[10px] tracking-widest uppercase">Founder</p>
+                </div>
+                <div>
+                  <p className="font-display font-bold text-xl md:text-2xl text-[#F5F0E8]/90 leading-snug">
+                    "I don't just facilitate projects — I help filmmakers visualize, plan, and execute with the right people, the right locations and the right time."
+                  </p>
+                </div>
+              </div>
+
+              {/* Corner accents */}
+              <div className="absolute top-0 right-0 w-6 h-6" style={{ borderTop: '1px solid rgba(201,168,76,0.4)', borderRight: '1px solid rgba(201,168,76,0.4)' }} />
+              <div className="absolute bottom-0 right-0 w-6 h-6" style={{ borderBottom: '1px solid rgba(201,168,76,0.4)', borderRight: '1px solid rgba(201,168,76,0.4)' }} />
+            </div>
+          </FadeIn>
+
+        </div>
+      </section>
+
+      <GoldDivider />
+
+      {/* ── MISSION & VISION ── */}
+      <section className="relative py-20 overflow-hidden">
+        {/* bg glow */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 70% 60% at 50% 100%, rgba(201,168,76,0.05) 0%, transparent 70%)' }} />
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-px" style={{ border: '1px solid rgba(201,168,76,0.1)' }}>
+
+            {/* Mission */}
+            <FadeIn>
+              <div className="relative p-10 h-full overflow-hidden group" style={{ background: 'rgba(201,168,76,0.015)' }}>
+                <div className="absolute top-0 left-0 right-0 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"
+                  style={{ background: 'linear-gradient(to right, #C9A84C, transparent)' }} />
+                {/* ghost word */}
+                <span className="absolute bottom-4 right-4 font-display font-bold select-none pointer-events-none leading-none"
+                  style={{ fontSize: 'clamp(60px,8vw,100px)', color: 'rgba(201,168,76,0.04)' }}>MISSION</span>
+
+                <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-5">Our Mission</p>
+                <h3 className="font-display font-bold text-3xl md:text-4xl text-[#F5F0E8] leading-tight mb-6">
+                  Bridge the Trust &<br /><span style={goldText}>Execution Gap</span>
+                </h3>
+                <p className="text-[#F5F0E8]/50 text-base leading-relaxed">
+                  Our mission is to bridge the trust and execution gap in film production — connecting production houses with reliable, verified professionals and providing end-to-end facilitation support across Madhya Pradesh.
+                </p>
+              </div>
+            </FadeIn>
+
+            {/* Vision */}
+            <FadeIn delay={0.15}>
+              <div className="relative p-10 h-full overflow-hidden group" style={{ background: 'rgba(201,168,76,0.025)' }}>
+                <div className="absolute top-0 left-0 right-0 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"
+                  style={{ background: 'linear-gradient(to right, #C9A84C, transparent)' }} />
+                {/* ghost word */}
+                <span className="absolute bottom-4 right-4 font-display font-bold select-none pointer-events-none leading-none"
+                  style={{ fontSize: 'clamp(60px,8vw,100px)', color: 'rgba(201,168,76,0.06)' }}>VISION</span>
+
+                <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-5">Our Long-Term Vision</p>
+                <h3 className="font-display font-bold text-3xl md:text-4xl text-[#F5F0E8] leading-tight mb-6">
+                  A Globally <span style={goldText}>Competitive</span><br />Film Destination
+                </h3>
+                <p className="text-[#F5F0E8]/50 text-base leading-relaxed mb-4">
+                  FilmIndustryMP aims to build long-term confidence, encouraging production houses to repeatedly choose Madhya Pradesh for feature films, web series, OTT content, television shows, commercials, and international productions.
+                </p>
+                <p className="text-[#F5F0E8]/40 text-sm leading-relaxed">
+                  Through professionalism, transparency, and institutional trust, we are committed to positioning Madhya Pradesh as a film-friendly, dependable, and globally competitive production destination.
+                </p>
+              </div>
+            </FadeIn>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* Bottom gold line */}
+      <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
+
     </main>
   )
 }

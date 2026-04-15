@@ -17,6 +17,7 @@ import { SubsidyEditor } from '@/components/admin/subsidy-editor'
 import { GalleryManager } from '@/components/admin/gallery-manager'
 import AboutManager from '@/components/admin/about-manager'
 import PromotionManager from '@/components/admin/promotion-manager'
+import { GuideManager } from '@/components/admin/guide-manager'
 import { SocialManager } from '@/components/admin/social-manager'
 import { AccountManager } from '@/components/admin/account-manager'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
@@ -37,6 +38,16 @@ export default function AdminPage() {
     const [visitingCards, setVisitingCards] = useState<any[]>([])
     const [galleryCount, setGalleryCount] = useState(0)
     const [loading, setLoading] = useState(true)
+    const [authChecked, setAuthChecked] = useState(false)
+
+    useEffect(() => {
+        fetch('/api/auth/verify-token')
+            .then(res => {
+                if (!res.ok) window.location.replace('/login')
+                else setAuthChecked(true)
+            })
+            .catch(() => window.location.replace('/login'))
+    }, [])
 
     const fetchDocuments = async () => {
         try {
@@ -60,6 +71,7 @@ export default function AdminPage() {
     }
 
     useEffect(() => {
+        if (!authChecked) return
         const fetchData = async () => {
             try {
                 const [contactsData, applicationsData] = await Promise.all([
@@ -76,7 +88,7 @@ export default function AdminPage() {
             }
         }
         fetchData()
-    }, [])
+    }, [authChecked])
 
     if (loading) {
         return (
@@ -221,6 +233,20 @@ export default function AdminPage() {
                                         <DocumentList documents={forms} onUpdate={fetchDocuments} />
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Guides Section */}
+                        <Card className="border-none shadow-sm ring-1 ring-slate-200 rounded-3xl overflow-hidden">
+                            <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
+                                <CardTitle className="text-2xl font-bold flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">📚</div>
+                                    Guide PDFs
+                                    <span className="text-sm font-normal text-slate-400 ml-2">— Services page download buttons</span>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-8">
+                                <GuideManager />
                             </CardContent>
                         </Card>
 

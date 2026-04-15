@@ -2,76 +2,118 @@
 
 import { motion } from 'framer-motion'
 
+const BUTTONS = [
+  { label: 'Film Shooting Guide',        href: '/forms/film-shooting-guide-mp.pdf',  gold: true  },
+  { label: 'Movie Promotion Guide',       href: '/forms/film-promotion-guide-mp.pdf', gold: false },
+  { label: 'Theatre Advertisement Guide', href: '/forms/theatre-advertisement-guide-mp.pdf', gold: false },
+  { label: 'Celebrity Management Guide',  href: '/forms/celebrity-management-guide-mp.pdf',  gold: false },
+  { label: 'Subsidy Guide',               href: '/forms/subsidy-guide-mp.pdf',         gold: false },
+]
+
 export function HeroSection() {
   return (
-    <section className="relative w-full h-auto aspect-video sm:aspect-auto sm:h-[80vh] md:h-[85vh] lg:h-[90vh] overflow-hidden bg-black">
+    <section className="relative w-full overflow-hidden bg-black aspect-video sm:aspect-auto sm:h-screen sm:min-h-150">
 
-      {/* VIDEO */}
+      {/* VIDEO — top-anchored on mobile, contained on desktop */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover sm:object-center"
+        preload="auto"
+        className="absolute inset-0 w-full h-full object-cover object-center"
       >
         <source src="/newhero.mp4" type="video/mp4" />
       </video>
 
-      {/* GRADIENT OVER VIDEO */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      {/* Gradient — heavier at bottom */}
+      <div className="absolute inset-0 bg-linear-to-t from-black/95 via-black/30 to-black/5" />
+      {/* Left edge fade */}
+      <div className="absolute inset-0 bg-linear-to-r from-black/60 via-transparent to-transparent" />
 
-      {/* BUTTONS */}
-      <motion.div
-        className="absolute bottom-4 sm:bottom-12 left-0 sm:left-1/2 sm:-translate-x-1/2 z-10 flex flex-row justify-center items-center gap-1.5 sm:gap-6 w-full px-2 sm:px-0 sm:w-auto overflow-x-auto no-scrollbar"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
-      >
-
-        {/* FILM SHOOTING GUIDE */}
-        <motion.a
-          href="/forms/film-shooting-guide-mp.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-auto text-center px-3 sm:px-8 py-2 sm:py-4 rounded-full bg-[#8B6F47] text-white font-semibold text-[10px] sm:text-lg shadow-lg hover:bg-[#A8895C] transition flex items-center justify-center whitespace-nowrap"
+      {/* ── MOBILE: text inside video area (16:9 anchor) ── */}
+      <div className="sm:hidden absolute top-0 left-0 w-full z-10 pointer-events-none" style={{ aspectRatio: '16/9' }}>
+        <div className="absolute inset-x-0 bottom-0 h-20"
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }} />
+        <motion.div
+          className="absolute bottom-0 left-0 px-5 pb-3 pointer-events-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.9, delay: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
         >
-          Film Shooting Guide
-        </motion.a>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="h-px w-5 bg-[#C9A84C]" />
+            <span className="text-[#C9A84C] text-[8px]">✦</span>
+            <span className="text-[#F5F0E8]/50 text-[8px] tracking-[0.4em] uppercase font-medium">Madhya Pradesh — The Heart of India</span>
+            <span className="text-[#C9A84C] text-[8px]">✦</span>
+            <span className="h-px w-5 bg-[#C9A84C]" />
+          </div>
+          <p className="font-display font-bold text-sm max-w-60 leading-snug"
+            style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+            Apna Madhya Pradesh<br />Sabka Madhya Pradesh
+          </p>
+        </motion.div>
+      </div>
 
-        {/* PAMPHLETS */}
-        <motion.a
-          href="/pamphlets"
-          className="w-auto text-center px-3 sm:px-8 py-2 sm:py-4 rounded-full bg-[#3E2723] text-white font-semibold text-[10px] sm:text-lg shadow-lg hover:bg-[#4e342e] transition flex items-center justify-center whitespace-nowrap"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.9 }}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          View Pamphlets
-        </motion.a>
 
-        {/* FILM PROMOTION GUIDE */}
-        <motion.a
-          href="/forms/film-promotion-guide-mp.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-auto text-center px-3 sm:px-8 py-2 sm:py-4 rounded-full bg-[#2D5016] text-white font-semibold text-[10px] sm:text-lg shadow-lg hover:bg-[#3b6b1f] transition flex items-center justify-center whitespace-nowrap"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.1 }}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          Film Promotion Guide
-        </motion.a>
+      {/* ── DESKTOP: tagline top-left + buttons horizontal bottom ── */}
+      <div className="hidden sm:block absolute bottom-0 left-0 right-0 z-10 px-12 lg:px-16 pb-10">
+        <div className="max-w-7xl mx-auto">
 
-      </motion.div>
+          {/* Tagline — left aligned */}
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <span className="h-px w-8 bg-[#C9A84C]" />
+              <span className="text-[#C9A84C] text-xs">✦</span>
+              <span className="text-[#F5F0E8]/45 text-[10px] tracking-[0.45em] uppercase font-medium">Madhya Pradesh — The Heart of India</span>
+              <span className="text-[#C9A84C] text-xs">✦</span>
+              <span className="h-px w-8 bg-[#C9A84C]" />
+            </div>
+            <p className="font-display font-bold text-2xl max-w-sm leading-snug"
+              style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              Apna Madhya Pradesh<br />Sabka Madhya Pradesh
+            </p>
+          </motion.div>
+
+          {/* Divider */}
+          <div className="h-px w-full mb-5" style={{ background: 'linear-gradient(to right, rgba(201,168,76,0.4), rgba(201,168,76,0.1), transparent)' }} />
+
+          {/* Horizontal guide buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            {BUTTONS.map(({ label, href, gold }, i) => (
+              <motion.a
+                key={label}
+                href={href}
+                target={href.startsWith('/forms') ? '_blank' : undefined}
+                rel={href.startsWith('/forms') ? 'noopener noreferrer' : undefined}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 + i * 0.08 }}
+                className={`flex items-center gap-2 px-5 py-2.5 text-[10px] tracking-[0.2em] uppercase font-semibold whitespace-nowrap transition-all duration-300 ${
+                  gold
+                    ? 'bg-[#C9A84C] text-black hover:bg-[#E8C97A]'
+                    : 'bg-black/60 backdrop-blur-sm text-white/70 border border-white/10 hover:border-[#C9A84C]/60 hover:text-[#C9A84C]'
+                }`}
+              >
+                <span className={`w-1 h-1 rounded-full shrink-0 ${gold ? 'bg-black' : 'bg-[#C9A84C]'}`} />
+                {label}
+              </motion.a>
+            ))}
+          </div>
+
+        </div>
+      </div>
+
+      {/* Bottom gold line */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: 'linear-gradient(90deg, #C9A84C60, transparent 60%)' }}
+      />
     </section>
   )
 }

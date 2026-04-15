@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
+
+const BACKEND_URL = process.env.INTERNAL_API_URL || 'https://film-api.indusanalytics.co.in/api'
 
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData()
-        const file = formData.get('file') as File
+        const file = formData.get('file') as File | null
         const title = formData.get('title') as string
         const buttonLabel = formData.get('buttonLabel') as string
         const type = formData.get('type') as string
+        const serviceKey = formData.get('serviceKey') as string | null
 
         if (!file) {
             return NextResponse.json(
@@ -21,11 +21,13 @@ export async function POST(request: NextRequest) {
         // Validate file type
         const allowedTypes: Record<string, string[]> = {
             form: ['application/pdf'],
+            guide: ['application/pdf'],
             pamphlet: ['image/png', 'image/jpeg', 'image/jpg'],
             visiting_card: ['image/png', 'image/jpeg', 'image/jpg'],
         }
 
-        if (!allowedTypes[type]?.includes(file.type)) {
+        const isPDFType = (type === 'form' || type === 'guide') && file.name.toLowerCase().endsWith('.pdf')
+        if (!isPDFType && !allowedTypes[type]?.includes(file.type)) {
             return NextResponse.json(
                 { error: 'Invalid file type for this category' },
                 { status: 400 }
@@ -41,57 +43,35 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Create upload directory if it doesn't exist
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads', type + 's')
-        if (!existsSync(uploadDir)) {
-            await mkdir(uploadDir, { recursive: true })
-        }
+        // Build proxy form data for backend
+        const proxyForm = new FormData()
+        proxyForm.append('file', file, file.name)
+        proxyForm.append('type', type)
+        proxyForm.append('title', title || file.name)
+        proxyForm.append('buttonLabel', buttonLabel || getDefaultButtonLabel(type))
+        if (serviceKey) proxyForm.append('serviceKey', serviceKey)
 
-        // Generate unique filename
-        const timestamp = Date.now()
-        const ext = path.extname(file.name)
-        const filename = `${timestamp}${ext}`
-        const filepath = path.join(uploadDir, filename)
-
-        // Convert file to buffer and save
-        const bytes = await file.arrayBuffer()
-        const buffer = Buffer.from(bytes)
-        await writeFile(filepath, buffer)
-
-        // Create document metadata
-        const document = {
-            id: timestamp,
-            title: title || file.name,
-            buttonLabel: buttonLabel || getDefaultButtonLabel(type),
-            type,
-            filename,
-            filepath: `/uploads/${type}s/${filename}`,
-            filesize: file.size,
-            uploadedAt: new Date().toISOString(),
-        }
-
-        // Save to documents.json
-        const documentsPath = path.join(process.cwd(), 'data', 'documents.json')
-        const documentsDir = path.dirname(documentsPath)
-
-        if (!existsSync(documentsDir)) {
-            await mkdir(documentsDir, { recursive: true })
-        }
-
-        let documents = []
-        if (existsSync(documentsPath)) {
-            const { readFile } = await import('fs/promises')
-            const data = await readFile(documentsPath, 'utf-8')
-            documents = JSON.parse(data)
-        }
-
-        documents.push(document)
-        await writeFile(documentsPath, JSON.stringify(documents, null, 2))
-
-        return NextResponse.json({
-            success: true,
-            document,
+        const res = await fetch(`${BACKEND_URL}/documents/upload`, {
+            method: 'POST',
+            body: proxyForm,
         })
+
+        if (!res.ok) {
+            const err = await res.text()
+            console.error('Backend document upload error:', err)
+            return NextResponse.json(
+                { error: 'Failed to upload file' },
+                { status: 500 }
+            )
+        }
+
+        const data = await res.json()
+        // Normalize filepath to include backend base URL if it's a relative path
+        if (data.document && data.document.filepath && !data.document.filepath.startsWith('http')) {
+            data.document.filepath = `https://film-api.indusanalytics.co.in${data.document.filepath}`
+        }
+
+        return NextResponse.json(data)
     } catch (error) {
         console.error('Upload error:', error)
         return NextResponse.json(

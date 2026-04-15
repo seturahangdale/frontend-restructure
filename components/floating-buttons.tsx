@@ -35,7 +35,7 @@ export function FloatingButtons() {
         }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-40 bg-[#25D366] hover:bg-[#1ebe5d]text-white p-3 sm:p-3.5 md:p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow touch-manipulation relative"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-40 bg-[#25D366] hover:bg-[#1ebe5d] text-white p-3 sm:p-3.5 md:p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow touch-manipulation"
         aria-label="Contact via WhatsApp"
       >
         {/* Pulse ring */}

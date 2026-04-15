@@ -1,66 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, readFile, mkdir } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
 
-const GALLERY_PATH = path.join(process.cwd(), 'data', 'gallery.json')
-const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'gallery')
+const BACKEND_URL = process.env.INTERNAL_API_URL || 'https://film-api.indusanalytics.co.in/api'
 
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData()
-        const file = formData.get('file') as File
-        const title = formData.get('title') as string
-        const category = formData.get('category') as string
-        const description = formData.get('description') as string
-        const tagsString = formData.get('tags') as string
-        const tags = tagsString ? tagsString.split(',').map(t => t.trim()) : []
 
-        if (!file) {
+        // Proxy the multipart form data directly to the backend
+        // The backend expects: image, title, location, category, year, description
+        // The frontend may send: file, title, category, description, tags
+        // We remap 'file' -> 'image' and handle missing fields
+        const file = formData.get('file') as File | null
+        const image = formData.get('image') as File | null
+        const actualFile = image ?? file
+
+        if (!actualFile) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
         }
 
-        // Validate file type (images only)
-        if (!file.type.startsWith('image/')) {
+        if (!actualFile.type.startsWith('image/')) {
             return NextResponse.json({ error: 'Only images are allowed' }, { status: 400 })
         }
 
-        // Ensure upload directory exists
-        if (!existsSync(UPLOAD_DIR)) {
-            await mkdir(UPLOAD_DIR, { recursive: true })
-        }
+        const proxyForm = new FormData()
+        proxyForm.append('image', actualFile, actualFile.name)
+        proxyForm.append('title', (formData.get('title') as string) || 'Untitled')
+        proxyForm.append('location', (formData.get('location') as string) || '')
+        proxyForm.append('category', (formData.get('category') as string) || 'others')
 
-        const buffer = Buffer.from(await file.arrayBuffer())
-        const filename = `${Date.now()}-${file.name.replace(/\s+/g, '_')}`
-        const filepath = path.join(UPLOAD_DIR, filename)
-        const publicPath = `/uploads/gallery/${filename}`
+        const year = formData.get('year') as string | null
+        if (year) proxyForm.append('year', year)
 
-        await writeFile(filepath, buffer)
+        const description = formData.get('description') as string | null
+        if (description) proxyForm.append('description', description)
 
-        // Update gallery.json
-        let galleryData: { categories: any[], items: any[] } = { categories: [], items: [] }
-        if (existsSync(GALLERY_PATH)) {
-            const fileData = await readFile(GALLERY_PATH, 'utf-8')
-            galleryData = JSON.parse(fileData)
-        }
-
-        const newItem = {
-            id: Date.now().toString(),
-            title: title || 'Untitled',
-            category: category || 'others',
-            description: description || '',
-            src: publicPath,
-            tags: tags,
-            uploadedAt: new Date().toISOString()
-        }
-
-        galleryData.items.push(newItem)
-        await writeFile(GALLERY_PATH, JSON.stringify(galleryData, null, 2))
-
-        return NextResponse.json({
-            success: true,
-            item: newItem
+        const res = await fetch(`${BACKEND_URL}/gallery/upload`, {
+            method: 'POST',
+            body: proxyForm,
         })
+
+        if (!res.ok) {
+            const err = await res.text()
+            console.error('Backend gallery upload error:', err)
+            return NextResponse.json({ error: 'Failed to upload gallery image' }, { status: 500 })
+        }
+
+        const data = await res.json()
+        // Normalize response: backend returns { success, item } with item.imageUrl
+        // Frontend expects { success, item } with item.src
+        if (data.item && data.item.imageUrl && !data.item.src) {
+            data.item.src = `https://film-api.indusanalytics.co.in${data.item.imageUrl}`
+        }
+
+        return NextResponse.json(data)
     } catch (error) {
         console.error('Gallery upload error:', error)
         return NextResponse.json(

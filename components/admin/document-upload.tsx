@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Upload, X, FileText, Image as ImageIcon, CreditCard, Loader2, Pencil, Trash2, Eye } from 'lucide-react'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Upload, Loader2 } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
 
 interface Document {
@@ -17,7 +17,7 @@ interface Document {
 }
 
 interface DocumentUploadProps {
-    type: 'form' | 'pamphlet' | 'visiting_card'
+    type: 'form' | 'pamphlet' | 'visiting_card' | 'guide'
     onUploadSuccess: () => void
 }
 
@@ -28,7 +28,7 @@ export function DocumentUpload({ type, onUploadSuccess }: DocumentUploadProps) {
     const [uploading, setUploading] = useState(false)
     const [error, setError] = useState('')
     const [dragActive, setDragActive] = useState(false)
-    const fileInputRef = useRef<HTMLInputElement>(null)
+
 
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault()
@@ -54,12 +54,13 @@ export function DocumentUpload({ type, onUploadSuccess }: DocumentUploadProps) {
         // Validate file type
         const allowedTypes: Record<string, string[]> = {
             form: ['application/pdf'],
+            guide: ['application/pdf'],
             pamphlet: ['image/png', 'image/jpeg'],
             visiting_card: ['image/png', 'image/jpeg'],
         }
 
         if (!allowedTypes[type].includes(selectedFile.type)) {
-            setError(`Invalid file type. Please upload ${type === 'form' ? 'PDF' : 'PNG/JPEG'} only.`)
+            setError(`Invalid file type. Please upload ${type === 'form' || type === 'guide' ? 'PDF' : 'PNG/JPEG'} only.`)
             return
         }
 
@@ -104,17 +105,15 @@ export function DocumentUpload({ type, onUploadSuccess }: DocumentUploadProps) {
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
                 className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${dragActive
                         ? 'border-[#8B6B3E] bg-[#8B6B3E]/5'
                         : 'border-gray-300 hover:border-[#8B6B3E] hover:bg-gray-50'
                     }`}
             >
                 <input
-                    ref={fileInputRef}
                     type="file"
-                    className="hidden"
-                    accept={type === 'form' ? '.pdf' : '.png,.jpg,.jpeg'}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    accept={type === 'form' || type === 'guide' ? '.pdf,application/pdf' : '.png,.jpg,.jpeg,image/png,image/jpeg'}
                     onChange={(e) => e.target.files && handleFileSelect(e.target.files[0])}
                 />
 
@@ -123,7 +122,7 @@ export function DocumentUpload({ type, onUploadSuccess }: DocumentUploadProps) {
                     {file ? file.name : 'Click or drag file to upload'}
                 </p>
                 <p className="text-sm text-gray-500">
-                    {type === 'form' ? 'PDF files only' : 'PNG or JPEG images'} • Max 10MB
+                    {type === 'form' || type === 'guide' ? 'PDF files only' : 'PNG or JPEG images'} • Max 10MB
                 </p>
             </div>
 
@@ -166,7 +165,7 @@ export function DocumentUpload({ type, onUploadSuccess }: DocumentUploadProps) {
                         <button
                             onClick={handleUpload}
                             disabled={uploading}
-                            className="flex-1 px-6 py-3 bg-gradient-to-r from-[#8B6B3E] to-[#B8860B] text-white rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="flex-1 px-6 py-3 bg-linear-to-r from-[#8B6B3E] to-[#B8860B] text-white rounded-lg font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             {uploading ? (
                                 <>

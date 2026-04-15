@@ -1,57 +1,208 @@
-import type { Metadata } from 'next'
-import { HeroSection } from "@/components/hero-section"
-import { TextBanner } from "@/components/text-banner"
-import { MPProjectSection } from "@/components/mp-project-section"
-import { BenefitsSection } from "@/components/benefits-section"
-import {
-  AboutPreviewSection,
-  GalleryPreviewSection,
-} from "@/components/home-preview-sections"
-import { Footer } from "@/components/footer"
-import { FloatingButtons } from "@/components/floating-buttons"
+'use client'
 
-export const metadata: Metadata = {
-  alternates: { canonical: 'https://filmindustrymp.com' },
-}
+import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Film Industry MP',
-  url: 'https://filmindustrymp.com',
-  logo: 'https://filmindustrymp.com/logo.png',
-  description:
-    'Film Industry MP is your complete production partner in Madhya Pradesh — locations, subsidies, permits, line producers, and crew.',
-  address: {
-    '@type': 'PostalAddress',
-    addressRegion: 'Madhya Pradesh',
-    addressCountry: 'IN',
-  },
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    telephone: '+91-919977110001',
-    areaServed: 'IN',
-    availableLanguage: ['English', 'Hindi'],
-  },
-  sameAs: [],
-}
-
-export default function Home() {
+export default function Portal() {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <HeroSection />
-      <TextBanner />
-      <MPProjectSection />
-      <BenefitsSection />
-      <AboutPreviewSection />
-      <GalleryPreviewSection />
-      <Footer />
-      <FloatingButtons />
-    </>
+    <main className="min-h-screen bg-[#050505] flex flex-col items-center justify-center relative overflow-hidden">
+
+      {/* ── Ambient background orbs ── */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full opacity-[0.07]"
+        style={{ background: 'radial-gradient(circle, #C9A84C, transparent 70%)' }} />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full opacity-[0.05]"
+        style={{ background: 'radial-gradient(circle, #C9A84C, transparent 70%)' }} />
+
+      {/* ── Subtle film grain texture overlay ── */}
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundSize: '200px' }} />
+
+      {/* ── Horizontal gold divider lines ── */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#C9A84C]/60 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#C9A84C]/30 to-transparent" />
+
+      {/* ── Vertical side accents ── */}
+      <div className="absolute top-8 left-8 w-px h-16 bg-linear-to-b from-transparent to-[#C9A84C]/40" />
+      <div className="absolute top-8 left-8 h-px w-16 bg-linear-to-r from-[#C9A84C]/40 to-transparent" />
+      <div className="absolute bottom-8 right-8 w-px h-16 bg-linear-to-t from-transparent to-[#C9A84C]/40" />
+      <div className="absolute bottom-8 right-8 h-px w-16 bg-linear-to-l from-[#C9A84C]/40 to-transparent" />
+
+      {/* ── Header ── */}
+      <motion.div
+        className="text-center mb-14 z-10 px-6"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: [0.25, 0.4, 0.25, 1] }}
+      >
+        {/* Eyebrow */}
+        <motion.p
+          className="text-[9px] tracking-[0.7em] text-[#C9A84C] uppercase mb-5"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.8 }}
+        >
+          Government of Madhya Pradesh
+        </motion.p>
+
+        {/* Main title */}
+        <h1 className="font-display font-bold text-[#F5F0E8] text-4xl md:text-6xl lg:text-7xl leading-tight tracking-tight">
+          Madhya Pradesh
+          <br />
+          <span style={{
+            background: 'linear-gradient(135deg, #C9A84C 0%, #F0D87A 40%, #C9A84C 80%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}>
+            Film Industry
+          </span>
+        </h1>
+
+        {/* Decorative divider */}
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <div className="h-px w-16 bg-linear-to-r from-transparent to-[#C9A84C]/60" />
+          <span className="text-[#C9A84C] text-xs">✦</span>
+          <div className="h-px w-16 bg-linear-to-l from-transparent to-[#C9A84C]/60" />
+        </div>
+
+        <motion.p
+          className="text-[#F5F0E8]/30 text-xs tracking-[0.3em] uppercase mt-4"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.8 }}
+        >
+          Choose your portal
+        </motion.p>
+      </motion.div>
+
+      {/* ── Portal Cards ── */}
+      <div className="flex flex-col md:flex-row gap-5 z-10 px-6 w-full max-w-4xl">
+
+        {/* ── Card 1: Film Facilitation ── */}
+        <motion.div
+          className="flex-1"
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
+        >
+          <Link href="/film-industry" className="group block relative overflow-hidden" style={{ minHeight: '320px' }}>
+            {/* Card background */}
+            <div className="absolute inset-0 transition-all duration-700"
+              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.04) 100%)' }} />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.08) 100%)' }} />
+
+            {/* Border */}
+            <div className="absolute inset-0 border border-[#C9A84C]/50 group-hover:border-[#C9A84C] transition-colors duration-500" />
+
+            {/* Top gold line always visible, brightens on hover */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-[#C9A84C]/60 to-transparent group-hover:via-[#F0D87A] transition-all duration-500" />
+
+            {/* Corner accents */}
+            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center justify-center p-12 h-full" style={{ minHeight: '320px' }}>
+              <motion.div className="mb-5 relative" whileHover={{ rotate: 45, scale: 1.2 }} transition={{ duration: 0.4 }}>
+                <span className="text-[#C9A84C] text-4xl block" style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.6))' }}>✦</span>
+              </motion.div>
+
+              <p className="text-[8px] tracking-[0.6em] text-[#C9A84C]/80 uppercase mb-3">Portal 01</p>
+
+              <h2 className="font-display font-bold text-[#F5F0E8] text-2xl md:text-3xl tracking-wide text-center mb-4 group-hover:text-[#C9A84C] transition-colors duration-300">
+                Film Facilitation
+              </h2>
+
+              <div className="h-px w-16 bg-[#C9A84C]/50 mb-4 group-hover:w-24 group-hover:bg-[#C9A84C] transition-all duration-500" />
+
+              <p className="text-[#F5F0E8]/60 text-[10px] tracking-[0.25em] uppercase text-center leading-relaxed group-hover:text-[#F5F0E8]/80 transition-colors duration-300">
+                Locations · Subsidies<br />Line Production · Permits
+              </p>
+
+              <div className="mt-8 flex items-center gap-3 text-[#C9A84C]/80 group-hover:text-[#C9A84C] transition-all duration-300">
+                <span className="text-[9px] tracking-[0.4em] uppercase font-semibold">Enter</span>
+                <span className="h-px w-8 bg-current group-hover:w-14 transition-all duration-400" />
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+        {/* ── Divider (desktop) ── */}
+        <motion.div
+          className="hidden md:flex flex-col items-center justify-center gap-2"
+          initial={{ opacity: 0, scaleY: 0 }}
+          animate={{ opacity: 1, scaleY: 1 }}
+          transition={{ duration: 1, delay: 0.7 }}
+        >
+          <div className="w-px h-16 bg-linear-to-b from-transparent via-[#C9A84C]/30 to-transparent" />
+          <span className="text-[#C9A84C]/30 text-[10px] tracking-widest">OR</span>
+          <div className="w-px h-16 bg-linear-to-b from-transparent via-[#C9A84C]/30 to-transparent" />
+        </motion.div>
+
+        {/* ── Card 2: Film Pathshala ── */}
+        <motion.div
+          className="flex-1"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
+        >
+          <Link href="/film-pathshala" className="group block relative overflow-hidden" style={{ minHeight: '320px' }}>
+            {/* Card background */}
+            <div className="absolute inset-0 transition-all duration-700"
+              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.04) 100%)' }} />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.08) 100%)' }} />
+
+            {/* Border */}
+            <div className="absolute inset-0 border border-[#C9A84C]/50 group-hover:border-[#C9A84C] transition-colors duration-500" />
+
+            {/* Top line */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-[#C9A84C]/60 to-transparent group-hover:via-[#F0D87A] transition-all duration-500" />
+
+            {/* Corner accents */}
+            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col items-center justify-center p-12 h-full" style={{ minHeight: '320px' }}>
+              <motion.div className="mb-5 relative" whileHover={{ rotate: 45, scale: 1.2 }} transition={{ duration: 0.4 }}>
+                <span className="text-[#C9A84C] text-4xl block" style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.6))' }}>✦</span>
+              </motion.div>
+
+              <p className="text-[8px] tracking-[0.6em] text-[#C9A84C]/80 uppercase mb-3">Portal 02</p>
+
+              <h2 className="font-display font-bold text-[#F5F0E8] text-2xl md:text-3xl tracking-wide text-center mb-4 group-hover:text-[#C9A84C] transition-colors duration-300">
+                Film पाठशाला
+              </h2>
+
+              <div className="h-px w-16 bg-[#C9A84C]/50 mb-4 group-hover:w-24 group-hover:bg-[#C9A84C] transition-all duration-500" />
+
+              <p className="text-[#F5F0E8]/60 text-[10px] tracking-[0.25em] uppercase text-center leading-relaxed group-hover:text-[#F5F0E8]/80 transition-colors duration-300">
+                Learn · Train · Grow<br />Film Education Platform
+              </p>
+
+              <div className="mt-8 flex items-center gap-3 text-[#C9A84C]/80 group-hover:text-[#C9A84C] transition-all duration-300">
+                <span className="text-[9px] tracking-[0.4em] uppercase font-semibold">Enter</span>
+                <span className="h-px w-8 bg-current group-hover:w-14 transition-all duration-400" />
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+
+      </div>
+
+      {/* ── Footer note ── */}
+      <motion.p
+        className="mt-12 text-[8px] tracking-[0.4em] text-white/15 uppercase z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 1 }}
+      >
+        © 2026 Film Industry MP · All Rights Reserved
+      </motion.p>
+
+    </main>
   )
 }

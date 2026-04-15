@@ -2,352 +2,270 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ScrollReveal } from '@/components/scroll-reveal'
-import {
-  Instagram,
-  Youtube,
-  Facebook,
-  Linkedin,
-  Twitter,
-  Sparkles,
-  Video,
-  MapPin,
-  Landmark,
-  Church,
-  Trees,
-  Award,
-  Target,
-  Loader2,
-  Globe
-} from 'lucide-react'
+import { Instagram, Youtube, Facebook, Linkedin, Twitter, Globe, Play } from 'lucide-react'
 import { apiClient } from '@/lib/api-client'
+import Link from 'next/link'
+
+const goldText = {
+  background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)',
+  WebkitBackgroundClip: 'text' as const,
+  WebkitTextFillColor: 'transparent' as const,
+  backgroundClip: 'text' as const,
+}
+
+const CATEGORY_META: Record<string, { icon: string; label: string; sub: string }> = {
+  information: { icon: '📢', label: 'Information',  sub: 'Updates & awareness content'   },
+  location:    { icon: '📍', label: 'Location',     sub: 'MP filming destinations'        },
+  event:       { icon: '🎬', label: 'Event',        sub: 'Festivals, shoots & highlights' },
+}
+
+const getIcon = (platform: string) => {
+  switch (platform) {
+    case 'instagram': return Instagram
+    case 'facebook':  return Facebook
+    case 'youtube':   return Youtube
+    case 'linkedin':  return Linkedin
+    case 'twitter':   return Twitter
+    default:          return Globe
+  }
+}
+
+const getPlatformColor = (platform: string) => {
+  switch (platform) {
+    case 'instagram': return '#E1306C'
+    case 'facebook':  return '#1877F2'
+    case 'youtube':   return '#FF0000'
+    case 'linkedin':  return '#0A66C2'
+    case 'twitter':   return '#ffffff'
+    default:          return '#C9A84C'
+  }
+}
+
+function VideoGrid({ videos }: { videos: any[] }) {
+  if (!videos.length) return (
+    <p className="text-[#F5F0E8]/20 text-xs py-10 text-center tracking-widest uppercase">
+      No videos in this section yet
+    </p>
+  )
+  return (
+    <div className={`grid gap-4 ${
+      videos.length === 1 ? 'grid-cols-1 max-w-2xl' :
+      videos.length === 2 ? 'grid-cols-1 md:grid-cols-2' :
+      'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+    }`}>
+      {videos.map((video: any, i: number) => (
+        <motion.div key={i} className="group relative overflow-hidden"
+          style={{ border: '1px solid rgba(201,168,76,0.1)' }}
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.07 }}
+          whileHover={{ borderColor: 'rgba(201,168,76,0.3)' }}
+        >
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#C9A84C] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left z-10" />
+          <div className="aspect-video bg-black">
+            <iframe src={video.url} title={video.title || `Video ${i + 1}`}
+              allow="autoplay; encrypted-media" allowFullScreen className="w-full h-full" />
+          </div>
+          {video.title && (
+            <div className="px-4 py-2.5" style={{ background: 'rgba(201,168,76,0.04)' }}>
+              <p className="text-[#F5F0E8]/50 text-sm tracking-wide truncate">{video.title}</p>
+            </div>
+          )}
+        </motion.div>
+      ))}
+    </div>
+  )
+}
 
 export default function SocialMediaPage() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData]       = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState('information')
 
   useEffect(() => {
-    const fetchSocial = async () => {
-      try {
-        const res = await apiClient.getSocialData()
-        setData(res)
-      } catch (error) {
-        console.error('Failed to fetch social:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchSocial()
+    apiClient.getSocialData()
+      .then(setData)
+      .catch(console.error)
+      .finally(() => setLoading(false))
   }, [])
 
-  const contentSections = [
-    {
-      title: 'Cinematic Locations',
-      icon: MapPin,
-      color: 'from-blue-500 to-cyan-500',
-      items: [
-        'Forests, wildlife reserves, rivers, waterfalls, hills, and lakes',
-        'Urban cityscapes and rural village settings',
-        'Terrains for historical, contemporary, and fantasy narratives',
-      ],
-    },
-    {
-      title: 'Heritage & Palaces',
-      icon: Landmark,
-      color: 'from-purple-500 to-pink-500',
-      items: [
-        'Historic forts, palaces, stepwells, and monuments',
-        'UNESCO World Heritage Sites',
-        'Royal architecture for period and grand productions',
-      ],
-    },
-    {
-      title: 'Temples & Spiritual Destinations',
-      icon: Church,
-      color: 'from-amber-500 to-orange-500',
-      items: [
-        'Ancient temples and sacred sites',
-        'Pilgrimage destinations with cultural depth',
-        'Locations for mythological and devotional storytelling',
-      ],
-    },
-    {
-      title: 'Wildlife & Natural Reserves',
-      icon: Trees,
-      color: 'from-green-500 to-emerald-500',
-      items: [
-        'National parks and wildlife sanctuaries',
-        'Eco-sensitive forest landscapes',
-        'Shooting feasibility & permission guidelines',
-      ],
-    },
-    {
-      title: 'Film Subsidy & Government Support',
-      icon: Award,
-      color: 'from-red-500 to-rose-500',
-      items: [
-        'Film shooting subsidy policies',
-        'Government incentives & reimbursements',
-        'Single-window permission processes',
-      ],
-    },
-  ]
+  if (loading || !data) return (
+    <div className="min-h-screen bg-[#080808] flex items-center justify-center">
+      <div className="w-10 h-10 border border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
+    </div>
+  )
 
-  const getIcon = (platform: string) => {
-    switch (platform) {
-      case 'instagram': return Instagram
-      case 'facebook': return Facebook
-      case 'youtube': return Youtube
-      case 'linkedin': return Linkedin
-      case 'twitter': return Twitter
-      default: return Globe
-    }
-  }
-
-  const getColors = (platform: string) => {
-    switch (platform) {
-      case 'instagram': return { color: 'text-pink-600', gradient: 'from-pink-500 to-rose-500' }
-      case 'facebook': return { color: 'text-blue-600', gradient: 'from-blue-500 to-blue-700' }
-      case 'youtube': return { color: 'text-red-600', gradient: 'from-red-500 to-red-700' }
-      case 'linkedin': return { color: 'text-blue-700', gradient: 'from-blue-600 to-blue-800' }
-      case 'twitter': return { color: 'text-foreground', gradient: 'from-gray-700 to-black' }
-      default: return { color: 'text-slate-600', gradient: 'from-slate-500 to-slate-700' }
-    }
-  }
-
-  if (loading || !data) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <Loader2 className="w-12 h-12 animate-spin text-accent mb-4" />
-        <p className="text-slate-500 font-medium tracking-widest uppercase text-sm">Loading Social Presence...</p>
-      </div>
-    )
-  }
+  const categories: any[] = data.videoCategories || []
+  const socialLinks: any[] = data.socialLinks || []
+  const activeCategory = categories.find((c: any) => c.id === activeTab)
 
   return (
-    <main className="min-h-screen pt-20 overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-28 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white overflow-hidden">
-        {/* Animated background */}
-        <div className="absolute inset-0 pointer-events-none opacity-20">
-          {[...Array(15)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [0, -40, 0],
-                opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: 5 + i * 0.3,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: i * 0.2,
-              }}
-            >
-              <Video className="w-8 h-8 text-white/30" />
-            </motion.div>
-          ))}
-        </div>
+    <main className="min-h-screen bg-[#080808] pt-24 pb-32">
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center">
+      {/* Gold top line */}
+      <div className="fixed top-0 left-0 right-0 h-px z-50"
+        style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+
+        {/* ── HERO ── */}
+        <motion.div className="text-center mb-16 pt-6"
+          initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+        >
+          <p className="text-[10px] tracking-[0.6em] text-[#C9A84C] uppercase font-medium mb-5">
+            Digital Awareness Initiative
+          </p>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <span className="h-px w-12" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
+            <span className="text-[#C9A84C] text-xs">✦</span>
+            <span className="h-px w-12" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
+          </div>
+          <h1 className="font-display font-bold text-[#F5F0E8] text-4xl sm:text-5xl leading-tight mb-4 max-w-3xl mx-auto">
+            Our Digital Awareness &<br />
+            <span style={goldText}>Promotion Initiative</span>
+          </h1>
+          <p className="text-[#F5F0E8]/35 text-sm max-w-xl mx-auto leading-relaxed">
+            FilmIndustryMP showcases Madhya Pradesh as a premier filming destination through cinematic video storytelling.
+          </p>
+        </motion.div>
+
+        {/* ── VIDEO SECTION ── */}
+        {categories.length > 0 && (
+          <section className="mb-20">
+            {/* Category Tabs */}
+            <motion.div className="flex gap-0 mb-10 relative"
+              style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              {categories.map((cat: any) => {
+                const meta = CATEGORY_META[cat.id] || { icon: '▶', label: cat.label, sub: '' }
+                const isActive = activeTab === cat.id
+                return (
+                  <button key={cat.id} onClick={() => setActiveTab(cat.id)}
+                    className="flex-1 flex flex-col items-center gap-1 py-5 px-4 relative transition-all duration-300 group"
+                  >
+                    {isActive && (
+                      <motion.div className="absolute bottom-0 left-0 right-0 h-px"
+                        style={{ background: '#C9A84C' }}
+                        layoutId="activeTab"
+                      />
+                    )}
+                    <div className="flex items-center gap-2">
+                      <span className={`text-sm font-bold tracking-wide transition-colors duration-300 ${
+                        isActive ? 'text-[#C9A84C]' : 'text-[#F5F0E8]/30 group-hover:text-[#F5F0E8]/60'
+                      }`}>{meta.label}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 transition-colors duration-300 ${
+                        isActive
+                          ? 'bg-[rgba(201,168,76,0.15)] text-[#C9A84C]'
+                          : 'bg-[rgba(255,255,255,0.04)] text-[#F5F0E8]/20'
+                      }`}>{cat.videos.length}</span>
+                    </div>
+                    <span className="text-[10px] tracking-widest text-[#F5F0E8]/20 uppercase hidden sm:block">
+                      {meta.sub}
+                    </span>
+                  </button>
+                )
+              })}
+            </motion.div>
+
+            {/* Active Category Videos */}
+            {activeCategory && (
               <motion.div
-                className="inline-flex items-center gap-2 mb-6 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full border border-white/10"
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                key={activeTab}
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
               >
-                <Sparkles className="w-5 h-5 text-yellow-300" />
-                <span className="text-sm font-semibold tracking-wide uppercase">Digital Awareness Initiative</span>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center shrink-0">
+                    <Play className="w-3 h-3 text-white fill-white ml-0.5" />
+                  </div>
+                  <h2 className="font-display font-bold text-[#F5F0E8] text-xl">
+                    {CATEGORY_META[activeCategory.id]?.label || activeCategory.label}
+                    <span className="text-[#C9A84C]/40 text-sm font-normal ml-2">
+                      ({activeCategory.videos.length} {activeCategory.videos.length === 1 ? 'video' : 'videos'})
+                    </span>
+                  </h2>
+                </div>
+                <VideoGrid videos={activeCategory.videos} />
               </motion.div>
-
-              <h1 className="text-4xl md:text-6xl font-display font-bold mb-6 bg-gradient-to-r from-white via-slate-200 to-white bg-clip-text text-transparent">
-                Our Digital Awareness & Promotion Initiative
-              </h1>
-              <p className="text-lg md:text-xl opacity-80 max-w-3xl mx-auto leading-relaxed font-light">
-                FilmIndustryMP aims to create large-scale awareness about Madhya Pradesh
-                as a premier filming destination through digital content, reels, and
-                cinematic video storytelling.
-              </p>
-            </div>
-          </ScrollReveal>
-        </div>
-
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 w-full">
-          <svg viewBox="0 0 1200 120" className="w-full h-16 fill-background">
-            <path d="M0,0 C300,80 900,80 1200,0 L1200,120 L0,120 Z" />
-          </svg>
-        </div>
-      </section>
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* YouTube Video Section */}
-        {data.youtubeUrl && (
-          <ScrollReveal>
-            <motion.div
-              className="relative -mt-16 mb-20 z-10"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-                <iframe
-                  src={data.youtubeUrl}
-                  title="Film Industry MP YouTube"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full"
-                />
-              </div>
-              {/* Decorative glow */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-slate-500/10 via-indigo-500/10 to-slate-500/10 blur-2xl -z-10" />
-            </motion.div>
-          </ScrollReveal>
+            )}
+          </section>
         )}
 
-        {/* What We Promote Section */}
-        <section className="mb-20">
-          <ScrollReveal>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 bg-gradient-to-r from-slate-800 to-slate-400 bg-clip-text text-transparent uppercase tracking-tight">
-                What We Promote Through Digital Content
+        {/* Gold divider */}
+        <div className="h-px mb-16"
+          style={{ background: 'linear-gradient(to right, transparent, #C9A84C40, #C9A84C, #C9A84C40, transparent)' }} />
+
+        {/* ── CONNECT WITH US ── */}
+        {socialLinks.length > 0 && (
+          <section className="mb-16">
+            <motion.div className="text-center mb-10"
+              initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.6 }}
+            >
+              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-2">Follow Us</p>
+              <h2 className="font-display font-bold text-[#F5F0E8] text-3xl">
+                Connect With <span style={goldText}>Us</span>
               </h2>
-              <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
-                Our content strategy focuses on showcasing every aspect that makes
-                Madhya Pradesh a complete, film-friendly production ecosystem.
-              </p>
-            </div>
-          </ScrollReveal>
+            </motion.div>
 
-          {/* Content Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {contentSections.map((section, index) => (
-              <ScrollReveal key={section.title} delay={index * 0.1}>
-                <motion.div
-                  className="relative film-card p-8 overflow-hidden group"
-                  whileHover={{ y: -8, scale: 1.02 }}
-                >
-                  {/* Gradient overlay */}
-                  <motion.div
-                    className={`absolute inset-0 bg-gradient-to-br ${section.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                  />
-
-                  <div className="relative z-10">
-                    <motion.div
-                      className={`inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br ${section.color} text-white mb-4`}
-                      animate={{ rotate: [0, 10, -10, 0] }}
-                      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <section.icon className="w-7 h-7" />
-                    </motion.div>
-
-                    <h3 className="text-2xl font-bold mb-4">{section.title}</h3>
-                    <ul className="space-y-2">
-                      {section.items.map((item, i) => (
-                        <motion.li
-                          key={i}
-                          className="flex items-start gap-2 text-foreground/70"
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <span className="text-accent mt-1">•</span>
-                          <span>{item}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
-              </ScrollReveal>
-            ))}
-          </div>
-        </section>
-
-        {/* Objective & Vision Section */}
-        <section className="relative mb-20 py-16 px-8 rounded-2xl bg-slate-100/50 border border-slate-200 overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 pointer-events-none">
-            <motion.div
-              className="absolute top-10 right-10 w-32 h-32 rounded-full bg-gradient-to-br from-cyan-400/20 to-blue-400/20 blur-2xl"
-              animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
-          </div>
-
-          <ScrollReveal>
-            <div className="relative z-10 text-center">
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="inline-block mb-6"
-              >
-                <Target className="w-16 h-16 text-blue-600" />
-              </motion.div>
-
-              <h3 className="text-3xl font-display font-bold mb-6 bg-gradient-to-r from-slate-900 to-indigo-900 bg-clip-text text-transparent uppercase tracking-wider">
-                Our Objective & Vision
-              </h3>
-              <p className="text-lg text-foreground/80 mb-4 max-w-3xl mx-auto">
-                Our objective is to position Madhya Pradesh as a preferred,
-                repeat-choice filming destination and build producer confidence
-                even before they arrive on ground.
-              </p>
-              <p className="text-lg text-foreground/80 max-w-3xl mx-auto">
-                FilmIndustryMP acts as a digital-first bridge between Madhya Pradesh
-                and the global film industry — where creative vision meets
-                professional execution.
-              </p>
-            </div>
-          </ScrollReveal>
-        </section>
-
-        {/* Social Media Links */}
-        <section className="mb-20">
-          <ScrollReveal>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-center mb-12 bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 bg-clip-text text-transparent uppercase tracking-widest">
-              Connect With Us
-            </h2>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-            {data.socialLinks.map((social: any, index: number) => {
-              const Icon = getIcon(social.platform)
-              const colors = getColors(social.platform)
-              return (
-                <ScrollReveal key={social.name} delay={index * 0.1}>
-                  <motion.a
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative film-card py-8 text-center overflow-hidden group h-full block"
-                    whileHover={{ y: -8, scale: 1.05 }}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {socialLinks.map((social: any, i: number) => {
+                const Icon = getIcon(social.platform)
+                const color = getPlatformColor(social.platform)
+                return (
+                  <motion.a key={social.platform} href={social.url} target="_blank" rel="noopener noreferrer"
+                    className="group flex flex-col items-center justify-center py-7 gap-3 relative overflow-hidden transition-all duration-300"
+                    style={{ border: '1px solid rgba(201,168,76,0.08)', background: 'rgba(201,168,76,0.02)' }}
+                    initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.07 }}
+                    whileHover={{ borderColor: color + '40', background: color + '08' }}
                   >
-                    {/* Gradient background on hover */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                    />
-
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: index * 0.2 }}
-                      className="relative z-10"
-                    >
-                      <Icon className={`w-12 h-12 mx-auto mb-3 ${colors.color}`} />
-                    </motion.div>
-                    <p className="font-semibold relative z-10">{social.name}</p>
+                    <div className="absolute top-0 left-0 right-0 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-400 origin-left"
+                      style={{ background: color }} />
+                    <Icon className="w-7 h-7 transition-transform duration-300 group-hover:scale-110"
+                      style={{ color: 'rgba(245,240,232,0.35)' }} />
+                    <span className="text-[9px] tracking-[0.3em] text-[#F5F0E8]/25 uppercase font-medium group-hover:text-[#F5F0E8]/60 transition-colors duration-300">
+                      {social.name}
+                    </span>
+                    <span className="text-[8px] tracking-widest uppercase font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 -mt-1"
+                      style={{ color }}>Visit →</span>
                   </motion.a>
-                </ScrollReveal>
-              )
-            })}
+                )
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* ── OBJECTIVE ── */}
+        <motion.section className="text-center py-14 px-8 relative overflow-hidden"
+          style={{ border: '1px solid rgba(201,168,76,0.1)' }}
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }} transition={{ duration: 0.7 }}
+        >
+          <span className="absolute inset-0 flex items-center justify-center font-display font-bold pointer-events-none select-none"
+            style={{ fontSize: 'clamp(80px,15vw,180px)', color: 'transparent', WebkitTextStroke: '1px rgba(201,168,76,0.05)', letterSpacing: '-0.02em' }}>
+            MP
+          </span>
+          <div className="relative z-10">
+            <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Our Objective</p>
+            <h3 className="font-display font-bold text-[#F5F0E8] text-2xl sm:text-3xl mb-5 max-w-2xl mx-auto leading-snug">
+              Positioning Madhya Pradesh as a <span style={goldText}>World-Class</span> Filming Destination
+            </h3>
+            <p className="text-[#F5F0E8]/30 text-sm leading-relaxed max-w-xl mx-auto mb-7">
+              FilmIndustryMP acts as a digital-first bridge between Madhya Pradesh and the global film industry.
+            </p>
+            <Link href="/about"
+              className="inline-flex items-center gap-3 text-[#C9A84C] text-[10px] tracking-[0.35em] uppercase group hover:gap-5 transition-all duration-300">
+              Learn More
+              <span className="h-px w-8 bg-[#C9A84C] group-hover:w-12 transition-all duration-300" />
+            </Link>
           </div>
-        </section>
+          <div className="absolute top-3 left-3 w-5 h-5" style={{ borderTop: '1px solid rgba(201,168,76,0.3)', borderLeft: '1px solid rgba(201,168,76,0.3)' }} />
+          <div className="absolute top-3 right-3 w-5 h-5" style={{ borderTop: '1px solid rgba(201,168,76,0.3)', borderRight: '1px solid rgba(201,168,76,0.3)' }} />
+          <div className="absolute bottom-3 left-3 w-5 h-5" style={{ borderBottom: '1px solid rgba(201,168,76,0.3)', borderLeft: '1px solid rgba(201,168,76,0.3)' }} />
+          <div className="absolute bottom-3 right-3 w-5 h-5" style={{ borderBottom: '1px solid rgba(201,168,76,0.3)', borderRight: '1px solid rgba(201,168,76,0.3)' }} />
+        </motion.section>
+
       </div>
     </main>
   )

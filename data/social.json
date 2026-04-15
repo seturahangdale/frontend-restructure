@@ -1,30 +1,33 @@
 {
-  "youtubeUrl": "https://www.youtube.com/embed/BQTWPXAvsaY",
-  "socialLinks": [
+  "videoCategories": [
     {
-      "name": "Instagram",
-      "url": "https://www.instagram.com/filmindustrymp?igsh=YnJyM2U4NHNrOTB3",
-      "platform": "instagram"
+      "id": "information",
+      "label": "Information",
+      "videos": [
+        { "url": "https://www.youtube.com/embed/BQTWPXAvsaY", "title": "Film Industry MP" },
+        { "url": "https://www.youtube.com/embed/zkIsDcLnvpM", "title": "" },
+        { "url": "https://www.youtube.com/embed/ZWm4j4Z_tRU", "title": "" },
+        { "url": "https://www.youtube.com/embed/lvcdNMC_Jhg", "title": "" },
+        { "url": "https://www.youtube.com/embed/FHdBOjbbpaI", "title": "" },
+        { "url": "https://www.youtube.com/embed/8xyV1UZTAoA", "title": "" }
+      ]
     },
     {
-      "name": "Facebook",
-      "url": "https://www.facebook.com/share/1CHzuqUf36/",
-      "platform": "facebook"
+      "id": "location",
+      "label": "Location",
+      "videos": []
     },
     {
-      "name": "YouTube",
-      "url": "https://youtube.com/@filmindustrymp?si=lNSyA34X9dHteR1N",
-      "platform": "youtube"
-    },
-    {
-      "name": "LinkedIn",
-      "url": "https://www.linkedin.com/in/filmindustry-mp-05506966",
-      "platform": "linkedin"
-    },
-    {
-      "name": "X (Twitter)",
-      "url": "https://x.com/FilmIndustryMP",
-      "platform": "twitter"
+      "id": "event",
+      "label": "Event",
+      "videos": []
     }
+  ],
+  "socialLinks": [
+    { "name": "Instagram", "url": "https://www.instagram.com/filmindustrymp?igsh=YnJyM2U4NHNrOTB3", "platform": "instagram" },
+    { "name": "Facebook",  "url": "https://www.facebook.com/share/1CHzuqUf36/",                        "platform": "facebook"  },
+    { "name": "YouTube",   "url": "https://youtube.com/@filmindustrymp?si=lNSyA34X9dHteR1N",           "platform": "youtube"   },
+    { "name": "LinkedIn",  "url": "https://www.linkedin.com/in/filmindustry-mp-05506966",               "platform": "linkedin"  },
+    { "name": "X (Twitter)", "url": "https://x.com/FilmIndustryMP",                                    "platform": "twitter"   }
   ]
 }

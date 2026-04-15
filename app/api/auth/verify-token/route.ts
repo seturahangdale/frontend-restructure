@@ -1,5 +1,19 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { decrypt } from '@/lib/auth';
+
+export async function GET() {
+    try {
+        const session = (await cookies()).get('session')?.value;
+        if (!session) {
+            return NextResponse.json({ error: 'No session' }, { status: 401 });
+        }
+        await decrypt(session);
+        return NextResponse.json({ success: true });
+    } catch {
+        return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+    }
+}
 
 export async function POST(request: Request) {
     try {

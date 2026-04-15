@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readFile, writeFile, unlink } from 'fs/promises'
-import { existsSync } from 'fs'
-import path from 'path'
 
-const GALLERY_PATH = path.join(process.cwd(), 'data', 'gallery.json')
+const BACKEND_URL = process.env.INTERNAL_API_URL || 'https://film-api.indusanalytics.co.in/api'
 
 export async function PUT(
     request: NextRequest,
@@ -13,31 +10,26 @@ export async function PUT(
         const { id } = await params
         const body = await request.json()
 
-        if (!existsSync(GALLERY_PATH)) {
-            return NextResponse.json({ error: 'Gallery data not found' }, { status: 404 })
+        const res = await fetch(`${BACKEND_URL}/gallery/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        })
+
+        if (!res.ok) {
+            const err = await res.text()
+            console.error('Backend gallery update error:', err)
+            return NextResponse.json(
+                { error: 'Failed to update item' },
+                { status: res.status }
+            )
         }
 
-        const data = await readFile(GALLERY_PATH, 'utf-8')
-        const gallery = JSON.parse(data)
-
-        const itemIndex = gallery.items.findIndex((item: any) => item.id.toString() === id.toString())
-
-        if (itemIndex === -1) {
-            return NextResponse.json({ error: 'Item not found' }, { status: 404 })
-        }
-
-        // Update item metadata
-        gallery.items[itemIndex] = {
-            ...gallery.items[itemIndex],
-            ...body,
-            id: gallery.items[itemIndex].id // Preserve original ID
-        }
-
-        await writeFile(GALLERY_PATH, JSON.stringify(gallery, null, 2))
-
+        const data = await res.json()
         return NextResponse.json({
             success: true,
-            message: 'Gallery item updated successfully'
+            message: 'Gallery item updated successfully',
+            ...data,
         })
     } catch (error) {
         console.error('Update item error:', error)
@@ -49,43 +41,28 @@ export async function PUT(
 }
 
 export async function DELETE(
-    request: NextRequest,
+    _request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { id } = await params
 
-        if (!existsSync(GALLERY_PATH)) {
-            return NextResponse.json({ error: 'Gallery data not found' }, { status: 404 })
+        const res = await fetch(`${BACKEND_URL}/gallery/${id}`, {
+            method: 'DELETE',
+        })
+
+        if (!res.ok) {
+            const err = await res.text()
+            console.error('Backend gallery delete error:', err)
+            return NextResponse.json(
+                { error: 'Failed to delete item' },
+                { status: res.status }
+            )
         }
-
-        const data = await readFile(GALLERY_PATH, 'utf-8')
-        const gallery = JSON.parse(data)
-
-        const itemIndex = gallery.items.findIndex((item: any) => item.id.toString() === id.toString())
-
-        if (itemIndex === -1) {
-            return NextResponse.json({ error: 'Item not found' }, { status: 404 })
-        }
-
-        const item = gallery.items[itemIndex]
-
-        // Delete physical file if it's in the uploads directory
-        if (item.src && item.src.startsWith('/uploads/gallery/')) {
-            const filepath = path.join(process.cwd(), 'public', item.src)
-            if (existsSync(filepath)) {
-                await unlink(filepath).catch(e => console.error('Failed to delete file:', e))
-            }
-        }
-
-        // Remove from list
-        gallery.items.splice(itemIndex, 1)
-
-        await writeFile(GALLERY_PATH, JSON.stringify(gallery, null, 2))
 
         return NextResponse.json({
             success: true,
-            message: 'Gallery item deleted successfully'
+            message: 'Gallery item deleted successfully',
         })
     } catch (error) {
         console.error('Delete item error:', error)

@@ -528,11 +528,11 @@ export function GalleryManager() {
                             </button>
                         </div>
 
-                        <div className="p-10 overflow-y-auto space-y-10 custom-scrollbar">
+                        <div className="p-6 overflow-y-auto space-y-5 custom-scrollbar">
                             {/* File Upload Area */}
                             {!editingItem && (
                                 <div
-                                    className={`relative border-2 border-dashed rounded-[2rem] transition-all duration-500 overflow-hidden ${preview ? 'border-purple-600 p-2 ring-8 ring-purple-50' : 'border-slate-200 p-16 text-center hover:border-purple-400 hover:bg-purple-50/30'}`}
+                                    className={`relative border-2 border-dashed rounded-[1.5rem] transition-all duration-500 overflow-hidden ${preview ? 'border-purple-600 p-2 ring-4 ring-purple-50' : 'border-slate-200 p-10 text-center hover:border-purple-400 hover:bg-purple-50/30'}`}
                                     onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('bg-purple-50/30'); }}
                                     onDragLeave={e => { e.preventDefault(); e.currentTarget.classList.remove('bg-purple-50/30'); }}
                                     onDrop={e => {
@@ -548,7 +548,7 @@ export function GalleryManager() {
                                     }}
                                 >
                                     {preview ? (
-                                        <div className="relative h-72 w-full rounded-2xl overflow-hidden shadow-inner group/preview">
+                                        <div className="relative h-48 w-full rounded-2xl overflow-hidden shadow-inner group/preview">
                                             <Image src={preview} alt="Preview" fill className="object-cover" />
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                                                 <Button

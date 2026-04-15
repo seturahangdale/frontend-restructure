@@ -78,6 +78,10 @@ export const viewport: Viewport = {
 
 import { Toaster } from 'sonner'
 import { ThemeProvider } from "@/components/theme-provider"
+import { PixelPreloader } from "@/components/pixel-preloader"
+import { LenisProvider } from "@/components/lenis-provider"
+import { PageTransition } from "@/components/page-transition"
+import { GoldCursor } from "@/components/gold-cursor"
 
 export default function RootLayout({
   children,
@@ -89,20 +93,31 @@ export default function RootLayout({
       <body className="font-body antialiased text-foreground bg-background transition-colors duration-300">
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          enableSystem
+          defaultTheme="dark"
+          forcedTheme="dark"
           disableTransitionOnChange
         >
-          {/* Global Navbar Wrapper - handles visibility on admin pages */}
-          <NavbarWrapper />
+          <LenisProvider>
+            {/* Custom gold cursor */}
+            <GoldCursor />
 
-          {/* Page content with proper z-indexing */}
-          <main className="relative">
-            {children}
-          </main>
+            {/* Pixel wipe preloader — runs once on initial load */}
+            <PixelPreloader />
 
-          <Toaster position="top-right" richColors />
-          <Analytics />
+            {/* Pixel wipe transition — runs on every route change */}
+            <PageTransition />
+
+            {/* Global Navbar Wrapper - handles visibility on admin pages */}
+            <NavbarWrapper />
+
+            {/* Page content with proper z-indexing */}
+            <main className="relative">
+              {children}
+            </main>
+
+            <Toaster position="top-right" richColors />
+            <Analytics />
+          </LenisProvider>
         </ThemeProvider>
       </body>
     </html>

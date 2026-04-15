@@ -4,7 +4,7 @@
       "id": "heritage",
       "name": "Heritage",
       "color": "from-amber-500 to-orange-500",
-      "icon": "🏛️",
+      "icon": "",
       "description": "Discover the ancient soul of Madhya Pradesh through its UNESCO World Heritage sites, intricately carved temples, and legendary monuments that narrate tales of a glorious past.",
       "thumbnail": "",
       "places": []
@@ -13,63 +13,64 @@
       "id": "palaces",
       "name": "Palaces",
       "color": "from-purple-500 to-pink-500",
-      "icon": "👑",
+      "icon": "",
       "description": "Step into royalty. Explore grand palaces and majestic forts where history meets architectural brilliance, offering grand settings for cinematic storytelling.",
-      "thumbnail": "/images/gallery-orchha.jpg",
-      "places": [
-        "Gwalior Fort",
-        "Jahaz Mahal - Mandu",
-        "Jai Vilas Palace",
-        "Rajwada Palace",
-        "Orchha Fort"
-      ]
+      "thumbnail": "",
+      "places": []
     },
     {
       "id": "nature",
       "name": "Nature",
       "color": "from-green-500 to-emerald-500",
-      "icon": "🌿",
+      "icon": "",
       "description": "Immerse yourself in the pristine beauty of Satpuras and Vindhyas. From cascading waterfalls to tranquil rivers, MP offers breathtaking natural landscapes.",
-      "thumbnail": "/images/gallery-mandu.jpg",
-      "places": [
-        "Bhopal – The City of Lakes",
-        "Bhedaghat – Marble Rocks & Dhuandhar Falls",
-        "Alirajpur – Tribal landscapes",
-        "Jabalpur – Riverfronts & urban-nature mix",
-        "Tamia – Hill station",
-        "Sailani Island – Backwater landscapes",
-        "Pachmarhi – Forests, waterfalls, hills",
-        "Hanuwantiya – Adventure tourism location"
-      ]
+      "thumbnail": "",
+      "places": []
     },
     {
       "id": "wildlife",
       "name": "wildlife",
       "color": "from-slate-500 to-slate-700",
-      "icon": "📸",
+      "icon": "",
       "description": "The heart of India's wilderness. Capture the raw beauty of national parks where tigers roam free and bio-diversity thrives in its most authentic form.",
-      "thumbnail": "/images/gallery-pachmarhi.jpg",
-      "places": [
-        "Panna National Park",
-        "Rewa",
-        "Kanha Tiger Reserve",
-        "Tawa & Madai",
-        "Bandhavgarh",
-        "Parsili",
-        "Pench",
-        "Kuno National Park"
-      ]
+      "thumbnail": "",
+      "places": []
     },
     {
       "id": "spiritual",
       "name": "Spiritual",
       "color": "from-blue-500 to-cyan-500",
-      "icon": "🙏",
+      "icon": "",
       "description": "Experience the divine energy of Madhya Pradesh. From ancient spiritual cities to serene river ghats, these locations offer peace and profound cinematic depth.",
       "thumbnail": "",
-      "places": [
-        "Place 5"
-      ]
+      "places": []
+    },
+    {
+      "id": "rular",
+      "name": "RULAR",
+      "color": "from-slate-500 to-slate-700",
+      "icon": "",
+      "description": "",
+      "thumbnail": "",
+      "places": []
+    },
+    {
+      "id": "public-area",
+      "name": "PUBLIC TRANSPORT",
+      "color": "from-slate-500 to-slate-700",
+      "icon": "",
+      "description": "",
+      "thumbnail": "",
+      "places": []
+    },
+    {
+      "id": "urban-",
+      "name": "URBAN ",
+      "color": "from-slate-500 to-slate-700",
+      "icon": "📸",
+      "description": "",
+      "thumbnail": "",
+      "places": []
     }
   ],
   "items": [

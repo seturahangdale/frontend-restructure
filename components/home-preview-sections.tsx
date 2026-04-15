@@ -1,234 +1,336 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { Button } from './ui/button'
-import { ScrollReveal } from './scroll-reveal'
-import { ArrowRight, Loader2 } from 'lucide-react'
-
+import { Landmark, Crown, Trees, Camera, Flame, Waves } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { apiClient } from '@/lib/api-client'
 
-/* ================= ABOUT PREVIEW ================= */
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  heritage:    Landmark,
+  palaces:     Crown,
+  nature:      Trees,
+  wildlife:    Camera,
+  spiritual:   Flame,
+  rivers:      Waves,
+}
 
+
+const goldText = {
+  background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)',
+  WebkitBackgroundClip: 'text' as const,
+  WebkitTextFillColor: 'transparent' as const,
+  backgroundClip: 'text' as const,
+}
+
+/* ══════════════════════════════════════════
+   ABOUT PREVIEW
+══════════════════════════════════════════ */
 function AboutPreviewSection() {
-  const [data, setData] = useState<any>(null)
+  const [data, setData]       = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await apiClient.getAboutData()
-        setData(res)
-      } catch (error) {
-        console.error('Failed to fetch about data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
+    apiClient.getAboutData()
+      .then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
-  if (loading || !data) {
-    return (
-      <section className="py-20 md:py-32 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center">
-            <div className="w-10 h-10 border-2 border-slate-200 border-t-accent rounded-full animate-spin" />
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   return (
-    <section className="py-20 md:py-32 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
+    <section className="relative w-full min-h-screen md:h-full bg-[#080808] overflow-hidden flex">
 
-          <ScrollReveal>
-            <div className="space-y-6">
-              <h2 className="text-4xl md:text-5xl font-display font-bold">
-                {data.whoWeAre.title}
-              </h2>
+      {/* ── Full-bleed background image ── */}
+      <img
+        src="/images/film-production.jpg"
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover scale-105"
+      />
+      {/* Cinematic overlay — heavy left, lighter right */}
+      <div
+        className="absolute inset-0"
+        style={{ background: 'linear-gradient(105deg, rgba(8,8,8,0.97) 0%, rgba(8,8,8,0.88) 45%, rgba(8,8,8,0.55) 100%)' }}
+      />
+      {/* Top/bottom vignette */}
+      <div className="absolute inset-0"
+        style={{ background: 'linear-gradient(to bottom, #080808 0%, transparent 15%, transparent 85%, #080808 100%)' }} />
 
-              {data.whoWeAre.paragraphs.map((para: string, i: number) => (
-                <p key={i} className="text-lg text-foreground/70">
-                  {para}
-                </p>
+      {/* Gold top line */}
+      <div className="absolute top-0 left-0 right-0 h-px z-10"
+        style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
+
+      {/* ── Content — left-aligned ── */}
+      <div className="relative z-10 flex flex-col justify-center px-8 py-20 md:py-0 md:px-16 lg:px-20 w-full max-w-3xl">
+
+        <motion.p
+          className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase mb-4 font-medium"
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          Est. 2025 · Indore, Madhya Pradesh
+        </motion.p>
+
+        <div className="flex items-center gap-3 mb-6">
+          <div className="h-px w-10" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
+          <span className="text-[#C9A84C] text-sm">✦</span>
+        </div>
+
+        <motion.h2
+          className="font-display font-bold text-[#F5F0E8] text-4xl md:text-5xl lg:text-6xl leading-tight mb-4"
+          initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2, ease: [0.25, 0.4, 0.25, 1] }}
+        >
+          Film Industry <span style={goldText}>MP</span>
+        </motion.h2>
+        <motion.p
+          className="text-sm tracking-[0.3em] text-[#C9A84C]/70 uppercase font-medium mb-4"
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.35 }}
+        >
+          A Film Facilitation Hub Across Madhya Pradesh
+        </motion.p>
+
+
+
+        {/* ── What We Do — compact list ── */}
+        {!loading && data && (
+          <motion.div
+            className="mb-10"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <p className="text-[#C9A84C] text-xs tracking-[0.4em] uppercase mb-4 font-medium">What We Do</p>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              {data.whatWeDo.items.slice(0, 6).map((item: string, i: number) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-[#C9A84C] text-xs">✦</span>
+                  <span className="text-[#F5F0E8]/45 text-sm leading-snug truncate">{item}</span>
+                </div>
               ))}
             </div>
-          </ScrollReveal>
+          </motion.div>
+        )}
 
-          <ScrollReveal delay={0.2}>
-            <div className="bg-primary/10 border border-primary/30 rounded-xl p-8">
-              <h3 className="text-2xl font-bold mb-4">{data.whatWeDo.title}</h3>
-              <ul className="list-disc list-inside space-y-2 text-lg text-foreground/80">
-                {data.whatWeDo.items.map((item: string, i: number) => (
-                  <li key={i}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </ScrollReveal>
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.85 }}
+        >
+          <Link
+            href="/about"
+            className="inline-flex items-center gap-3 text-[#C9A84C] text-xs tracking-[0.3em] uppercase group hover:gap-5 transition-all duration-300"
+          >
+            <span>Read Our Story</span>
+            <span className="h-px w-8 bg-[#C9A84C] group-hover:w-12 transition-all duration-300" />
+          </Link>
+        </motion.div>
 
-        </div>
       </div>
+
+      {/* Gold bottom line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
     </section>
   )
 }
 
-/* ================= GALLERY PREVIEW (CLICKABLE) ================= */
-
+/* ══════════════════════════════════════════
+   GALLERY PREVIEW — A24 Films Hover Reveal
+══════════════════════════════════════════ */
 function GalleryPreviewSection() {
-  const [data, setData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [data, setData]         = useState<any>(null)
+  const [loading, setLoading]   = useState(true)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchGallery = async () => {
-      try {
-        const res = await apiClient.getGalleryData()
-        setData(res)
-      } catch (error) {
-        console.error('Failed to fetch gallery data', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchGallery()
+    apiClient.getGalleryData()
+      .then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
   if (loading || !data) {
     return (
-      <section className="py-20 md:py-32 bg-secondary text-secondary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Loader2 className="w-10 h-10 animate-spin mx-auto text-accent mb-4" />
-          <p>Loading Cinematic Locations...</p>
-        </div>
+      <section className="w-screen h-screen bg-[#080808] flex items-center justify-center">
+        <div className="w-8 h-8 border border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
       </section>
     )
   }
 
   const categories: any[] = data.categories || []
-  const items: any[] = data.items || []
+  const items: any[]      = data.items || []
 
   const getThumbnail = (cat: any) => {
-    if (cat.thumbnail && cat.thumbnail.trim() !== '') return cat.thumbnail
-    // Auto-pick first item from this category
-    const firstItem = items.find((item: any) => item.category === cat.id)
-    return firstItem?.src || '/images/Khajuraho Temple.jpg'
+    if (cat.thumbnail?.trim()) return cat.thumbnail
+    const first = items.find((item: any) => item.category === cat.id)
+    return first?.src || '/images/Khajuraho Temple.jpg'
   }
 
-  return (
-    <section className="py-20 md:py-32 bg-secondary text-secondary-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        <ScrollReveal>
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              TOP CINEMATIC LOCATIONS IN MADHYA PRADESH
-            </h2>
-            <p className="text-xl opacity-90 max-w-2xl mx-auto">
-              Madhya Pradesh offers one of India’s richest location libraries for filmmakers. Over {categories.length} distinct categories for every script and visual treatment.
-            </p>
-          </div>
-        </ScrollReveal>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {categories.map((cat, index) => (
-            <ScrollReveal key={cat.id} delay={index * 0.1}>
-              <Link href={`/locations/${cat.id}`}>
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  className="relative h-48 md:h-56 rounded-2xl overflow-hidden cursor-pointer group shadow-lg bg-slate-800"
-                >
-                  <img
-                    src={getThumbnail(cat)}
-                    alt={cat.name}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:via-black/40 transition-colors" />
-
-                  <div className="relative z-10 h-full flex flex-col items-center justify-center text-white p-4">
-                    <span className="text-4xl mb-3 block group-hover:scale-125 transition-transform duration-300">{cat.icon}</span>
-                    <h3 className="text-xl md:text-2xl font-display font-bold text-center">
-                      {cat.name}
-                    </h3>
-                  </div>
-                </motion.div>
-              </Link>
-            </ScrollReveal>
-          ))}
-        </div>
-
-      </div>
-    </section>
-  )
-}
-
-/* ================= PROJECTS PREVIEW (HOME ONLY – 4 ITEMS) ================= */
-
-function ProjectsPreviewSection() {
-  const homeProjects = [
-    { title: 'Bollywood Movie', slug: 'bollywood-movie' },
-    { title: 'South Movies', slug: 'south-movies' },
-    { title: 'International Movie', slug: 'international-movie' },
-    { title: 'Movie Promotion', slug: 'movie-promotion' },
-  ]
+  const hoveredCat   = categories.find((c: any) => c.id === hoveredId)
+  const hoveredImage = hoveredCat ? getThumbnail(hoveredCat) : null
 
   return (
-    <section className="py-20 md:py-32 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section
+      className="relative w-screen min-h-screen bg-[#080808] flex flex-col justify-center"
+      onMouseLeave={() => setHoveredId(null)}
+    >
 
-        <ScrollReveal>
-          <div className="text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Featured Projects
+      {/* ── Full-screen background image — crossfade on hover ── */}
+      <AnimatePresence mode="sync">
+        {hoveredImage && (
+          <motion.div
+            key={hoveredId}
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            <img
+              src={hoveredImage}
+              alt=""
+              className="w-full h-full object-cover scale-105"
+            />
+            {/* Dark cinematic overlay — keeps text readable */}
+            <div
+              className="absolute inset-0"
+              style={{ background: 'rgba(8,8,8,0.78)' }}
+            />
+            {/* Left vignette */}
+            <div
+              className="absolute inset-0"
+              style={{ background: 'linear-gradient(to right, rgba(8,8,8,0.6), transparent 60%)' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Gold top border */}
+      <div className="absolute top-0 left-0 right-0 h-px z-10"
+        style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
+
+      {/* ── Content ── */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-10 lg:px-16">
+
+        {/* Header */}
+        <motion.div
+          className="mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <p className="text-[10px] tracking-[0.5em] text-[#C9A84C]/60 uppercase mb-2 font-medium">
+            Cinematic Locations
+          </p>
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-display font-bold text-white text-3xl sm:text-4xl lg:text-4xl leading-tight">
+              Top Locations in<br />
+              <span style={goldText}>Madhya Pradesh</span>
             </h2>
-            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-              Discover film projects and productions supported by Film Industry MP
-              across Madhya Pradesh.
-            </p>
-          </div>
-        </ScrollReveal>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {homeProjects.map((project, index) => (
-            <ScrollReveal key={project.slug} delay={index * 0.1}>
-              <Link href={`/categories/${project.slug}`}>
-                <motion.div
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="h-48 rounded-xl bg-gradient-to-br from-[#8B6B3E] to-[#2F5D2F] flex items-center justify-center text-center cursor-pointer shadow-lg hover:shadow-xl transition-all"
-                >
-                  <h3 className="text-2xl font-display font-bold text-white">
-                    {project.title}
-                  </h3>
-                </motion.div>
-              </Link>
-            </ScrollReveal>
-          ))}
-        </div>
-
-        <ScrollReveal>
-          <div className="text-center">
-            <Link href="/projects">
-              <Button className="bg-primary text-white">
-                View All Projects
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+            <Link
+              href="/gallery"
+              className="shrink-0 flex items-center gap-3 text-[#C9A84C]/60 hover:text-[#C9A84C] text-[10px] tracking-[0.35em] uppercase transition-all duration-300 group mb-2"
+            >
+              View All
+              <span className="h-px w-6 bg-[#C9A84C]/60 group-hover:bg-[#C9A84C] group-hover:w-10 transition-all duration-300" />
             </Link>
           </div>
-        </ScrollReveal>
+
+          {/* Gold divider */}
+          <div className="mt-5 h-px w-full" style={{ background: 'rgba(201,168,76,0.15)' }} />
+        </motion.div>
+
+        {/* ── Location rows — A24 style ── */}
+        <div>
+          {categories.map((cat: any, i: number) => (
+            <Link
+              key={cat.id}
+              href="/gallery"
+              className="group flex items-center gap-6 py-3 border-b transition-all duration-400 cursor-pointer"
+              style={{
+                borderColor: hoveredId === cat.id
+                  ? 'rgba(201,168,76,0.35)'
+                  : 'rgba(255,255,255,0.05)',
+              }}
+              onMouseEnter={() => setHoveredId(cat.id)}
+            >
+              {/* Number */}
+              <span
+                className="font-display font-bold text-sm tabular-nums transition-colors duration-300 w-8 shrink-0"
+                style={{ color: hoveredId === cat.id ? '#C9A84C' : 'rgba(201,168,76,0.2)' }}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              {/* Icon */}
+              {(() => {
+                const Icon = CATEGORY_ICONS[cat.id]
+                return Icon ? (
+                  <Icon
+                    className="shrink-0 transition-all duration-300"
+                    style={{
+                      width: 20, height: 20,
+                      color: hoveredId === cat.id ? '#C9A84C' : 'rgba(201,168,76,0.3)',
+                      strokeWidth: 1.5,
+                    }}
+                  />
+                ) : null
+              })()}
+
+              {/* Location Name — big, transforms on hover */}
+              <motion.span
+                className="font-display font-bold flex-1 leading-none tracking-tight transition-all duration-400"
+                style={{
+                  fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
+                  color: hoveredId === cat.id ? '#F5F0E8' : 'rgba(245,240,232,0.35)',
+                }}
+              >
+                {cat.name}
+              </motion.span>
+
+              {/* Description — reveals on hover, desktop only */}
+              <span
+                className="hidden lg:block text-sm text-right max-w-[220px] leading-relaxed transition-all duration-400 shrink-0"
+                style={{
+                  color: hoveredId === cat.id ? 'rgba(245,240,232,0.5)' : 'transparent',
+                }}
+              >
+                {cat.description || `Explore ${cat.name} filming locations across MP`}
+              </span>
+
+              {/* Arrow */}
+              <motion.span
+                className="text-[#C9A84C] text-xl shrink-0 transition-all duration-300"
+                style={{
+                  opacity: hoveredId === cat.id ? 1 : 0,
+                  transform: hoveredId === cat.id ? 'translateX(0)' : 'translateX(-8px)',
+                }}
+              >
+                →
+              </motion.span>
+            </Link>
+          ))}
+        </div>
+
+        {/* Bottom hint */}
+        <motion.p
+          className="mt-8 text-[9px] tracking-[0.4em] text-white/15 uppercase"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+        >
+          Hover to explore · Click to view
+        </motion.p>
 
       </div>
+
+      {/* Gold bottom border */}
+      <div className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
+
     </section>
   )
 }
 
-/* ================= EXPORTS ================= */
-
+/* ══════════════════════════════════════════
+   EXPORTS
+══════════════════════════════════════════ */
 export {
   AboutPreviewSection,
   GalleryPreviewSection,
-  ProjectsPreviewSection,
 }

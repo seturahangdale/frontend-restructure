@@ -43,17 +43,20 @@ interface SubsidyContentData {
 
 export function SubsidyContent() {
   const [forms, setForms] = useState<Document[]>([])
+  const [guides, setGuides] = useState<Document[]>([])
   const [pageContent, setPageContent] = useState<SubsidyContentData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [docsRes, contentRes] = await Promise.all([
+        const [docsRes, guidesRes, contentRes] = await Promise.all([
           apiClient.getAllDocuments('form'),
+          apiClient.getAllDocuments('guide'),
           apiClient.getSubsidyContent()
         ])
         setForms(docsRes.documents)
+        setGuides(guidesRes.documents)
         setPageContent(contentRes)
       } catch (error) {
         console.error('Failed to fetch data:', error)
@@ -106,6 +109,54 @@ export function SubsidyContent() {
         <p className="text-lg text-muted-foreground mb-10">
           {content.hero.description}
         </p>
+
+        {/* ── Guide Documents (from admin panel) ── */}
+        {guides.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-16">
+            {guides.map((guide) => (
+              <div
+                key={guide.id}
+                className="flex flex-col gap-3 p-5"
+                style={{ border: '1px solid rgba(201,168,76,0.15)', background: 'rgba(201,168,76,0.03)' }}
+              >
+                <div className="flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-[#C9A84C]/60 shrink-0" />
+                  <p className="text-[11px] tracking-[0.3em] text-[#C9A84C] uppercase font-bold leading-snug">{guide.title}</p>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={guide.filepath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 text-center text-[10px] tracking-[0.25em] uppercase font-bold transition-all duration-300"
+                    style={{ border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(201,168,76,0.08)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    View
+                  </a>
+                  <a
+                    href={guide.filepath}
+                    download
+                    className="flex-1 py-2 text-center text-[10px] tracking-[0.25em] uppercase font-bold transition-all duration-300"
+                    style={{ background: 'linear-gradient(135deg, #C9A84C, #E8C97A)', color: '#080808' }}
+                  >
+                    Download
+                  </a>
+                  <a
+                    href={`mailto:?subject=${encodeURIComponent(guide.title + ' - Film Industry MP')}&body=${encodeURIComponent('Please find the ' + guide.title + ' at: https://filmindustrymp.com' + guide.filepath)}`}
+                    className="flex-1 py-2 text-center text-[10px] tracking-[0.25em] uppercase font-bold transition-all duration-300"
+                    style={{ border: '1px solid rgba(201,168,76,0.3)', color: 'rgba(201,168,76,0.6)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#C9A84C')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(201,168,76,0.6)')}
+                  >
+                    Send
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <h3 className="text-2xl font-semibold mb-4 text-accent">
           {content.whyChooseMP.title}
