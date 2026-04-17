@@ -33,10 +33,22 @@ export function SubsidyEditor() {
         const fetchContent = async () => {
             try {
                 const data = await apiClient.getSubsidyContent()
-                setContent(data)
+                if (data && data.hero) {
+                    setContent(data)
+                } else {
+                    setContent({
+                        hero: { title: '', description: '' },
+                        whyChooseMP: { title: '', points: [] },
+                        incentives: { title: '', description: '', eligibleProjects: { title: '', items: [] } },
+                    })
+                }
             } catch (error) {
                 console.error('Failed to fetch content:', error)
-                toast.error('Failed to load subsidy content')
+                setContent({
+                    hero: { title: '', description: '' },
+                    whyChooseMP: { title: '', points: [] },
+                    incentives: { title: '', description: '', eligibleProjects: { title: '', items: [] } },
+                })
             } finally {
                 setLoading(false)
             }

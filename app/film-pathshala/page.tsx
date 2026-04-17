@@ -32,6 +32,75 @@ function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
   return <span ref={ref}>{count}{suffix}</span>
 }
 
+function VideoShowcase() {
+  const [videos, setVideos] = useState<{ id: string; url: string; title: string }[]>([])
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    fetch('/api/pathshala-videos')
+      .then(r => r.json())
+      .then(d => { if (d.videos?.length) setVideos(d.videos) })
+      .catch(() => {})
+  }, [])
+
+  if (!videos.length) return null
+
+  return (
+    <section className="py-24 px-6 border-t border-[#C9A84C]/10 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 50%, rgba(201,168,76,0.05), transparent 70%)' }} />
+      <div className="max-w-6xl mx-auto relative z-10">
+        <motion.div className="flex items-center gap-4 mb-12" {...fadeUp()}>
+          <div className="h-px w-12 bg-[#C9A84C]/50" />
+          <span className="text-[9px] tracking-[0.7em] text-[#C9A84C] uppercase font-semibold">Watch · Learn</span>
+          <div className="h-px flex-1 bg-[#C9A84C]/10" />
+        </motion.div>
+        <motion.div {...fadeUp(0.1)} className="mb-4">
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-white mb-2">
+            Our <span className={GOLD_CLS} style={GOLD_IMG}>Videos</span>
+          </h2>
+        </motion.div>
+
+        {/* Main player */}
+        <motion.div {...fadeUp(0.15)} className="relative w-full aspect-video bg-black border border-[#C9A84C]/20 mb-4 overflow-hidden">
+          <iframe
+            key={videos[active]?.url}
+            src={videos[active]?.url}
+            title={videos[active]?.title || 'Film Pathshala Video'}
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </motion.div>
+        {videos[active]?.title && (
+          <p className="text-[#F5F0E8]/50 text-sm mb-6 tracking-wide">{videos[active].title}</p>
+        )}
+
+        {/* Thumbnails */}
+        {videos.length > 1 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {videos.map((v, i) => {
+              const match = v.url.match(/embed\/([a-zA-Z0-9_-]{11})/)
+              const thumb = match ? `https://img.youtube.com/vi/${match[1]}/mqdefault.jpg` : ''
+              return (
+                <motion.button key={v.id} onClick={() => setActive(i)}
+                  className={`relative aspect-video overflow-hidden border-2 transition-all duration-300 ${active === i ? 'border-[#C9A84C]' : 'border-white/10 hover:border-[#C9A84C]/50'}`}
+                  {...fadeUp(0.05 * i)}>
+                  {thumb ? <img src={thumb} alt={v.title || `Video ${i+1}`} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/20 text-xs">▶</div>}
+                  {active === i && <div className="absolute inset-0 bg-[#C9A84C]/20 flex items-center justify-center">
+                    <span className="text-[#C9A84C] text-lg">▶</span>
+                  </div>}
+                </motion.button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
 const CONTENT = {
   en: {
     navMP: 'MP Film Industry',
@@ -116,7 +185,7 @@ const CONTENT = {
       },
       f2: {
         label: 'Founder 02', name: 'Mr. Parmeshwar Patidar',
-        role: 'Founder & MD — PrintudeAI & Indas Analytics Pvt. Ltd.',
+        role: 'Founder & MD — Printude.AI & Indas Analytics Pvt. Ltd.',
         stat1l: 'Yrs Expertise', stat2l: 'Companies',
         bio: 'National & international experience as a System Expert and Business Coach. Transforms industries into sustainable, process-driven growth models with a focus on long-term scalability and structured execution.',
         skills: ['Scalable Systems', 'Business Coaching', 'Process Execution'],
@@ -242,15 +311,15 @@ const CONTENT = {
       label: '04 — नेतृत्व', title: 'मिलिए', titleGold: 'विज़नरीज़ से',
       sub: 'दो नेता, पूरक विशेषज्ञता, एक संयुक्त मिशन।',
       f1: {
-        label: 'संस्थापक 01', name: 'श्री नवीन जैन',
+        label: 'संस्थापक 01', name: 'नवीन जैन',
         role: 'पूर्व संस्थापक एवं MD — ऑल इंडिया ज्ञान दर्शन एजुकेशन ग्रुप',
         stat1l: 'वर्ष शिक्षा', stat2l: 'वर्ष फिल्म',
         bio: 'मध्य प्रदेश में ज्ञान दर्शन एजुकेशन फ्रेंचाइज़ी बनाई और विस्तारित की। 15+ वर्षों से फिल्म सुविधा और प्रोडक्शन समन्वय में गहरी भागीदारी के साथ, वे फिल्म पाठशाला में अतुलनीय ज़मीनी विशेषज्ञता लाते हैं।',
         skills: ['फिल्म प्रोडक्शन', 'लोकेशन इंटेलिजेंस', 'उद्योग समन्वय'],
       },
       f2: {
-        label: 'संस्थापक 02', name: 'श्री परमेश्वर पाटीदार',
-        role: 'संस्थापक एवं MD — PrintudeAI और Indas Analytics Pvt. Ltd.',
+        label: 'संस्थापक 02', name: 'परमेश्वर पाटीदार',
+        role: 'संस्थापक एवं MD — Printude.AI और Indas Analytics Pvt. Ltd.',
         stat1l: 'वर्ष अनुभव', stat2l: 'कंपनियाँ',
         bio: 'राष्ट्रीय और अंतरराष्ट्रीय अनुभव के साथ एक सिस्टम एक्सपर्ट और बिज़नेस कोच। उद्योगों को टिकाऊ, प्रक्रिया-आधारित विकास मॉडल में बदलते हैं।',
         skills: ['स्केलेबल सिस्टम', 'बिज़नेस कोचिंग', 'प्रक्रिया क्रियान्वयन'],
@@ -319,26 +388,30 @@ export default function FilmPathshala() {
       {/* ── NAV ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-14 py-4 border-b border-white/5"
         style={{ background: 'rgba(6,6,6,0.85)', backdropFilter: 'blur(16px)' }}>
-        <Link href="/" className="flex items-center gap-2 group">
-          <span className="h-px w-5 bg-[#C9A84C]/60 group-hover:w-8 transition-all duration-300" />
-          <span className="text-[9px] tracking-[0.5em] text-[#C9A84C]/60 uppercase group-hover:text-[#C9A84C] transition-colors">Portal</span>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="h-px w-5 bg-[#C9A84C]/60 group-hover:w-8 transition-all duration-300" />
+            <span className="text-[9px] tracking-[0.5em] text-[#C9A84C]/60 uppercase group-hover:text-[#C9A84C] transition-colors">Portal</span>
+          </Link>
+          <Link href="/film-industry" className="hidden md:flex items-center gap-2 px-3 py-1.5 text-[9px] tracking-[0.3em] uppercase font-semibold text-white/40 hover:text-[#C9A84C] border border-white/10 hover:border-[#C9A84C]/40 transition-all duration-300">
+            Film Industry
+          </Link>
+        </div>
         <div className="flex items-center gap-3">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
           <span className="font-display font-bold text-[#F5F0E8]/90 text-sm tracking-[0.25em] uppercase">Film पाठशाला</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[9px] tracking-[0.4em] text-white/20 uppercase hidden md:block">{t.navMP}</span>
-          {/* Language Toggle */}
+        {/* Language Toggle */}
+        <div className="flex items-center" style={{ border: '1px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.06)' }}>
           <button
-            onClick={() => setLang(l => l === 'en' ? 'hi' : 'en')}
-            className="flex items-center gap-0 border border-[#C9A84C]/40 overflow-hidden hover:border-[#C9A84C] transition-colors duration-300"
-            style={{ background: 'rgba(201,168,76,0.08)' }}
-          >
-            <span className={`px-3 py-1.5 text-[9px] tracking-[0.3em] font-bold uppercase transition-all duration-300 ${lang === 'en' ? 'bg-[#C9A84C] text-black' : 'text-[#C9A84C]/50 hover:text-[#C9A84C]'}`}>EN</span>
-            <span className="w-px h-5 bg-[#C9A84C]/20" />
-            <span className={`px-3 py-1.5 text-[9px] tracking-[0.3em] font-bold uppercase transition-all duration-300 ${lang === 'hi' ? 'bg-[#C9A84C] text-black' : 'text-[#C9A84C]/50 hover:text-[#C9A84C]'}`}>हि</span>
-          </button>
+            onClick={() => setLang(() => 'en')}
+            className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${lang === 'en' ? 'bg-[#C9A84C] text-black' : 'text-[#C9A84C]/40 hover:text-[#C9A84C]'}`}
+          >EN</button>
+          <span className="w-px h-4 bg-[#C9A84C]/20 shrink-0" />
+          <button
+            onClick={() => setLang(() => 'hi')}
+            className={`px-4 py-2 text-[10px] font-bold uppercase transition-all duration-300 ${lang === 'hi' ? 'bg-[#C9A84C] text-black' : 'text-[#C9A84C]/40 hover:text-[#C9A84C]'}`}
+          >हि</button>
         </div>
       </nav>
 
@@ -678,13 +751,13 @@ export default function FilmPathshala() {
               <div className="absolute top-0 left-0 right-0 h-[2px] z-20"
                 style={{ background: 'linear-gradient(90deg, #C9A84C 0%, #F5D87A 50%, #C9A84C 100%)' }} />
               <div className="absolute inset-0 border border-[#C9A84C]/20 group-hover:border-[#C9A84C]/50 transition-colors duration-500 z-20 pointer-events-none" />
-              <div className="flex flex-col md:flex-row min-h-[260px]">
+              <div className="flex flex-col md:flex-row-reverse min-h-[260px]">
                 <div className="relative md:w-56 shrink-0 overflow-hidden" style={{ background: '#0a0a0a' }}>
-                  <img src="/pathashalaexpert/Naveen ji transparent.png" alt={t.s04.f1.name}
+                  <img src="/pathashalaexpert/Indas team (34).png" alt={t.s04.f1.name}
                     className="w-full h-full object-cover object-top min-h-[260px] group-hover:scale-105 transition-transform duration-700"
                     style={{ filter: 'contrast(1.05) brightness(0.95)' }} />
                   <div className="absolute inset-0 hidden md:block"
-                    style={{ background: 'linear-gradient(90deg, transparent 50%, rgba(6,6,6,0.95) 100%)' }} />
+                    style={{ background: 'linear-gradient(270deg, transparent 50%, rgba(6,6,6,0.95) 100%)' }} />
                 </div>
                 <div className="flex-1 relative p-8 md:p-10" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.06) 0%, rgba(6,6,6,0.9) 50%)' }}>
                   <div className="absolute inset-0 opacity-[0.025]"
@@ -727,13 +800,13 @@ export default function FilmPathshala() {
               <div className="absolute top-0 left-0 right-0 h-[2px] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 style={{ background: 'linear-gradient(90deg, #C9A84C 0%, #F5D87A 50%, #C9A84C 100%)' }} />
               <div className="absolute inset-0 border border-white/8 group-hover:border-[#C9A84C]/40 transition-colors duration-500 z-20 pointer-events-none" />
-              <div className="flex flex-col md:flex-row-reverse min-h-[260px]">
+              <div className="flex flex-col md:flex-row min-h-[260px]">
                 <div className="relative md:w-56 shrink-0 overflow-hidden" style={{ background: '#0a0a0a' }}>
                   <img src="/pathashalaexpert/Indas team (29) (1).png" alt={t.s04.f2.name}
                     className="w-full h-full object-cover object-top min-h-[260px] group-hover:scale-105 transition-transform duration-700"
                     style={{ filter: 'contrast(1.05) brightness(0.92)' }} />
                   <div className="absolute inset-0 hidden md:block"
-                    style={{ background: 'linear-gradient(270deg, transparent 50%, rgba(6,6,6,0.95) 100%)' }} />
+                    style={{ background: 'linear-gradient(90deg, transparent 50%, rgba(6,6,6,0.95) 100%)' }} />
                 </div>
                 <div className="flex-1 relative p-8 md:p-10" style={{ background: 'linear-gradient(225deg, rgba(255,255,255,0.03) 0%, rgba(6,6,6,0.9) 60%)' }}>
                   <div className="absolute inset-0 opacity-[0.02]"
@@ -903,6 +976,9 @@ export default function FilmPathshala() {
           </motion.div>
         </div>
       </section>
+
+      {/* ══ VIDEO SHOWCASE ══ */}
+      <VideoShowcase />
 
       {/* ── Footer ── */}
       <footer className="border-t border-[#C9A84C]/10 py-6 px-6 flex flex-col md:flex-row items-center justify-between gap-3">

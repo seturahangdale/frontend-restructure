@@ -28,9 +28,9 @@ export function SocialManager() {
     const fetchSocial = async () => {
         try {
             const res = await apiClient.getSocialData()
-            setData(res)
+            setData(res ?? { videoCategories: [], socialLinks: [] })
         } catch {
-            toast.error('Failed to load social data')
+            setData({ videoCategories: [], socialLinks: [] })
         } finally {
             setLoading(false)
         }

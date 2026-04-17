@@ -19,6 +19,7 @@ import AboutManager from '@/components/admin/about-manager'
 import PromotionManager from '@/components/admin/promotion-manager'
 import { GuideManager } from '@/components/admin/guide-manager'
 import { SocialManager } from '@/components/admin/social-manager'
+import { PathshalaVideoManager } from '@/components/admin/pathshala-video-manager'
 import { AccountManager } from '@/components/admin/account-manager'
 import { AdminSidebar } from '@/components/admin/admin-sidebar'
 import { DashboardOverview } from '@/components/admin/dashboard-overview'
@@ -289,6 +290,7 @@ export default function AdminPage() {
             case 'gallery': return <GalleryManager />
             case 'about': return <AboutManager />
             case 'social': return <SocialManager />
+            case 'pathshala-videos': return <PathshalaVideoManager />
             case 'promotion': return <PromotionManager />
             case 'settings': return <AccountManager />
             default: return null

@@ -78,7 +78,6 @@ export const viewport: Viewport = {
 
 import { Toaster } from 'sonner'
 import { ThemeProvider } from "@/components/theme-provider"
-import { PixelPreloader } from "@/components/pixel-preloader"
 import { LenisProvider } from "@/components/lenis-provider"
 import { PageTransition } from "@/components/page-transition"
 import { GoldCursor } from "@/components/gold-cursor"
@@ -100,9 +99,6 @@ export default function RootLayout({
           <LenisProvider>
             {/* Custom gold cursor */}
             <GoldCursor />
-
-            {/* Pixel wipe preloader — runs once on initial load */}
-            <PixelPreloader />
 
             {/* Pixel wipe transition — runs on every route change */}
             <PageTransition />

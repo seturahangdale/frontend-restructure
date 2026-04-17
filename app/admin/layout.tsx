@@ -8,5 +8,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => document.body.classList.remove('admin-page')
   }, [])
 
-  return <>{children}</>
+  return (
+    <>
+      <style>{`#admin-root, #admin-root *, #admin-root *::before, #admin-root *::after { cursor: auto !important; }`}</style>
+      <div id="admin-root">{children}</div>
+    </>
+  )
 }

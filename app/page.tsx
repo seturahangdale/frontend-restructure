@@ -2,11 +2,22 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import Image from 'next/image'
+
 
 export default function Portal() {
   return (
     <main className="min-h-screen bg-[#050505] flex flex-col items-center justify-center relative overflow-hidden">
+
+
+      {/* ── Background video ── */}
+      <video
+        autoPlay muted loop playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-25 z-0"
+      >
+        <source src="/loader/filmindustry.mp4#t=0.001" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 z-[1]" style={{ background: 'rgba(5,5,5,0.70)' }} />
 
       {/* ── Ambient background orbs ── */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full opacity-[0.07]"
@@ -30,19 +41,11 @@ export default function Portal() {
 
       {/* ── Header ── */}
       <motion.div
-        className="text-center mb-14 z-10 px-6"
+        className="text-center mb-14 relative z-10 px-6"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: [0.25, 0.4, 0.25, 1] }}
       >
-        {/* Eyebrow */}
-        <motion.p
-          className="text-[9px] tracking-[0.7em] text-[#C9A84C] uppercase mb-5"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.8 }}
-        >
-          Government of Madhya Pradesh
-        </motion.p>
-
         {/* Main title */}
         <h1 className="font-display font-bold text-[#F5F0E8] text-4xl md:text-6xl lg:text-7xl leading-tight tracking-tight">
           Madhya Pradesh
@@ -73,121 +76,46 @@ export default function Portal() {
       </motion.div>
 
       {/* ── Portal Cards ── */}
-      <div className="flex flex-col md:flex-row gap-5 z-10 px-6 w-full max-w-4xl">
+      <div className="flex flex-col gap-5 relative z-10 px-6 w-full max-w-lg">
 
         {/* ── Card 1: Film Facilitation ── */}
         <motion.div
-          className="flex-1"
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.9, delay: 0.5, ease: [0.25, 0.4, 0.25, 1] }}
         >
-          <Link href="/film-industry" className="group block relative overflow-hidden" style={{ minHeight: '320px' }}>
-            {/* Card background */}
-            <div className="absolute inset-0 transition-all duration-700"
-              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.04) 100%)' }} />
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.08) 100%)' }} />
-
-            {/* Border */}
-            <div className="absolute inset-0 border border-[#C9A84C]/50 group-hover:border-[#C9A84C] transition-colors duration-500" />
-
-            {/* Top gold line always visible, brightens on hover */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-[#C9A84C]/60 to-transparent group-hover:via-[#F0D87A] transition-all duration-500" />
-
-            {/* Corner accents */}
-            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-center p-12 h-full" style={{ minHeight: '320px' }}>
-              <motion.div className="mb-5 relative" whileHover={{ rotate: 45, scale: 1.2 }} transition={{ duration: 0.4 }}>
-                <span className="text-[#C9A84C] text-4xl block" style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.6))' }}>✦</span>
-              </motion.div>
-
-              <p className="text-[8px] tracking-[0.6em] text-[#C9A84C]/80 uppercase mb-3">Portal 01</p>
-
-              <h2 className="font-display font-bold text-[#F5F0E8] text-2xl md:text-3xl tracking-wide text-center mb-4 group-hover:text-[#C9A84C] transition-colors duration-300">
-                Film Facilitation
-              </h2>
-
-              <div className="h-px w-16 bg-[#C9A84C]/50 mb-4 group-hover:w-24 group-hover:bg-[#C9A84C] transition-all duration-500" />
-
-              <p className="text-[#F5F0E8]/60 text-[10px] tracking-[0.25em] uppercase text-center leading-relaxed group-hover:text-[#F5F0E8]/80 transition-colors duration-300">
-                Locations · Subsidies<br />Line Production · Permits
-              </p>
-
-              <div className="mt-8 flex items-center gap-3 text-[#C9A84C]/80 group-hover:text-[#C9A84C] transition-all duration-300">
-                <span className="text-[9px] tracking-[0.4em] uppercase font-semibold">Enter</span>
-                <span className="h-px w-8 bg-current group-hover:w-14 transition-all duration-400" />
-              </div>
-            </div>
+          <Link href="/film-industry" className="group flex items-center justify-center">
+            <motion.div whileHover={{ scale: 1.08 }} transition={{ duration: 0.4 }}>
+              <Image
+                src="/new logo/logo11 (1).png"
+                alt="MP Film Industry"
+                width={200}
+                height={200}
+                className="object-contain"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(201,168,76,0.5))' }}
+              />
+            </motion.div>
           </Link>
         </motion.div>
 
-        {/* ── Divider (desktop) ── */}
-        <motion.div
-          className="hidden md:flex flex-col items-center justify-center gap-2"
-          initial={{ opacity: 0, scaleY: 0 }}
-          animate={{ opacity: 1, scaleY: 1 }}
-          transition={{ duration: 1, delay: 0.7 }}
-        >
-          <div className="w-px h-16 bg-linear-to-b from-transparent via-[#C9A84C]/30 to-transparent" />
-          <span className="text-[#C9A84C]/30 text-[10px] tracking-widest">OR</span>
-          <div className="w-px h-16 bg-linear-to-b from-transparent via-[#C9A84C]/30 to-transparent" />
-        </motion.div>
 
         {/* ── Card 2: Film Pathshala ── */}
         <motion.div
-          className="flex-1"
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.9, delay: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
         >
-          <Link href="/film-pathshala" className="group block relative overflow-hidden" style={{ minHeight: '320px' }}>
-            {/* Card background */}
-            <div className="absolute inset-0 transition-all duration-700"
-              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.12) 0%, rgba(201,168,76,0.04) 100%)' }} />
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-              style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.08) 100%)' }} />
-
-            {/* Border */}
-            <div className="absolute inset-0 border border-[#C9A84C]/50 group-hover:border-[#C9A84C] transition-colors duration-500" />
-
-            {/* Top line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-linear-to-r from-transparent via-[#C9A84C]/60 to-transparent group-hover:via-[#F0D87A] transition-all duration-500" />
-
-            {/* Corner accents */}
-            <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-            <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-            <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-            <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-[#C9A84C]/60 group-hover:border-[#C9A84C] transition-colors duration-300" />
-
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-center p-12 h-full" style={{ minHeight: '320px' }}>
-              <motion.div className="mb-5 relative" whileHover={{ rotate: 45, scale: 1.2 }} transition={{ duration: 0.4 }}>
-                <span className="text-[#C9A84C] text-4xl block" style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.6))' }}>✦</span>
-              </motion.div>
-
-              <p className="text-[8px] tracking-[0.6em] text-[#C9A84C]/80 uppercase mb-3">Portal 02</p>
-
-              <h2 className="font-display font-bold text-[#F5F0E8] text-2xl md:text-3xl tracking-wide text-center mb-4 group-hover:text-[#C9A84C] transition-colors duration-300">
-                Film पाठशाला
-              </h2>
-
-              <div className="h-px w-16 bg-[#C9A84C]/50 mb-4 group-hover:w-24 group-hover:bg-[#C9A84C] transition-all duration-500" />
-
-              <p className="text-[#F5F0E8]/60 text-[10px] tracking-[0.25em] uppercase text-center leading-relaxed group-hover:text-[#F5F0E8]/80 transition-colors duration-300">
-                Learn · Train · Grow<br />Film Education Platform
-              </p>
-
-              <div className="mt-8 flex items-center gap-3 text-[#C9A84C]/80 group-hover:text-[#C9A84C] transition-all duration-300">
-                <span className="text-[9px] tracking-[0.4em] uppercase font-semibold">Enter</span>
-                <span className="h-px w-8 bg-current group-hover:w-14 transition-all duration-400" />
-              </div>
-            </div>
+          <Link href="/film-pathshala" className="group flex items-center justify-center">
+            <motion.div whileHover={{ scale: 1.08 }} transition={{ duration: 0.4 }}>
+              <Image
+                src="/new logo/Film pathshala logo trns.png"
+                alt="Film Pathshala"
+                width={220}
+                height={220}
+                className="object-contain"
+                style={{ filter: 'drop-shadow(0 0 10px rgba(201,168,76,0.5))' }}
+              />
+            </motion.div>
           </Link>
         </motion.div>
 

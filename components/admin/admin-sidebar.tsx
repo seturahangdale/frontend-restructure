@@ -15,7 +15,8 @@ import {
     ChevronRight,
     User,
     Settings,
-    X
+    X,
+    Video
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils'
@@ -54,6 +55,7 @@ export function AdminSidebar({
         { id: 'gallery', label: 'Gallery Manager', icon: ImageIcon },
         { id: 'about', label: 'About Us', icon: Info },
         { id: 'social', label: 'Social Media', icon: Share2 },
+        { id: 'pathshala-videos', label: 'Pathshala Videos', icon: Video },
         { id: 'promotion', label: 'Promotion', icon: Megaphone },
         { id: 'settings', label: 'Account Settings', icon: Settings },
     ]

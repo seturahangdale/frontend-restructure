@@ -32,10 +32,9 @@ export default function PromotionManager() {
     const fetchPromotion = async () => {
         try {
             const res = await apiClient.getPromotionData()
-            setData(res)
+            setData(res && res.hero ? res : null)
         } catch (error) {
             console.error('Failed to fetch promotion:', error)
-            toast.error('Failed to load promotion data')
         } finally {
             setLoading(false)
         }

@@ -1,55 +1,33 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+import { backendGet, backendPost } from '@/lib/backend-fetch'
 
-const BACKEND_URL = process.env.INTERNAL_API_URL || 'https://film-api.indusanalytics.co.in/api'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const fallbackPath = path.join(process.cwd(), 'data', 'about.json')
 
 export async function GET() {
-    try {
-        const res = await fetch(`${BACKEND_URL}/settings/about`, { cache: 'no-store' })
-        if (res.ok) {
-            const text = await res.text()
-            // Backend returns null (the string "null") when no data exists yet
-            if (text && text.trim() !== 'null') {
-                return new NextResponse(text, {
-                    headers: { 'Content-Type': 'application/json' },
-                })
-            }
-        }
+    const data = await backendGet('/settings/about')
+    if (data) return NextResponse.json(data)
 
-        // Fallback to local JSON file
-        const data = await fs.readFile(fallbackPath, 'utf8')
-        return NextResponse.json(JSON.parse(data))
-    } catch (error) {
-        console.error('Error reading about data:', error)
-        return NextResponse.json({ error: 'Failed to fetch about data' }, { status: 500 })
-    }
+    try {
+        const raw = await fs.readFile(fallbackPath, 'utf-8')
+        return NextResponse.json(JSON.parse(raw))
+    } catch { /* ignore */ }
+
+    return NextResponse.json({})
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
         const body = await request.json()
-        // Simple validation
-        if (!body.whoWeAre || !body.whatWeDo) {
+        if (!body.whoWeAre || !body.whatWeDo)
             return NextResponse.json({ error: 'Invalid data format' }, { status: 400 })
-        }
-
-        const res = await fetch(`${BACKEND_URL}/settings/about`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-        })
-
-        if (!res.ok) {
-            const err = await res.text()
-            console.error('Backend error saving about:', err)
-            return NextResponse.json({ error: 'Failed to update about data' }, { status: 500 })
-        }
-
+        await backendPost('/settings/about', body)
         return NextResponse.json({ message: 'About data updated successfully' })
-    } catch (error) {
-        console.error('Error updating about data:', error)
+    } catch {
         return NextResponse.json({ error: 'Failed to update about data' }, { status: 500 })
     }
 }

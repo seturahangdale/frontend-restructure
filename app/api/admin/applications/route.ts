@@ -25,9 +25,6 @@ export async function GET() {
         return NextResponse.json(data);
     } catch (error) {
         console.error('Admin Proxy Error:', error);
-        return NextResponse.json(
-            { error: 'Internal Admin Proxy Error' },
-            { status: 500 }
-        );
+        return NextResponse.json([]);
     }
 }

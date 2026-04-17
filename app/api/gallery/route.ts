@@ -10,15 +10,14 @@ const BACKEND_URL = process.env.INTERNAL_API_URL || 'https://film-api.indusanaly
 const GALLERY_FALLBACK_PATH = path.join(process.cwd(), 'data', 'gallery.json')
 
 export async function GET() {
+    let categories: any[] | null = null
+    let items: any[] | null = null
+
     try {
-        // Fetch categories from settings and items from gallery DB in parallel
         const [categoriesRes, itemsRes] = await Promise.all([
             fetch(`${BACKEND_URL}/settings/gallery-categories`, { cache: 'no-store' }),
             fetch(`${BACKEND_URL}/gallery`, { cache: 'no-store' }),
         ])
-
-        let categories: any[] | null = null
-        let items: any[] | null = null
 
         if (categoriesRes.ok) {
             const text = await categoriesRes.text()
@@ -36,18 +35,19 @@ export async function GET() {
                     tags: item.tags || [],
                     description: item.description || '',
                 }))
-                // Only use backend items if at least some have images
                 const hasImages = mapped.some((item: any) => item.src && item.src.trim() !== '')
                 if (hasImages) items = mapped
             }
         }
+    } catch { /* backend down */ }
 
-        // If we got both from backend, return them
-        if (categories !== null && items !== null) {
-            return NextResponse.json({ categories, items })
-        }
+    // If we got both from backend, return them
+    if (categories !== null && items !== null) {
+        return NextResponse.json({ categories, items })
+    }
 
-        // Fallback to local gallery.json
+    // Fallback to local gallery.json
+    try {
         if (existsSync(GALLERY_FALLBACK_PATH)) {
             const fileData = await fs.readFile(GALLERY_FALLBACK_PATH, 'utf-8')
             const fallback = JSON.parse(fileData)
@@ -56,18 +56,9 @@ export async function GET() {
                 items: items ?? fallback.items ?? [],
             })
         }
+    } catch { /* ignore */ }
 
-        return NextResponse.json({
-            categories: categories ?? [],
-            items: items ?? [],
-        })
-    } catch (error) {
-        console.error('Fetch gallery error:', error)
-        return NextResponse.json(
-            { error: 'Failed to fetch gallery data' },
-            { status: 500 }
-        )
-    }
+    return NextResponse.json({ categories: categories ?? [], items: items ?? [] })
 }
 
 export async function PUT(request: NextRequest) {

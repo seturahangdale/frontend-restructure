@@ -22,16 +22,14 @@ export async function GET(request: NextRequest) {
         const url = new URL(`${BACKEND_URL}/documents`)
         if (type) url.searchParams.set('type', type)
 
-        const res = await fetch(url.toString(), { cache: 'no-store' })
-
-        if (!res.ok) {
-            const err = await res.text()
-            console.error('Backend documents fetch error:', err)
-            return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 })
-        }
-
-        const data = await res.json()
-        const backendDocs: any[] = data.documents || []
+        let backendDocs: any[] = []
+        try {
+            const res = await fetch(url.toString(), { cache: 'no-store' })
+            if (res.ok) {
+                const data = await res.json()
+                backendDocs = data.documents || []
+            }
+        } catch { /* backend down */ }
 
         // Merge: for each guide fallback, use it only if backend doesn't have that serviceKey
         const backendServiceKeys = new Set(backendDocs.map((d: any) => d.serviceKey).filter(Boolean))
@@ -41,9 +39,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ documents })
     } catch (error) {
         console.error('Get documents error:', error)
-        return NextResponse.json(
-            { error: 'Failed to fetch documents' },
-            { status: 500 }
-        )
+        return NextResponse.json({ documents: GUIDE_FALLBACKS })
     }
 }

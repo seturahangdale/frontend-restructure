@@ -44,10 +44,9 @@ export function PixelPreloader() {
           >
             <video
               className="absolute inset-0 w-full h-full object-cover"
-              src="/loading_h264.mp4"
+              src="/loader/filmindustry.mp4#t=0.001"
               autoPlay
               muted
-              loop
               playsInline
               preload="auto"
             />
