@@ -24,11 +24,16 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json()
-        await backendPost('/settings/social', body)
-        return NextResponse.json({ success: true, message: 'Social data updated successfully' })
-    } catch {
-        return NextResponse.json({ error: 'Failed to update social data' }, { status: 500 })
-    }
+    let body: any
+    try { body = await request.json() }
+    catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
+
+    // Always save locally first (works even when backend is down)
+    try { await fs.writeFile(fallbackPath, JSON.stringify(body, null, 2), 'utf-8') }
+    catch { /* ignore */ }
+
+    // Also sync to backend if available
+    await backendPost('/settings/social', body)
+
+    return NextResponse.json({ success: true, message: 'Social data updated successfully' })
 }

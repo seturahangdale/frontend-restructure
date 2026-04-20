@@ -27,16 +27,6 @@ const goldText = {
    ABOUT PREVIEW
 ══════════════════════════════════════════ */
 function AboutPreviewSection() {
-  const [data, setData]       = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    apiClient.getAboutData()
-      .then(setData)
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
-
   return (
     <section className="relative w-full min-h-screen md:h-full bg-[#080808] overflow-hidden flex">
 
@@ -89,23 +79,21 @@ function AboutPreviewSection() {
 
 
 
-        {/* ── What We Do — compact list ── */}
-        {!loading && data && (
-          <motion.div
-            className="mb-10"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.7 }}
-          >
-            <p className="text-[#C9A84C] text-xs tracking-[0.4em] uppercase mb-4 font-medium">What We Do</p>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-              {data.whatWeDo.items.slice(0, 6).map((item: string, i: number) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-[#C9A84C] text-xs">✦</span>
-                  <span className="text-[#F5F0E8]/45 text-sm leading-snug truncate">{item}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
+        {/* ── Description paragraphs ── */}
+        <motion.div
+          className="mb-10 space-y-4 max-w-xl"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <p className="text-[#F5F0E8]/55 text-sm leading-relaxed">
+            Film Industry MP operates as a centralized coordination platform with decentralized execution.
+          </p>
+          <p className="text-[#F5F0E8]/55 text-sm leading-relaxed">
+            We collaborate with city-wise representatives across Madhya Pradesh who manage all local operations including locations, crew, permissions, and logistics.
+          </p>
+          <p className="text-[#F5F0E8]/55 text-sm leading-relaxed">
+            This model allows filmmakers to access authentic local expertise while maintaining a single point of contact.
+          </p>
+        </motion.div>
 
         {/* CTA */}
         <motion.div

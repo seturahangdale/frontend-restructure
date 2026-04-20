@@ -111,7 +111,7 @@ export default function SocialMediaPage() {
         <motion.div className="text-center mb-16 pt-6"
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
         >
-          <p className="text-[10px] tracking-[0.6em] text-[#C9A84C] uppercase font-medium mb-5">
+          <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-5">
             Digital Awareness Initiative
           </p>
           <div className="flex items-center justify-center gap-4 mb-6">
@@ -202,7 +202,7 @@ export default function SocialMediaPage() {
               initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ duration: 0.6 }}
             >
-              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-2">Follow Us</p>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-2">Follow Us</p>
               <h2 className="font-display font-bold text-[#F5F0E8] text-3xl">
                 Connect With <span style={goldText}>Us</span>
               </h2>
@@ -247,7 +247,7 @@ export default function SocialMediaPage() {
             MP
           </span>
           <div className="relative z-10">
-            <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Our Objective</p>
+            <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-3">Our Objective</p>
             <h3 className="font-display font-bold text-[#F5F0E8] text-2xl sm:text-3xl mb-5 max-w-2xl mx-auto leading-snug">
               Positioning Madhya Pradesh as a <span style={goldText}>World-Class</span> Filming Destination
             </h3>

@@ -1,14 +1,14 @@
 {
     "hero": {
         "title": "Movie Promotion & Celebrity Management",
-        "description": "At Film Industry MP, we provide structured, result-driven movie promotion and celebrity management services across Madhya Pradesh."
+        "description": "At Film Industry MP, we operate as a network-driven facilitation platform, connecting filmmakers and brands with trusted local coordinators, production teams, and promotion partners across Madhya Pradesh.\n\nOur approach ensures efficient execution, local expertise, and scalable support across multiple cities and districts."
     },
     "whyPromote": [
-        "Large Tier-2 & Tier-3 audience base",
-        "Strong cinema-going culture",
-        "Rapidly growing multiplex infrastructure",
+        "Large Tier-2 & Tier-3 audience base across multiple districts",
+        "Strong and growing cinema-going culture",
+        "Rapidly expanding multiplex & theatre network",
         "High youth engagement through colleges & public events",
-        "Cost-effective promotional execution compared to metro cities"
+        "Cost-effective promotion execution through local networks"
     ],
     "cities": [
         "Indore",
@@ -22,39 +22,39 @@
         {
             "title": "Press Conferences & Media Management",
             "items": [
-                "Venue booking & setup",
-                "Regional TV & print media coordination",
-                "Digital media invitations",
-                "Press kit management",
-                "Structured media interaction planning"
+                "Venue coordination through local partners",
+                "Regional TV & print media coordination via city networks",
+                "Digital media outreach & invitations",
+                "Press kit facilitation through local teams",
+                "Structured media interaction planning with on-ground coordinators"
             ]
         },
         {
             "title": "Mall & Public Event Promotions",
             "items": [
-                "Stage design & branding setup",
-                "Fan engagement activities",
-                "Public meet & greet coordination",
-                "Crowd management",
-                "Sound, lighting & technical execution"
+                "Stage & branding setup via local execution teams",
+                "Fan engagement activities coordinated locally",
+                "Public meet & greet managed by city representatives",
+                "Crowd management through regional partners",
+                "Sound, lighting & technical setup via verified vendors"
             ]
         },
         {
             "title": "College & Youth Promotions",
             "items": [
-                "Campus activation programs",
-                "Celebrity interaction sessions",
-                "Student influencer collaborations",
-                "Social media amplification"
+                "Campus activation via local coordinators",
+                "Celebrity interaction planning with regional support",
+                "Student influencer collaborations (city-wise)",
+                "Social media amplification through local networks"
             ]
         },
         {
-            "title": "Premiere & Special Screening Management",
+            "title": "Premiere & Special Screening",
             "items": [
-                "Red carpet event execution",
-                "Guest list coordination",
-                "Security & protocol handling",
-                "Media coverage planning"
+                "Red carpet event coordination via city teams",
+                "Guest list & invite management",
+                "Security & protocol handled by local partners",
+                "Media coverage planning with regional media"
             ]
         }
     ],

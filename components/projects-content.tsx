@@ -92,12 +92,14 @@ export function ProjectsContent() {
             Our <span style={goldText}>Services</span>
           </motion.h1>
 
-          <motion.p
-            className="text-[#F5F0E8]/55 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed mb-10"
+          <motion.div
+            className="max-w-3xl mx-auto mb-10 space-y-4"
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}
           >
-            {data.hero?.description || 'At Film Industry MP, we take pride in delivering end-to-end film production and promotional solutions across every city in Madhya Pradesh.'}
-          </motion.p>
+            {(data.hero?.description || 'At Film Industry MP, we take pride in delivering end-to-end film production and promotional solutions across every city in Madhya Pradesh.').split('\n\n').map((para: string, i: number) => (
+              <p key={i} className="text-[#F5F0E8]/55 text-base sm:text-lg leading-relaxed">{para}</p>
+            ))}
+          </motion.div>
 
 
 
@@ -125,13 +127,14 @@ export function ProjectsContent() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {[
-            { num: '01', title: 'Film Shooting',         serviceKey: 'film-shooting',         btn: 'Film Shooting Guide',         text: 'We specialize in Film Shooting in Madhya Pradesh, offering complete on-ground support including location coordination, crew management, equipment arrangements, and smooth execution of shoots.' },
-            { num: '02', title: 'Film Subsidy',           serviceKey: 'subsidy',               btn: 'Subsidy Related Guide',         text: 'Our team provides expert assistance in Film Subsidy in MP, guiding production houses through government policies, documentation, and compliance to help them maximize financial benefits.' },
-            { num: '03', title: 'Theatre Advertisement',  serviceKey: 'theatre-advertisement', btn: 'Theatre Advertisement Guide',   text: 'We offer impactful Theatre Advertisement services, enabling brands and films to reach a wide audience through strategic cinema promotions across multiple cities in MP.' },
-            { num: '04', title: 'Celebrity Management',   serviceKey: 'celebrity-management',  btn: 'Celebrity Management Guide',    serviceKey2: 'movie-promotion', btn2: 'Movie Promotion Guide', text: 'We excel in Celebrity Management and Movie Promotions, handling everything from artist coordination to event execution, ensuring successful promotions and strong audience engagement.' },
+            { num: '01', title: 'Film Shooting',         serviceKey: 'film-shooting',         btn: 'Film Shooting Guide',         text: 'We facilitate film shooting across Madhya Pradesh through our city-wise network of coordinators and production teams, ensuring smooth on-ground execution including location coordination, crew arrangement, and logistical support.' },
+            { num: '02', title: 'Film Subsidy',           serviceKey: 'subsidy',               btn: 'Subsidy Related Guide',         text: 'We assist filmmakers by connecting them with experienced local experts and consultants who guide production houses through subsidy policies, documentation, and compliance processes in Madhya Pradesh.' },
+            { num: '03', title: 'Theatre Advertisement',  serviceKey: 'theatre-advertisement', btn: 'Theatre Advertisement Guide',   text: 'We enable impactful theatre advertising through our multi-city network, helping films and brands reach wider audiences via coordinated cinema promotions across districts.' },
+            { num: '04', title: 'Celebrity Management',   serviceKey: 'celebrity-management',  btn: 'Celebrity Management Guide',    text: 'We coordinate celebrity management and movie promotions through regional partners and city-level teams, ensuring smooth artist coordination, event execution, and audience engagement.' },
+            { num: '05', title: 'Movie Promotion',        serviceKey: 'movie-promotion',       btn: 'Movie Promotion Guide',         text: 'Explore how our network-driven approach enables effective movie promotions across multiple districts.\nConnect with local coordinators and execute campaigns seamlessly.\nAchieve wider audience reach with optimized regional strategies.' },
+            { num: '06', title: 'Film Pathshala',         serviceKey: 'film-pathshala',        btn: 'Visit Film Pathshala',          text: 'Film Pathshala is designed to guide aspiring talents with real industry insights and practical learning.\nWe connect creativity with on-ground exposure through experienced mentors and local networks.\nFrom learning to execution, we help you take your first step into the film industry with confidence.' },
           ].map((item, i) => {
             const guide  = guides[item.serviceKey]
-            const guide2 = item.serviceKey2 ? guides[item.serviceKey2] : undefined
             return (
             <motion.div
               key={i}
@@ -157,10 +160,19 @@ export function ProjectsContent() {
                 {item.title}
               </h3>
 
-              <p className="text-[#F5F0E8]/50 text-sm leading-relaxed mb-5">{item.text}</p>
+              <div className="text-[#F5F0E8]/50 text-sm leading-relaxed mb-5 space-y-1">
+                {item.text.split('\n').map((line: string, li: number) => <p key={li}>{line}</p>)}
+              </div>
 
               <div className="flex flex-wrap gap-2">
-                {guide ? (
+                {item.serviceKey === 'film-pathshala' ? (
+                  <Link
+                    href="/film-pathshala"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-[10px] tracking-[0.15em] uppercase font-semibold bg-[#C9A84C] text-black hover:bg-transparent hover:text-[#C9A84C] border border-[#C9A84C] transition-all duration-300"
+                  >
+                    {item.btn}
+                  </Link>
+                ) : guide ? (
                   <a
                     href={guide.filepath}
                     target="_blank"
@@ -173,22 +185,6 @@ export function ProjectsContent() {
                   <span className="inline-flex items-center gap-2 px-4 py-2 text-[10px] tracking-[0.15em] uppercase font-semibold border border-white/10 text-white/25 cursor-not-allowed">
                     {item.btn} — Coming Soon
                   </span>
-                )}
-                {item.btn2 && (
-                  guide2 ? (
-                    <a
-                      href={guide2.filepath}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 text-[10px] tracking-[0.15em] uppercase font-semibold border border-white/20 text-white/60 hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all duration-300"
-                    >
-                      {item.btn2}
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-2 px-4 py-2 text-[10px] tracking-[0.15em] uppercase font-semibold border border-white/10 text-white/25 cursor-not-allowed">
-                      {item.btn2} — Coming Soon
-                    </span>
-                  )
                 )}
               </div>
             </motion.div>
@@ -213,80 +209,52 @@ export function ProjectsContent() {
         <div className="h-px mt-12" style={{ background: 'linear-gradient(to right, rgba(201,168,76,0.3), transparent)' }} />
       </div>
 
-      {/* ── WHY PROMOTE IN MP ── */}
-      {data.whyPromote?.length > 0 && (
-        <div className="max-w-6xl mx-auto px-6 lg:px-12 mt-20">
-          <FadeIn>
-            <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Regional Advantage</p>
-            <h2 className="font-display font-bold text-[#F5F0E8] text-3xl sm:text-4xl mb-10">
-              Why Promote in <span style={goldText}>Madhya Pradesh?</span>
-            </h2>
-          </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.whyPromote.map((point: string, i: number) => (
-              <FadeIn key={i} delay={i * 0.08}>
-                <div className="flex items-start gap-4 p-5" style={{ border: '1px solid rgba(201,168,76,0.1)', background: 'rgba(201,168,76,0.02)' }}>
-                  <span className="text-[#C9A84C] font-display font-bold text-lg shrink-0 mt-0.5">{String(i + 1).padStart(2, '0')}</span>
-                  <p className="text-[#F5F0E8]/55 text-sm leading-relaxed">{point}</p>
-                </div>
-              </FadeIn>
-            ))}
+      {/* ── PRESENCE ── */}
+      {(() => {
+        const districts = [
+          'Agar Malwa','Alirajpur','Anuppur','Ashoknagar','Balaghat','Barwani','Betul','Bhind',
+          'Bhopal','Burhanpur','Chhatarpur','Chhindwara','Damoh','Datia','Dewas','Dhar','Dindori',
+          'Guna','Gwalior','Harda','Narmadapuram (Hoshangabad)','Indore','Jabalpur','Jhabua',
+          'Katni','Khandwa (East Nimar)','Khargone (West Nimar)','Mandla','Mandsaur','Morena',
+          'Narsinghpur','Neemuch','Niwari','Mauganj','Panna','Raisen','Rajgarh','Ratlam','Rewa',
+          'Sagar','Satna','Sehore','Seoni','Shahdol','Shajapur','Sheopur','Shivpuri','Sidhi',
+          'Singrauli','Tikamgarh','Ujjain','Umaria','Vidisha','Bhopal Rural','Chachaura',
+        ]
+        return (
+          <div className="max-w-6xl mx-auto px-6 lg:px-12 mt-20">
+            <FadeIn>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-3">Coverage</p>
+              <h2 className="font-display font-bold text-[#F5F0E8] text-3xl sm:text-4xl mb-4">
+                Our Presence Across <span style={goldText}>Madhya Pradesh</span>
+              </h2>
+              <p className="text-[#F5F0E8]/50 text-base leading-relaxed mb-3 max-w-2xl">
+                Film Industry MP has a growing network of coordinators and production partners across all major districts of Madhya Pradesh.
+              </p>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-8">
+                ✦ Complete District Coverage
+              </p>
+            </FadeIn>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {districts.map((d, i) => (
+                <FadeIn key={i} delay={Math.min(i * 0.02, 0.5)}>
+                  <div
+                    className="flex items-center gap-2 px-4 py-3 group hover:border-[#C9A84C]/50 transition-all duration-300"
+                    style={{ border: '1px solid rgba(201,168,76,0.15)', background: 'rgba(201,168,76,0.02)' }}
+                  >
+                    <span className="w-1 h-1 rounded-full shrink-0" style={{ background: 'rgba(201,168,76,0.4)' }} />
+                    <span className="text-sm text-[#F5F0E8]/65 group-hover:text-[#C9A84C] transition-colors duration-300 leading-tight">
+                      {d}
+                    </span>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+            <FadeIn delay={0.3}>
+              <p className="mt-8 text-[#F5F0E8]/25 text-xs tracking-widest uppercase">{districts.length} Districts · All of Madhya Pradesh</p>
+            </FadeIn>
           </div>
-        </div>
-      )}
-
-      {/* ── PROMOTION SERVICES ── */}
-      {data.services?.length > 0 && (
-        <div className="max-w-6xl mx-auto px-6 lg:px-12 mt-20">
-          <FadeIn>
-            <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Promotion Offerings</p>
-            <h2 className="font-display font-bold text-[#F5F0E8] text-3xl sm:text-4xl mb-10">
-              Movie <span style={goldText}>Promotion Services</span>
-            </h2>
-          </FadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {data.services.map((service: any, i: number) => (
-              <FadeIn key={i} delay={i * 0.08}>
-                <div className="p-7 h-full" style={{ border: '1px solid rgba(201,168,76,0.12)', background: 'rgba(201,168,76,0.02)' }}>
-                  <h3 className="font-display font-bold text-[#F5F0E8] text-lg mb-4">{service.title}</h3>
-                  <ul className="space-y-2">
-                    {service.items?.map((item: string, j: number) => (
-                      <li key={j} className="flex items-start gap-3 text-[#F5F0E8]/50 text-sm">
-                        <span className="text-[#C9A84C] mt-0.5 shrink-0">✦</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── CITIES ── */}
-      {data.cities?.length > 0 && (
-        <div className="max-w-6xl mx-auto px-6 lg:px-12 mt-20">
-          <FadeIn>
-            <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Coverage</p>
-            <h2 className="font-display font-bold text-[#F5F0E8] text-3xl sm:text-4xl mb-10">
-              Cities We <span style={goldText}>Operate In</span>
-            </h2>
-          </FadeIn>
-          <div className="flex flex-wrap gap-3">
-            {data.cities.map((city: string, i: number) => (
-              <FadeIn key={i} delay={i * 0.05}>
-                <span
-                  className="px-6 py-3 text-sm font-semibold text-[#F5F0E8]/70 tracking-wider"
-                  style={{ border: '1px solid rgba(201,168,76,0.2)', background: 'rgba(201,168,76,0.03)' }}
-                >
-                  {city}
-                </span>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      )}
+        )
+      })()}
 
       {/* ── CTA ── */}
       <div className="max-w-6xl mx-auto px-6 lg:px-12 mt-24">
@@ -303,7 +271,7 @@ export function ProjectsContent() {
             >MP</span>
 
             <div className="relative z-10">
-              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-4">Ready to Promote?</p>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-4">Ready to Promote?</p>
               <h2 className="font-display font-bold text-[#F5F0E8] text-3xl sm:text-4xl mb-4 max-w-2xl mx-auto leading-snug">
                 Let's Promote Your Next Release in <span style={goldText}>MP</span>
               </h2>

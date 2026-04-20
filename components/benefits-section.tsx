@@ -5,15 +5,16 @@ import Link from 'next/link'
 import { useRef, useState } from 'react'
 
 const benefits = [
-  { number: '01', title: 'Ease of Permissions',        description: 'Rapid clearances for locations, incentives, subsidies, and full government support.' },
-  { number: '02', title: 'Verified Line Producers',    description: 'Experienced, trustworthy local crew for seamless filming across Madhya Pradesh.' },
-  { number: '03', title: 'Ideal Film Locations',       description: 'Scenic sites aligned to your script with cost-effective logistics and permit support.' },
-  { number: '04', title: 'Local Crew & Artists',       description: 'Well-trained technicians, artists, and production staff — reducing cost and boosting subsidy.' },
-  { number: '05', title: 'Cost-Effective Planning',    description: 'Smart budgeting, local vendor tie-ups, and subsidy-aligned planning to maximize savings.' },
-  { number: '06', title: 'Films, OTT & Ad Shoots',     description: 'Proven support for feature films, web series, OTT, TV shows, docs, and ad films.' },
-  { number: '07', title: 'Fast & Transparent Process', description: 'Clear communication, realistic timelines, and transparent costing — no surprises.' },
-  { number: '08', title: 'Strong Local Presence',      description: 'Deep knowledge of regional culture, locations, and administration.' },
-  { number: '09', title: 'Production-Friendly',        description: 'We respect creative vision while handling all practical production challenges.' },
+  { number: '01', title: 'Ease of Permissions',        description: 'We facilitate faster permissions through local coordinators and regional support systems, helping you navigate approvals, incentives, and compliance efficiently.' },
+  { number: '02', title: 'Verified Line Producers',    description: 'Access trusted line producers and city-level experts from our network, ensuring smooth and reliable on-ground execution.' },
+  { number: '03', title: 'Ideal Film Locations',       description: 'Discover diverse locations through local experts who understand regional landscapes, aligned with your script and budget.' },
+  { number: '04', title: 'Local Crew & Artists',       description: 'Connect with skilled technicians, artists, and production staff through our district-level network — ensuring quality and cost efficiency.' },
+  { number: '05', title: 'Cost-Effective Planning',    description: 'Plan smarter with local vendor networks, regional insights, and optimized budgeting, reducing overall production costs.' },
+  { number: '06', title: 'Films, OTT & Ad Shoots',     description: 'Execute projects seamlessly with on-ground support from experienced local teams across films, OTT, ads, and digital content.' },
+  { number: '07', title: 'Fast & Transparent Process', description: 'Experience smooth coordination with clear communication, realistic timelines, and transparent execution via local partners.' },
+  { number: '08', title: 'Strong Local Presence',      description: 'Benefit from our deep-rooted network across multiple districts, offering strong regional knowledge and faster coordination.' },
+  { number: '09', title: 'Production-Friendly Approach', description: 'We enable a production-friendly environment by connecting you with the right local teams, ensuring your creative vision is executed smoothly.' },
+  { number: '10', title: 'Statewide Network Coverage', description: 'Leverage our extensive network across all districts of Madhya Pradesh, ensuring consistent support, faster coordination, and seamless execution regardless of location.' },
 ]
 
 const goldGrad = {
@@ -51,7 +52,7 @@ function SpotlightGrid() {
   return (
     <div
       ref={gridRef}
-      className="flex-1 relative z-10 flex items-center overflow-hidden px-4 md:px-6 py-8"
+      className="flex-1 relative z-10 flex items-start overflow-y-auto px-4 md:px-6 py-8 h-screen"
       onMouseMove={handleMouse}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -73,8 +74,8 @@ function SpotlightGrid() {
       )}
 
       <motion.div
-        className="grid grid-cols-2 md:grid-cols-3 w-full h-full relative z-10"
-        style={{ gridTemplateRows: 'repeat(3, 1fr)' }}
+        className="grid grid-cols-2 md:grid-cols-3 w-full relative z-10"
+        style={{}}
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
@@ -82,10 +83,10 @@ function SpotlightGrid() {
         {benefits.map((b, i) => (
           <motion.div
             key={b.number}
-            className="group relative p-5 cursor-default overflow-hidden"
+            className="group relative p-5 cursor-default"
             style={{
               borderRight: (i % 3 !== 2) ? '1px solid rgba(201,168,76,0.08)' : 'none',
-              borderBottom: (i < 6) ? '1px solid rgba(201,168,76,0.08)' : 'none',
+              borderBottom: (i < 9) ? '1px solid rgba(201,168,76,0.08)' : 'none',
             }}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -124,7 +125,7 @@ function SpotlightGrid() {
 
 export function BenefitsSection() {
   return (
-    <section className="relative w-full min-h-screen md:h-full bg-[#080808] flex flex-col md:flex-row overflow-hidden">
+    <section className="relative w-full h-full bg-[#080808] flex flex-col md:flex-row overflow-hidden">
 
       {/* Subtle grid bg */}
       <div className="absolute inset-0 opacity-[0.022] pointer-events-none"
@@ -162,15 +163,8 @@ export function BenefitsSection() {
           style={{ fontSize: 'clamp(120px,16vw,200px)', color: 'rgba(201,168,76,0.03)', bottom: '-20px', left: '10px', lineHeight: 1 }}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2 }}
         >
-          9
+          10
         </motion.span>
-
-        <motion.p
-          className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase mb-4 font-medium"
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-        >
-          Why Choose Us
-        </motion.p>
 
         <div className="flex items-center gap-3 mb-5">
           <div className="h-px w-10" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
@@ -181,7 +175,7 @@ export function BenefitsSection() {
           className="font-display font-bold text-[#F5F0E8] text-3xl md:text-4xl lg:text-5xl leading-tight mb-5"
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
         >
-          9 Reasons to<br />Film in{' '}
+          10 Reasons to<br />Film in{' '}
           <span style={goldGrad}>MP</span>
         </motion.h2>
 
@@ -189,7 +183,7 @@ export function BenefitsSection() {
           className="text-[#F5F0E8]/40 text-sm leading-relaxed max-w-xs mb-10"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.4 }}
         >
-          Everything a production needs — locations, crew, permits, subsidies — all in one place.
+          Everything your production needs — enabled through our network of local coordinators, crews, and partners across Madhya Pradesh.
         </motion.p>
 
         <motion.div

@@ -48,9 +48,9 @@ export function HeroSection() {
             <span className="text-[#C9A84C] text-[8px]">✦</span>
             <span className="h-px w-5 bg-[#C9A84C]" />
           </div>
-          <p className="font-display font-bold text-sm max-w-60 leading-snug"
-            style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-            Apna Madhya Pradesh<br />Sabka Madhya Pradesh
+          <p className="text-[#F5F0E8]/60 text-[10px] max-w-55 leading-relaxed">
+            Film Industry MP is a network-driven film facilitation platform that connects filmmakers with trusted local coordinators, line producers, and production teams across Madhya Pradesh.<br /><br />
+            Instead of directly providing services, we ensure efficient on-ground execution through verified city-level experts, making film production faster, smoother, and cost-effective.
           </p>
         </motion.div>
       </div>
@@ -62,29 +62,30 @@ export function HeroSection() {
 
           {/* Tagline — left aligned */}
           <motion.div
-            className="mb-6"
+            className="mb-2"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: [0.25, 0.4, 0.25, 1] }}
           >
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center justify-center gap-3 mb-3">
               <span className="h-px w-8 bg-[#C9A84C]" />
               <span className="text-[#C9A84C] text-xs">✦</span>
               <span className="text-[#F5F0E8]/45 text-[10px] tracking-[0.45em] uppercase font-medium">Madhya Pradesh — The Heart of India</span>
               <span className="text-[#C9A84C] text-xs">✦</span>
               <span className="h-px w-8 bg-[#C9A84C]" />
             </div>
-            <p className="font-display font-bold text-2xl max-w-sm leading-snug"
-              style={{ background: 'linear-gradient(135deg, #C9A84C 0%, #E8C97A 50%, #C9A84C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Apna Madhya Pradesh<br />Sabka Madhya Pradesh
+            <p className="text-[#F5F0E8]/60 text-sm leading-relaxed whitespace-nowrap">
+              Film Industry MP is a network-driven film facilitation platform that connects filmmakers with trusted local coordinators, line producers, and production teams across Madhya Pradesh.
             </p>
           </motion.div>
 
-          {/* Divider */}
-          <div className="h-px w-full mb-5" style={{ background: 'linear-gradient(to right, rgba(201,168,76,0.4), rgba(201,168,76,0.1), transparent)' }} />
+          {/* Second line above buttons */}
+          <p className="text-[#F5F0E8]/60 text-sm leading-relaxed mb-4 mt-2 whitespace-nowrap">
+            Instead of directly providing services, we ensure efficient on-ground execution through verified city-level experts, making film production faster, smoother, and cost-effective.
+          </p>
 
           {/* Horizontal guide buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             {BUTTONS.map(({ label, href, gold }, i) => (
               <motion.a
                 key={label}

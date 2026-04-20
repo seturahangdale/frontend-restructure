@@ -24,22 +24,6 @@ function Dot({ index, activeProgress }: { index: number; activeProgress: MotionV
   )
 }
 
-function ScrollHint({ progress }: { progress: MotionValue<number> }) {
-  const opacity = useTransform(progress, [0, 0.1], [1, 0])
-  return (
-    <motion.div
-      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none"
-      style={{ opacity }}
-    >
-      <p className="text-[9px] tracking-[0.4em] text-[#C9A84C]/60 uppercase">Scroll</p>
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-        className="w-px h-10 bg-linear-to-b from-[#C9A84C]/60 to-transparent"
-      />
-    </motion.div>
-  )
-}
 
 function PanelDots({ progress }: { progress: MotionValue<number> }) {
   const activeProgress = useTransform(progress, [0, 1], [0, PANELS - 1])
@@ -103,7 +87,6 @@ export function HorizontalScrollHome() {
           />
 
           <PanelDots progress={scrollYProgress} />
-          <ScrollHint progress={scrollYProgress} />
 
           {/* Horizontal panels strip */}
           <motion.div style={{ x }} className="flex h-screen will-change-transform">

@@ -196,7 +196,7 @@ export function AboutContent() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
             <FadeIn>
-              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-4">His Network</p>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-4">His Network</p>
               <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-6">
                 Building the Right<br /><span style={goldText}>Connections</span>
               </h2>
@@ -247,7 +247,7 @@ export function AboutContent() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start mb-8">
             <FadeIn>
-              <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-3">Key Differentiator</p>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-3">Key Differentiator</p>
               <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight mb-5">
                 Visual Intelligence for<br /><span style={goldText}>Filmmakers</span>
               </h2>
@@ -303,45 +303,34 @@ export function AboutContent() {
           {/* Label + heading */}
           <FadeIn>
             <div className="text-center mb-14">
-              <p className="text-[10px] tracking-[0.6em] text-[#C9A84C] uppercase font-medium mb-4">His Vision</p>
-              <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight max-w-2xl mx-auto">
-                A Film-Friendly <span style={goldText}>Ecosystem</span>
+              <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-4">Our Vision</p>
+              <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight max-w-3xl mx-auto">
+                To build a connected film ecosystem across{' '}
+                <span style={goldText}>Madhya Pradesh</span>
               </h2>
             </div>
           </FadeIn>
 
-          {/* 3 vision pillars */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px mb-16" style={{ border: '1px solid rgba(201,168,76,0.1)' }}>
-            {[
-              {
-                roman: 'I',
-                title: 'Reduce Uncertainty',
-                text: 'Connecting production houses with reliable, location-specific resources while guiding them through visual content and real insights — improving execution efficiency.'
-              },
-              {
-                roman: 'II',
-                title: 'Build the Ecosystem',
-                text: 'Committed to creating a film-friendly ecosystem in Madhya Pradesh where filmmakers work seamlessly while generating opportunities for local talent, vendors, and communities.'
-              },
-              {
-                roman: 'III',
-                title: 'Lead with Vision',
-                text: 'With a clear vision, strong grassroots network, and innovative digital approach — positioned as a trusted Film Facilitator, Industry Connector, and Location Intelligence Provider.'
-              },
-            ].map((pillar, i) => (
-              <FadeIn key={i} delay={i * 0.12}>
-                <div className="group relative p-8 h-full transition-all duration-300 overflow-hidden"
-                  style={{ background: 'rgba(201,168,76,0.015)' }}>
-                  {/* hover gold top line */}
-                  <div className="absolute top-0 left-0 right-0 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
-                    style={{ background: 'linear-gradient(to right, #C9A84C, transparent)' }} />
-                  <span className="font-display font-bold text-sm tracking-[0.3em] mb-5 block" style={{ color: 'rgba(201,168,76,0.5)' }}>{pillar.roman}</span>
-                  <h3 className="font-display font-bold text-[#F5F0E8] text-lg mb-3">{pillar.title}</h3>
-                  <p className="text-[#F5F0E8]/45 text-sm leading-relaxed">{pillar.text}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+          {/* Vision pillars */}
+          <FadeIn delay={0.15}>
+            <div className="max-w-2xl mx-auto mb-16">
+              <p className="text-[#F5F0E8]/50 text-base mb-8 text-center">by:</p>
+              <div className="space-y-4">
+                {[
+                  'Empowering local talent and coordinators',
+                  'Making film production accessible across districts',
+                  'Promoting MP as a leading film destination',
+                  'Creating opportunities in regional filmmaking',
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4 group">
+                    <span className="shrink-0 font-display font-bold text-sm tabular-nums" style={{ color: 'rgba(201,168,76,0.4)' }}>0{i + 1}</span>
+                    <div className="h-px flex-1" style={{ background: 'rgba(201,168,76,0.12)' }} />
+                    <p className="text-[#F5F0E8]/70 text-base group-hover:text-[#F5F0E8] transition-colors duration-300">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeIn>
 
           {/* Quote */}
           <FadeIn delay={0.4}>
@@ -397,12 +386,12 @@ export function AboutContent() {
                 <span className="absolute bottom-4 right-4 font-display font-bold select-none pointer-events-none leading-none"
                   style={{ fontSize: 'clamp(60px,8vw,100px)', color: 'rgba(201,168,76,0.04)' }}>MISSION</span>
 
-                <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-5">Our Mission</p>
-                <h3 className="font-display font-bold text-3xl md:text-4xl text-[#F5F0E8] leading-tight mb-6">
-                  Bridge the Trust &<br /><span style={goldText}>Execution Gap</span>
-                </h3>
+                <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-5">Our Mission</p>
+                <p className="text-[#F5F0E8]/50 text-base leading-relaxed mb-5">
+                  Our mission is to build a strong, reliable, and scalable film facilitation network across Madhya Pradesh by connecting filmmakers with the right local coordinators and production experts in every district.
+                </p>
                 <p className="text-[#F5F0E8]/50 text-base leading-relaxed">
-                  Our mission is to bridge the trust and execution gap in film production — connecting production houses with reliable, verified professionals and providing end-to-end facilitation support across Madhya Pradesh.
+                  We aim to simplify the filmmaking process through efficient coordination, local expertise, and structured execution, ensuring that every project is supported seamlessly from planning to completion.
                 </p>
               </div>
             </FadeIn>
@@ -416,15 +405,15 @@ export function AboutContent() {
                 <span className="absolute bottom-4 right-4 font-display font-bold select-none pointer-events-none leading-none"
                   style={{ fontSize: 'clamp(60px,8vw,100px)', color: 'rgba(201,168,76,0.06)' }}>VISION</span>
 
-                <p className="text-[10px] tracking-[0.5em] text-[#C9A84C] uppercase font-medium mb-5">Our Long-Term Vision</p>
-                <h3 className="font-display font-bold text-3xl md:text-4xl text-[#F5F0E8] leading-tight mb-6">
-                  A Globally <span style={goldText}>Competitive</span><br />Film Destination
-                </h3>
+                <p className="text-sm tracking-[0.3em] text-[#C9A84C] uppercase font-bold mb-5">Our Long-Term Vision</p>
                 <p className="text-[#F5F0E8]/50 text-base leading-relaxed mb-4">
-                  FilmIndustryMP aims to build long-term confidence, encouraging production houses to repeatedly choose Madhya Pradesh for feature films, web series, OTT content, television shows, commercials, and international productions.
+                  Our long-term vision is to transform Madhya Pradesh into a leading film production hub in India, powered by a strong and well-connected network of local coordinators, production teams, and creative professionals across every district.
                 </p>
-                <p className="text-[#F5F0E8]/40 text-sm leading-relaxed">
-                  Through professionalism, transparency, and institutional trust, we are committed to positioning Madhya Pradesh as a film-friendly, dependable, and globally competitive production destination.
+                <p className="text-[#F5F0E8]/50 text-base leading-relaxed mb-4">
+                  We aim to build a self-sustaining film ecosystem where filmmakers from across the country and globally can seamlessly access locations, talent, and production support through a single, reliable platform.
+                </p>
+                <p className="text-[#F5F0E8]/50 text-base leading-relaxed">
+                  By strengthening local networks and enabling consistent opportunities, we envision creating a system where every district contributes to the growth of the film industry, making Madhya Pradesh a preferred destination for films, web series, advertisements, and digital content production.
                 </p>
               </div>
             </FadeIn>

@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Playfair_Display, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { NavbarWrapper } from "@/components/navbar-wrapper"
+import { BackButton } from "@/components/back-button"
 import "./globals.css"
 
 const playfair = Playfair_Display({
@@ -81,6 +82,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { LenisProvider } from "@/components/lenis-provider"
 import { PageTransition } from "@/components/page-transition"
 import { GoldCursor } from "@/components/gold-cursor"
+import { ScrollIndicator } from "@/components/scroll-indicator"
 
 export default function RootLayout({
   children,
@@ -105,6 +107,12 @@ export default function RootLayout({
 
             {/* Global Navbar Wrapper - handles visibility on admin pages */}
             <NavbarWrapper />
+
+            {/* Global Back Button */}
+            <BackButton />
+
+            {/* Subtle scroll indicator */}
+            <ScrollIndicator />
 
             {/* Page content with proper z-indexing */}
             <main className="relative">

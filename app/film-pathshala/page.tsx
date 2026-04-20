@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRef, useEffect, useState } from 'react'
 
 const ease4: [number, number, number, number] = [0.22, 1, 0.36, 1]
@@ -14,23 +15,6 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.8, delay, ease: ease4 },
 })
 
-function Counter({ to, suffix = '' }: { to: number; suffix?: string }) {
-  const [count, setCount] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const [started, setStarted] = useState(false)
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true) }, { threshold: 0.5 })
-    if (ref.current) obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [])
-  useEffect(() => {
-    if (!started) return
-    let n = 0; const step = Math.ceil(to / 50)
-    const t = setInterval(() => { n += step; if (n >= to) { setCount(to); clearInterval(t) } else setCount(n) }, 25)
-    return () => clearInterval(t)
-  }, [started, to])
-  return <span ref={ref}>{count}{suffix}</span>
-}
 
 function VideoShowcase() {
   const [videos, setVideos] = useState<{ id: string; url: string; title: string }[]>([])
@@ -386,9 +370,9 @@ export default function FilmPathshala() {
     <main className="bg-[#060606] text-[#F5F0E8] overflow-x-hidden" data-lang={lang}>
 
       {/* ── NAV ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-14 py-4 border-b border-white/5"
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center px-6 md:px-14 py-4 border-b border-white/5"
         style={{ background: 'rgba(6,6,6,0.85)', backdropFilter: 'blur(16px)' }}>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-1">
           <Link href="/" className="flex items-center gap-2 group">
             <span className="h-px w-5 bg-[#C9A84C]/60 group-hover:w-8 transition-all duration-300" />
             <span className="text-[9px] tracking-[0.5em] text-[#C9A84C]/60 uppercase group-hover:text-[#C9A84C] transition-colors">Portal</span>
@@ -397,21 +381,21 @@ export default function FilmPathshala() {
             Film Industry
           </Link>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
-          <span className="font-display font-bold text-[#F5F0E8]/90 text-sm tracking-[0.25em] uppercase">Film पाठशाला</span>
+        {/* Truly centered logo */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
+          <Image src="/new logo/PRint pathshala logo (3) (2).png" alt="Film Pathshala" width={140} height={48} className="object-contain h-10 w-auto" />
         </div>
         {/* Language Toggle */}
         <div className="flex items-center" style={{ border: '1px solid rgba(201,168,76,0.25)', background: 'rgba(201,168,76,0.06)' }}>
           <button
             onClick={() => setLang(() => 'en')}
             className={`px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${lang === 'en' ? 'bg-[#C9A84C] text-black' : 'text-[#C9A84C]/40 hover:text-[#C9A84C]'}`}
-          >EN</button>
+          >English</button>
           <span className="w-px h-4 bg-[#C9A84C]/20 shrink-0" />
           <button
             onClick={() => setLang(() => 'hi')}
             className={`px-4 py-2 text-[10px] font-bold uppercase transition-all duration-300 ${lang === 'hi' ? 'bg-[#C9A84C] text-black' : 'text-[#C9A84C]/40 hover:text-[#C9A84C]'}`}
-          >हि</button>
+          >हिंदी</button>
         </div>
       </nav>
 
@@ -438,8 +422,8 @@ export default function FilmPathshala() {
           <motion.h1 className="font-display font-bold leading-[0.88] mb-8"
             initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, delay: 0.35, ease: ease4 }}>
-            <span className="block text-6xl md:text-8xl lg:text-[7.5rem] text-white drop-shadow-2xl">Film</span>
-            <span className={"block text-7xl md:text-9xl lg:text-[9.5rem] drop-shadow-2xl " + GOLD_CLS} style={GOLD_IMG}>पाठशाला</span>
+            <span className="block text-4xl sm:text-6xl md:text-8xl lg:text-[7.5rem] text-white drop-shadow-2xl">Film</span>
+            <span className={"block text-5xl sm:text-7xl md:text-9xl lg:text-[9.5rem] drop-shadow-2xl " + GOLD_CLS} style={GOLD_IMG}>पाठशाला</span>
           </motion.h1>
           <motion.div className="flex flex-wrap justify-center gap-3 mb-10"
             initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.85 }}>
@@ -448,7 +432,7 @@ export default function FilmPathshala() {
                 style={{ background: 'rgba(201,168,76,0.15)', backdropFilter: 'blur(8px)' }}>{pill}</span>
             ))}
           </motion.div>
-          <motion.div className="relative max-w-xl mx-auto px-7 py-6 text-left"
+          <motion.div className="relative max-w-xl mx-auto px-4 py-4 md:px-7 md:py-6 text-left"
             initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 1.1 }}
             style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(201,168,76,0.45)' }}>
             <div className="absolute top-0 left-0 right-0 h-[2px]"
@@ -469,31 +453,18 @@ export default function FilmPathshala() {
         </motion.div>
       </section>
 
-      {/* ══ STATS ══ */}
-      <section className="relative py-12 border-y border-[#C9A84C]/12"
-        style={{ background: 'linear-gradient(90deg, rgba(201,168,76,0.05) 0%, rgba(201,168,76,0.02) 50%, rgba(201,168,76,0.05) 100%)' }}>
-        <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[{ n: 12, s: ' Yrs' }, { n: 15, s: '+' }, { n: 21, s: '+' }, { n: 1, s: ' MP' }].map((s, i) => (
-            <motion.div key={i} className="text-center relative" {...fadeUp(i * 0.08)}>
-              {i < 3 && <div className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 w-px h-8 bg-[#C9A84C]/15" />}
-              <p className={"font-display font-bold text-3xl md:text-4xl " + GOLD_CLS} style={GOLD_IMG}><Counter to={s.n} suffix={s.s} /></p>
-              <p className="text-[#F5F0E8]/30 text-[9px] tracking-[0.35em] uppercase mt-1">{t.stats[i]}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
 
       {/* ══ INDUSTRY REALITY ══ */}
-      <section className="py-24 px-6 relative overflow-hidden">
+      <section className="py-14 md:py-24 px-4 md:px-6 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src="/gif/download.gif" alt="" className="w-full h-full object-cover object-center opacity-15" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(6,6,6,0.7) 0%, rgba(6,6,6,0.5) 50%, rgba(6,6,6,0.8) 100%)' }} />
         </div>
         <div className="max-w-6xl mx-auto relative z-10">
-          <motion.div className="flex items-center gap-6 mb-16" {...fadeUp()}>
+          <motion.div className="flex items-center gap-6 mb-8 md:mb-16" {...fadeUp()}>
             <div className="flex flex-col gap-1">
-              <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase">{t.s01.label}</span>
-              <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight">
+              <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s01.label}</span>
+              <h2 className="font-display font-bold text-3xl md:text-5xl leading-tight">
                 {t.s01.title}<br /><span className={GOLD_CLS} style={GOLD_IMG}>{t.s01.titleGold}</span>
               </h2>
               <p className="text-[#F5F0E8]/40 text-sm mt-3 max-w-md leading-relaxed">{t.s01.desc}</p>
@@ -522,7 +493,7 @@ export default function FilmPathshala() {
       </section>
 
       {/* ══ THE GAP ══ */}
-      <section className="relative py-28 px-6 overflow-hidden">
+      <section className="relative py-16 md:py-28 px-4 md:px-6 overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(201,168,76,0.09) 0%, rgba(6,6,6,0) 50%, rgba(201,168,76,0.06) 100%)' }} />
         <div className="absolute inset-0 border-y border-[#C9A84C]/15" />
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
@@ -534,13 +505,13 @@ export default function FilmPathshala() {
           <motion.div className="text-center mb-16" {...fadeUp()}>
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-px w-12 bg-[#C9A84C]/50" />
-              <span className="text-[9px] tracking-[0.7em] text-[#C9A84C] uppercase font-semibold">{t.s02.label}</span>
+              <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s02.label}</span>
               <div className="h-px w-12 bg-[#C9A84C]/50" />
             </div>
-            <h2 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-tight">
+            <h2 className="font-display font-bold text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
               {t.s02.title1} <span className={GOLD_CLS} style={GOLD_IMG}>{t.s02.title1Gold}</span>
             </h2>
-            <h2 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-tight text-white/25 mt-1">{t.s02.title2}</h2>
+            <h2 className="font-display font-bold text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight text-white/25 mt-1">{t.s02.title2}</h2>
             <p className="text-[#F5F0E8]/45 text-sm md:text-base leading-relaxed mt-6 max-w-xl mx-auto">{t.s02.desc}</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
@@ -575,7 +546,7 @@ export default function FilmPathshala() {
       </section>
 
       {/* ══ CORE PHILOSOPHY ══ */}
-      <section className="relative py-28 px-6 overflow-hidden border-t border-[#C9A84C]/10">
+      <section className="relative py-16 md:py-28 px-4 md:px-6 overflow-hidden border-t border-[#C9A84C]/10">
         <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(6,6,6,0) 0%, rgba(201,168,76,0.06) 50%, rgba(6,6,6,0) 100%)' }} />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] opacity-[0.06] pointer-events-none"
           style={{ background: 'radial-gradient(circle at top right, #C9A84C, transparent 60%)' }} />
@@ -585,7 +556,7 @@ export default function FilmPathshala() {
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div className="flex items-center gap-4 mb-16" {...fadeUp()}>
             <div className="h-px w-12 bg-[#C9A84C]/50" />
-            <span className="text-[9px] tracking-[0.7em] text-[#C9A84C] uppercase font-semibold">{t.phil.label}</span>
+            <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.phil.label}</span>
           </motion.div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <motion.div {...fadeUp()}>
@@ -637,7 +608,7 @@ export default function FilmPathshala() {
       </section>
 
       {/* ══ MISSION ══ */}
-      <section className="relative py-28 px-6 overflow-hidden border-t border-[#C9A84C]/10">
+      <section className="relative py-16 md:py-28 px-4 md:px-6 overflow-hidden border-t border-[#C9A84C]/10">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.07), transparent 65%)' }} />
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
@@ -647,7 +618,7 @@ export default function FilmPathshala() {
           <motion.div className="text-center mb-16" {...fadeUp()}>
             <div className="flex items-center justify-center gap-4 mb-5">
               <div className="h-px w-12 bg-[#C9A84C]/50" />
-              <span className="text-[9px] tracking-[0.7em] text-[#C9A84C] uppercase font-semibold">{t.s03.label}</span>
+              <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s03.label}</span>
               <div className="h-px w-12 bg-[#C9A84C]/50" />
             </div>
             <h2 className="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-tight">
@@ -707,7 +678,7 @@ export default function FilmPathshala() {
       <section className="py-24 px-6 border-t border-[#C9A84C]/8">
         <div className="max-w-6xl mx-auto">
           <motion.div className="text-center mb-14" {...fadeUp()}>
-            <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase">{t.what.label}</span>
+            <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.what.label}</span>
             <h2 className="font-display font-bold text-4xl md:text-5xl mt-3">
               {t.what.title1}<br />{lang === 'en' ? <>the <span className={GOLD_CLS} style={GOLD_IMG}>{t.what.titleGold}</span></> : <span className={GOLD_CLS} style={GOLD_IMG}>{t.what.titleGold}</span>}
             </h2>
@@ -732,13 +703,13 @@ export default function FilmPathshala() {
       </section>
 
       {/* ══ FOUNDERS ══ */}
-      <section className="py-24 px-6 relative overflow-hidden border-t border-[#C9A84C]/8">
+      <section className="py-14 md:py-24 px-4 md:px-6 relative overflow-hidden border-t border-[#C9A84C]/8">
         <div className="absolute inset-0"
           style={{ background: 'radial-gradient(ellipse 100% 80% at 50% 50%, rgba(201,168,76,0.05), transparent 65%)' }} />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div className="flex items-end justify-between mb-14 flex-wrap gap-4" {...fadeUp()}>
             <div>
-              <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase">{t.s04.label}</span>
+              <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s04.label}</span>
               <h2 className="font-display font-bold text-4xl md:text-5xl mt-2">
                 {t.s04.title} <span className={GOLD_CLS} style={GOLD_IMG}>{t.s04.titleGold}</span>
               </h2>
@@ -751,10 +722,10 @@ export default function FilmPathshala() {
               <div className="absolute top-0 left-0 right-0 h-[2px] z-20"
                 style={{ background: 'linear-gradient(90deg, #C9A84C 0%, #F5D87A 50%, #C9A84C 100%)' }} />
               <div className="absolute inset-0 border border-[#C9A84C]/20 group-hover:border-[#C9A84C]/50 transition-colors duration-500 z-20 pointer-events-none" />
-              <div className="flex flex-col md:flex-row-reverse min-h-[260px]">
-                <div className="relative md:w-56 shrink-0 overflow-hidden" style={{ background: '#0a0a0a' }}>
+              <div className="flex flex-col md:flex-row-reverse">
+                <div className="relative w-full md:w-56 lg:w-72 shrink-0 overflow-hidden" style={{ background: '#0a0a0a' }}>
                   <img src="/pathashalaexpert/Indas team (34).png" alt={t.s04.f1.name}
-                    className="w-full h-full object-cover object-top min-h-[260px] group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-48 md:h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                     style={{ filter: 'contrast(1.05) brightness(0.95)' }} />
                   <div className="absolute inset-0 hidden md:block"
                     style={{ background: 'linear-gradient(270deg, transparent 50%, rgba(6,6,6,0.95) 100%)' }} />
@@ -765,7 +736,7 @@ export default function FilmPathshala() {
                   <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                     <div>
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase font-semibold">{t.s04.f1.label}</span>
+                        <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s04.f1.label}</span>
                         <div className="h-px flex-1 bg-[#C9A84C]/20" />
                         <span className="text-[#C9A84C] text-xs">✦</span>
                       </div>
@@ -800,10 +771,10 @@ export default function FilmPathshala() {
               <div className="absolute top-0 left-0 right-0 h-[2px] z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 style={{ background: 'linear-gradient(90deg, #C9A84C 0%, #F5D87A 50%, #C9A84C 100%)' }} />
               <div className="absolute inset-0 border border-white/8 group-hover:border-[#C9A84C]/40 transition-colors duration-500 z-20 pointer-events-none" />
-              <div className="flex flex-col md:flex-row min-h-[260px]">
-                <div className="relative md:w-56 shrink-0 overflow-hidden" style={{ background: '#0a0a0a' }}>
+              <div className="flex flex-col md:flex-row">
+                <div className="relative w-full md:w-56 lg:w-72 shrink-0 overflow-hidden" style={{ background: '#0a0a0a' }}>
                   <img src="/pathashalaexpert/Indas team (29) (1).png" alt={t.s04.f2.name}
-                    className="w-full h-full object-cover object-top min-h-[260px] group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-48 md:h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
                     style={{ filter: 'contrast(1.05) brightness(0.92)' }} />
                   <div className="absolute inset-0 hidden md:block"
                     style={{ background: 'linear-gradient(90deg, transparent 50%, rgba(6,6,6,0.95) 100%)' }} />
@@ -814,7 +785,7 @@ export default function FilmPathshala() {
                   <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                     <div>
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-[8px] tracking-[0.6em] text-white/35 group-hover:text-[#C9A84C] uppercase font-semibold transition-colors duration-300">{t.s04.f2.label}</span>
+                        <span className="text-xs tracking-[0.5em] text-white/35 group-hover:text-[#C9A84C] uppercase font-semibold transition-colors duration-300">{t.s04.f2.label}</span>
                         <div className="h-px flex-1 bg-white/8 group-hover:bg-[#C9A84C]/20 transition-colors duration-300" />
                         <span className="text-white/20 group-hover:text-[#C9A84C] text-xs transition-colors duration-300">✦</span>
                       </div>
@@ -848,7 +819,7 @@ export default function FilmPathshala() {
       </section>
 
       {/* ══ APPROACH ══ */}
-      <section className="py-24 px-6 border-t border-[#C9A84C]/8 relative overflow-hidden">
+      <section className="py-14 md:py-24 px-4 md:px-6 border-t border-[#C9A84C]/8 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src="/gif/K7.gif" alt="" className="w-full h-full object-cover object-center opacity-12" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(6,6,6,0.75) 0%, rgba(6,6,6,0.55) 50%, rgba(6,6,6,0.8) 100%)' }} />
@@ -856,7 +827,7 @@ export default function FilmPathshala() {
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-14">
             <motion.div {...fadeUp()}>
-              <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase">{t.s05.label}</span>
+              <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s05.label}</span>
               <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight mt-3">
                 {t.s05.title1}<br /><span className={GOLD_CLS} style={GOLD_IMG}>{t.s05.titleGold}</span>
               </h2>
@@ -893,13 +864,13 @@ export default function FilmPathshala() {
       </section>
 
       {/* ══ INDIA'S DEVELOPMENT ══ */}
-      <section className="py-24 px-6 border-t border-[#C9A84C]/8 relative overflow-hidden">
+      <section className="py-14 md:py-24 px-4 md:px-6 border-t border-[#C9A84C]/8 relative overflow-hidden">
         <div className="absolute inset-0"
           style={{ background: 'radial-gradient(ellipse 70% 50% at 80% 50%, rgba(201,168,76,0.05), transparent 65%)' }} />
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <motion.div {...fadeUp()}>
-              <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase">{t.nat.label}</span>
+              <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.nat.label}</span>
               <h2 className="font-display font-bold text-4xl md:text-5xl leading-tight mt-3 mb-6">
                 {t.nat.title1}<br /><span className={GOLD_CLS} style={GOLD_IMG}>{t.nat.titleGold}</span>
               </h2>
@@ -935,7 +906,7 @@ export default function FilmPathshala() {
           style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,168,76,0.07), transparent 65%)' }} />
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div className="text-center mb-14" {...fadeUp()}>
-            <span className="text-[8px] tracking-[0.6em] text-[#C9A84C] uppercase">{t.s06.label}</span>
+            <span className="text-xs tracking-[0.5em] text-[#C9A84C] uppercase font-semibold">{t.s06.label}</span>
             <h2 className="font-display font-bold text-4xl md:text-5xl mt-3">
               {t.s06.titlePre}{' '}
               <span className={GOLD_CLS} style={GOLD_IMG}>{t.s06.titleGold}<br />{t.s06.titlePost}</span>
